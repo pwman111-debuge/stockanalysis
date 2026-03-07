@@ -14,8 +14,6 @@ export async function generateMarketInsight(data: MarketData): Promise<string> {
         return "Gemini API 키가 설정되지 않았습니다. Cloudflare 설정에서 GOOGLE_API_KEY 또는 GEMINI_API_KEY를 등록해 주세요.";
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
     const prompt = `
         당신은 한국 주식 시장 전문 분석가 'KRX Intelligence AI'입니다. 
         아래 제공된 최신 지수 및 수급 데이터를 바탕으로 현재 시장 상황에 대한 날카로운 '오늘의 인사이트'를 3~4문장으로 작성해 주세요. 전문적이고 신뢰감 있는 문체를 사용하세요.
@@ -32,33 +30,53 @@ export async function generateMarketInsight(data: MarketData): Promise<string> {
         4. "인사이트:" 라는 말로 시작하지 말고 바로 본론을 작성하세요.
     `;
 
-    let retries = 0;
-    const maxRetries = 2;
+    const modelsToTry = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-flash-latest"];
+    let lastError = "";
 
-    while (retries <= maxRetries) {
-        try {
-            const result = await model.generateContent(prompt);
-            const response = await result.response;
-            return response.text().trim();
-        } catch (error: any) {
-            console.error(`Gemini API Error (Attempt ${retries + 1}):`, error);
+    for (const modelName of modelsToTry) {
+        let retries = 0;
+        const maxRetries = 1;
+        const model = genAI.getGenerativeModel({ model: modelName });
 
-            // 429 에러일 경우 잠시 대기 후 리트라이
-            if (error.status === 429 && retries < maxRetries) {
-                const waitTime = Math.pow(2, retries) * 1000;
-                console.log(`429 Error detected. Waiting ${waitTime}ms before retry...`);
-                await new Promise(resolve => setTimeout(resolve, waitTime));
+        while (retries <= maxRetries) {
+            try {
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                return response.text().trim();
+            } catch (error: any) {
+                lastError = error?.message || String(error);
+                const status = error?.status;
+
+                console.error(`Gemini API Error (Model: ${modelName}, Attempt: ${retries + 1}):`, lastError);
+
+                // 404 에러이면 다음 모델로 넘어감
+                if (status === 404 || lastError.includes("404")) {
+                    break;
+                }
+
+                // 429 에러일 경우 잠시 대기 후 리트라이
+                if (status === 429 || lastError.includes("429")) {
+                    if (retries < maxRetries) {
+                        const waitTime = Math.pow(2, retries) * 1000;
+                        await new Promise(resolve => setTimeout(resolve, waitTime));
+                        retries++;
+                        continue;
+                    }
+                }
+
+                // 그 외 에러는 리트라이 후 다음 모델 시도
+                if (retries >= maxRetries) {
+                    break;
+                }
                 retries++;
-                continue;
             }
-
-            if (retries >= maxRetries) {
-                return "현재 AI 호출이 많아 분석이 지연되고 있습니다. 잠시 후 새로고침해 주세요.";
-            }
-            break;
         }
     }
-    return "AI 분석 중 오류가 발생했습니다.";
+
+    if (lastError.includes("429")) {
+        return "현재 AI 서비스 사용량이 많아 분석이 지연되고 있습니다. 1~2분 후 다시 시도해 주세요.";
+    }
+    return `AI 분석 중 오류가 발생했습니다. (${lastError.substring(0, 100)})`;
 }
 
 /**
