@@ -14,7 +14,7 @@ export async function generateMarketInsight(data: MarketData): Promise<string> {
         return "Gemini API 키가 설정되지 않았습니다. Cloudflare 설정에서 GOOGLE_API_KEY 또는 GEMINI_API_KEY를 등록해 주세요.";
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
         당신은 한국 주식 시장 전문 분석가 'KRX Intelligence AI'입니다. 
@@ -89,7 +89,7 @@ export async function generateMarketAnalysisDraft(data: MarketData): Promise<str
     `;
 
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const result = await model.generateContent(prompt);
         const response = await result.response;
         return response.text().trim();
