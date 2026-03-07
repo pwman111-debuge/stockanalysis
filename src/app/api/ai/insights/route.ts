@@ -1,3 +1,6 @@
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { getLatestMarketData } from '@/lib/api/market-api';
 import { generateMarketInsight } from '@/lib/ai/gemini';

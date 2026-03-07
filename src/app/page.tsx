@@ -1,4 +1,7 @@
 
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 import { TrendingUp, TrendingDown, Users, Activity, ArrowRight, Calendar, Zap, Globe, BarChart3 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";

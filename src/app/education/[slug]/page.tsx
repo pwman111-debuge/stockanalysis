@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 import { notFound } from 'next/navigation';
 import { allEducation } from 'contentlayer/generated';
 import { MdxWrapper } from '@/components/mdx/MdxWrapper';

@@ -1,3 +1,6 @@
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { fetchNaverMarketData } from '@/lib/api/naver-scraper';
 import { updateMarketCache, getCacheTimestamp } from '@/lib/api/market-api';
