@@ -3,14 +3,15 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { MarketData } from "../api/market-api";
 
 // API 키가 없을 경우를 대비한 예외 처리
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "";
+const genAI = new GoogleGenerativeAI(apiKey);
 
 /**
  * 시장 데이터를 기반으로 AI 인사이트를 생성합니다.
  */
 export async function generateMarketInsight(data: MarketData): Promise<string> {
-    if (!process.env.GEMINI_API_KEY) {
-        return "Gemini API 키가 설정되지 않았습니다. .env.local 파일을 확인해 주세요.";
+    if (!apiKey) {
+        return "Gemini API 키가 설정되지 않았습니다. Cloudflare 설정에서 GOOGLE_API_KEY 또는 GEMINI_API_KEY를 등록해 주세요.";
     }
 
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
@@ -64,7 +65,7 @@ export async function generateMarketInsight(data: MarketData): Promise<string> {
  * 시황 분석 MDX 초안을 생성합니다.
  */
 export async function generateMarketAnalysisDraft(data: MarketData): Promise<string> {
-    if (!process.env.GEMINI_API_KEY) {
+    if (!apiKey) {
         return "Gemini API 키가 설정되지 않았습니다.";
     }
 
