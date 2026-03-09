@@ -6,11 +6,8 @@ import { ArrowLeft, Calendar, Tag, Share2, Bookmark } from 'lucide-react';
 import Link from 'next/link';
 import { MdxRenderer } from '@/components/content/MdxRenderer';
 
-export async function generateStaticParams() {
-    return allMarketAnalyses.map((post) => ({
-        slug: post._raw.flattenedPath.split('/').pop(),
-    }));
-}
+export const runtime = 'edge';
+
 
 export default async function MarketDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
