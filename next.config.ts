@@ -1,9 +1,6 @@
-import { withContentlayer } from 'next-contentlayer';
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   turbopack: {}, // Enable custom loader support if needed for old plugins
 };
-
-export default withContentlayer(nextConfig);
+export default nextConfig;
