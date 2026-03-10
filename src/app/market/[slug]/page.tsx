@@ -1,5 +1,5 @@
 
-import { allMarketAnalyses } from 'contentlayer/generated';
+import { allMarketAnalyses } from 'contentlayer2/generated';
 import { notFound } from 'next/navigation';
 import { format, parseISO } from 'date-fns';
 import { ArrowLeft, Calendar, Tag, Share2, Bookmark } from 'lucide-react';

@@ -14,7 +14,7 @@ import { RefreshButton } from "@/components/dashboard/RefreshButton";
 // Contentlayer가 빌드 시간에 생성 — dynamic import로 안전하게
 let allMarketAnalyses: any[] = [];
 try {
-  const cl = require('contentlayer/generated');
+  const cl = require('contentlayer2/generated');
   allMarketAnalyses = cl.allMarketAnalyses ?? [];
 } catch { }
 

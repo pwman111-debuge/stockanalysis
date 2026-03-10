@@ -1,7 +1,7 @@
 export const runtime = 'edge';
 
 import { notFound } from 'next/navigation';
-import { allEducation } from 'contentlayer/generated';
+import { allEducation } from 'contentlayer2/generated';
 import { MdxWrapper } from '@/components/mdx/MdxWrapper';
 import { BookOpen, Clock, Calendar, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';

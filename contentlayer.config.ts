@@ -1,5 +1,5 @@
 
-import { defineDocumentType, makeSource } from 'contentlayer/source-files'
+import { defineDocumentType, makeSource } from 'contentlayer2/source-files'
 
 export const MarketAnalysis = defineDocumentType(() => ({
     name: 'MarketAnalysis',

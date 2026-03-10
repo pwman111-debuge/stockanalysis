@@ -1,6 +1,6 @@
 
 import Link from 'next/link';
-import { allMarketAnalyses } from 'contentlayer/generated';
+import { allMarketAnalyses } from 'contentlayer2/generated';
 import { compareDesc, format, parseISO } from 'date-fns';
 import { Activity, ArrowRight, Calendar, Tag } from 'lucide-react';
 

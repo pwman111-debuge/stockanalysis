@@ -1,5 +1,5 @@
 
-import { allStockReports } from 'contentlayer/generated';
+import { allStockReports } from 'contentlayer2/generated';
 import { format, parseISO } from 'date-fns';
 import { BarChart3, FileText, ArrowRight, TrendingUp } from 'lucide-react';
 import Link from 'next/link';

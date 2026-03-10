@@ -1,6 +1,6 @@
 "use client";
 
-import { useMDXComponent } from 'next-contentlayer/hooks';
+import { useMDXComponent } from 'next-contentlayer2/hooks';
 
 // MDX 컴포넌트 커스텀 스타일 정의
 const mdxComponents = {

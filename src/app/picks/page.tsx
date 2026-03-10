@@ -1,5 +1,5 @@
 
-import { allStockPicks } from 'contentlayer/generated';
+import { allStockPicks } from 'contentlayer2/generated';
 import { compareDesc, format, parseISO } from 'date-fns';
 import { Search, TrendingUp, AlertTriangle, Target, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';

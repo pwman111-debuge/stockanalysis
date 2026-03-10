@@ -1,4 +1,4 @@
-import { allEducation, type Education } from 'contentlayer/generated';
+import { allEducation, type Education } from 'contentlayer2/generated';
 import { BookOpen, GraduationCap, TrendingUp, BarChart3, Shield, Target, ArrowRight, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
