@@ -1,4 +1,6 @@
 
+export const runtime = 'edge';
+
 export default function PicksPage() {
     return (
         <div className="min-h-[400px] flex items-center justify-center">
