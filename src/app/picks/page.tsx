@@ -25,7 +25,12 @@ export default function PicksPage() {
                 </div>
                 <div className="rounded-xl border border-border bg-white p-4 shadow-sm">
                     <p className="text-xs font-medium text-muted-foreground uppercase">평균 목표 수익률</p>
-                    <p className="mt-1 text-2xl font-bold text-kr-up">+14.5%</p>
+                    <p className="mt-1 text-2xl font-bold text-kr-up">
+                        {picks.length > 0
+                            ? `+${(picks.reduce((acc, p) => acc + parseFloat(p.expectedReturn?.replace(/[+%]/g, '') || '0'), 0) / picks.length).toFixed(1)}%`
+                            : "0.0%"
+                        }
+                    </p>
                 </div>
                 <div className="rounded-xl border border-border bg-white p-4 shadow-sm">
                     <p className="text-xs font-medium text-muted-foreground uppercase">최근 업데이트</p>
