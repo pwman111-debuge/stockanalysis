@@ -220,9 +220,17 @@ export default async function Home() {
                     {nextEvent.description}
                   </p>
                 )}
-                {nextEvent.forecast && (
-                  <div className="flex gap-3 mt-2 text-[11px]">
-                    <span className="text-muted-foreground">예측치: <strong className="text-primary">{nextEvent.forecast}</strong></span>
+                {(nextEvent.actual || nextEvent.forecast || nextEvent.previous) && (
+                  <div className="flex gap-4 mt-2 text-[11px]">
+                    {nextEvent.actual && (
+                      <span className="text-muted-foreground">발표: <strong className="text-green-600">{nextEvent.actual}</strong></span>
+                    )}
+                    {nextEvent.forecast && (
+                      <span className="text-muted-foreground">예측: <strong className="text-primary">{nextEvent.forecast}</strong></span>
+                    )}
+                    {nextEvent.previous && (
+                      <span className="text-muted-foreground">이전: <strong>{nextEvent.previous}</strong></span>
+                    )}
                   </div>
                 )}
               </div>

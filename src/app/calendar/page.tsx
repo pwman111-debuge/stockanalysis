@@ -131,10 +131,26 @@ export default async function CalendarPage() {
                                                 </div>
 
                                                 {/* Data columns */}
-                                                {ev.forecast && (
-                                                    <div className="text-right shrink-0">
-                                                        <p className="text-[9px] text-muted-foreground uppercase">예측치</p>
-                                                        <p className="text-xs font-bold text-primary">{ev.forecast}</p>
+                                                {(ev.previous || ev.forecast || ev.actual) && (
+                                                    <div className="flex gap-4 text-center shrink-0">
+                                                        {ev.actual && (
+                                                            <div>
+                                                                <p className="text-[9px] text-muted-foreground uppercase">발표</p>
+                                                                <p className="text-xs font-bold text-green-600">{ev.actual}</p>
+                                                            </div>
+                                                        )}
+                                                        {ev.forecast && (
+                                                            <div>
+                                                                <p className="text-[9px] text-muted-foreground uppercase">예측</p>
+                                                                <p className="text-xs font-bold text-primary">{ev.forecast}</p>
+                                                            </div>
+                                                        )}
+                                                        {ev.previous && (
+                                                            <div>
+                                                                <p className="text-[9px] text-muted-foreground uppercase">이전</p>
+                                                                <p className="text-xs font-bold">{ev.previous}</p>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 )}
                                             </div>
