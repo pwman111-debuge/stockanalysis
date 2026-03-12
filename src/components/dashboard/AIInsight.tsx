@@ -5,6 +5,9 @@ import { useState, useEffect } from "react";
 import { Activity, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const CACHE_KEY = "ai_insight_cache";
+const CACHE_TTL = 12 * 60 * 60 * 1000; // 12시간
+
 export function AIInsight() {
     const [insight, setInsight] = useState<string>("시장 데이터를 분석하여 오늘의 전략을 도출하고 있습니다...");
     const [isLoading, setIsLoading] = useState(true);
@@ -13,7 +16,20 @@ export function AIInsight() {
     useEffect(() => {
         async function fetchInsight() {
             try {
-                // ISR 캐시된 API 요청
+                // 1. 브라우저 로컬 캐시 확인
+                const cached = localStorage.getItem(CACHE_KEY);
+                if (cached) {
+                    const { data, timestamp, displayTime } = JSON.parse(cached);
+                    // 12시간 이내라면 서버 요청 없이 캐시 사용
+                    if (Date.now() - timestamp < CACHE_TTL) {
+                        setInsight(data);
+                        setGeneratedAt(displayTime);
+                        setIsLoading(false);
+                        return;
+                    }
+                }
+
+                // 2. 캐시가 없거나 만료된 경우에만 API 호출
                 const response = await fetch("/api/ai/insights");
                 const data = await response.json();
                 
@@ -21,10 +37,18 @@ export function AIInsight() {
                     setInsight(data.insight);
                     if (data.generatedAt) {
                         const date = new Date(data.generatedAt);
-                        setGeneratedAt(`${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`);
+                        const displayTime = `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+                        setGeneratedAt(displayTime);
+                        
+                        // 결과 저장
+                        localStorage.setItem(CACHE_KEY, JSON.stringify({
+                            data: data.insight,
+                            timestamp: Date.now(),
+                            displayTime: displayTime
+                        }));
                     }
                 } else if (data.error) {
-                    setInsight("최근 시장 분석 데이터를 불러오는 중입니다. 잠시만 기다려 주세요.");
+                    setInsight("최근 시장 분석 데이터를 불러오는 중입니다.");
                 }
             } catch (error) {
                 console.error("AI Insight Fetch Error:", error);
@@ -35,6 +59,7 @@ export function AIInsight() {
         }
         fetchInsight();
     }, []);
+
 
     return (
         <div className="rounded-xl bg-gradient-to-br from-blue-50/80 to-indigo-50/50 border border-blue-100 p-6 shadow-sm transition-all hover:shadow-md h-full flex flex-col justify-between">
