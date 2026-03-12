@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next'
-import { allMarketAnalyses, allStockPicks, allStockReports, allEducations } from 'contentlayer2/generated'
+import { allMarketAnalyses, allStockPicks, allStockReports, allEducation } from 'contentlayer2/generated'
 
 // TODO: 실제 배포된 사이트의 도메인 주소로 변경하세요.
 const BASE_URL = 'https://krx-intelligence.com'
@@ -47,7 +47,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }))
 
   // 투자 교육 (Education -> /education/[slug])
-  const educations = allEducations.map((post) => ({
+  const educations = allEducation.map((post) => ({
     url: `${BASE_URL}${post.url}`,
     lastModified: post.date,
     changeFrequency: 'monthly' as const,
@@ -56,3 +56,4 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [...routes, ...marketAnalyses, ...stockPicks, ...stockReports, ...educations]
 }
+
