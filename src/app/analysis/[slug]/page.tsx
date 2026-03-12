@@ -1,6 +1,4 @@
 
-export const runtime = 'edge';
-
 import { allStockReports } from 'contentlayer2/generated';
 import { notFound } from 'next/navigation';
 import { format, parseISO } from 'date-fns';
