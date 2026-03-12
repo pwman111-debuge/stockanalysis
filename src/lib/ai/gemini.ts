@@ -36,13 +36,17 @@ export async function generateMarketInsight(data: MarketData): Promise<string> {
     for (const modelName of modelsToTry) {
         let retries = 0;
         const maxRetries = 1;
-        const model = genAI.getGenerativeModel({ model: modelName });
+        const model = genAI.getGenerativeModel({ 
+            model: modelName,
+            generationConfig: { temperature: 0.1 } // 일관성을 위해 무작위성 최소화
+        });
 
         while (retries <= maxRetries) {
             try {
                 const result = await model.generateContent(prompt);
                 const response = await result.response;
                 return response.text().trim();
+
             } catch (error: any) {
                 lastError = error?.message || String(error);
                 const status = error?.status;
