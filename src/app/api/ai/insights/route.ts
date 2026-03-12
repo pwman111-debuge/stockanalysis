@@ -1,47 +1,34 @@
-export const runtime = 'edge';
-export const dynamic = 'force-dynamic';
+// 12시간(43,200초) 동안 이 API의 응답을 캐싱합니다. (ISR)
+export const revalidate = 43200; 
 
 import { NextResponse } from 'next/server';
 import { getLatestMarketData } from '@/lib/api/market-api';
 import { generateMarketInsight } from '@/lib/ai/gemini';
 
-// 간단한 인메모리 캐시
-let cachedInsight: {
-    insight: string;
-    lastUpdated: string;
-    timestamp: number;
-} | null = null;
-
-const CACHE_DURATION = 1000 * 60 * 60; // 1시간 캐시
-
+/**
+ * 시장 데이터를 기반으로 AI 인사이트를 가져옵니다.
+ * ISR 설정에 의해 12시간에 한 번만 실제 AI 분석이 수행됩니다.
+ */
 export async function GET() {
     try {
+        // 1. 최신 시장 데이터를 가져옵니다.
         const marketData = await getLatestMarketData();
 
-        // 캐시 확인 (시장 데이터 업데이트 시각이 같고 캐시 기간 내인 경우)
-        if (cachedInsight &&
-            cachedInsight.lastUpdated === marketData.lastUpdated &&
-            Date.now() - cachedInsight.timestamp < CACHE_DURATION) {
-            return NextResponse.json(cachedInsight);
-        }
-
+        // 2. AI 인사이트 생성 (Next.js가 이 함수의 결과가 아닌 이 라우트 자체를 캐싱함)
         const insight = await generateMarketInsight(marketData);
-
-        // 에러 메시지가 아닐 때만 캐싱
-        if (!insight.includes("오류") && !insight.includes("실패")) {
-            cachedInsight = {
-                insight,
-                lastUpdated: marketData.lastUpdated,
-                timestamp: Date.now()
-            };
-        }
 
         return NextResponse.json({
             insight,
-            lastUpdated: marketData.lastUpdated
+            lastUpdated: marketData.lastUpdated,
+            generatedAt: new Date().toISOString(),
+            isCached: true
         });
     } catch (error) {
         console.error("Insight API Error:", error);
-        return NextResponse.json({ error: "Failed to generate insights" }, { status: 500 });
+        return NextResponse.json(
+            { error: "최근 생성된 인사이트를 불러오는 중 오류가 발생했습니다." }, 
+            { status: 500 }
+        );
     }
 }
+
