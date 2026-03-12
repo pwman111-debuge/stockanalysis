@@ -28,6 +28,7 @@ interface TossEvent {
         economicIndicatorValue?: {
             actual?: number;
             forecast?: number;
+            historical?: number;
             unitPrefix?: string;
             time?: string;
         };
@@ -136,7 +137,7 @@ function mapTossEvent(toss: TossEvent): EconomicEvent {
         importance,
         category,
         categoryName,
-        previous: undefined, // 토스 API에서 이전/예상값은 좀 더 깊은 정보가 필요할 수 있음
+        previous: toss.view.economicIndicatorValue?.historical?.toString(),
         forecast: toss.view.economicIndicatorValue?.forecast?.toString(),
         actual: toss.view.economicIndicatorValue?.actual?.toString(),
         description: subtitle
