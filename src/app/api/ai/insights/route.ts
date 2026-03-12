@@ -1,3 +1,5 @@
+// Cloudflare Pages를 위한 Edge Runtime 설정
+export const runtime = 'edge';
 // 12시간(43,200초) 동안 이 API의 응답을 캐싱합니다. (ISR)
 export const revalidate = 43200; 
 
