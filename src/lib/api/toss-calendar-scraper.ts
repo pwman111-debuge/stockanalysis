@@ -38,6 +38,7 @@ interface TossEvent {
         companyName: string;
         eps?: number;
         salesDisplay?: string;
+        epsSurpriseDisplay?: string;
     };
 }
 
@@ -127,21 +128,32 @@ function mapTossEvent(toss: TossEvent): EconomicEvent {
         }
     }
 
+    const indicator = toss.view.economicIndicatorValue;
+    const unit = indicator?.unitPrefix || '';
+    const formatVal = (v?: number) => (v !== undefined && v !== null) ? `${v}${unit}` : undefined;
+
     const ev: EconomicEvent = {
         id: toss.id.uniqueName || `toss-${group}-${date}-${title}`,
         title: group.includes('EARNINGS') && toss.stockEarnings ? `${toss.stockEarnings.companyName} 실적발표` : title,
         date: date,
-        time: toss.view.economicIndicatorValue?.time?.substring(0, 5),
+        time: indicator?.time?.substring(0, 5),
         country,
         countryName,
         importance,
         category,
         categoryName,
-        previous: toss.view.economicIndicatorValue?.historical?.toString(),
-        forecast: toss.view.economicIndicatorValue?.forecast?.toString(),
-        actual: toss.view.economicIndicatorValue?.actual?.toString(),
+        previous: formatVal(indicator?.historical),
+        forecast: formatVal(indicator?.forecast),
+        actual: formatVal(indicator?.actual),
         description: subtitle
     };
+
+    // 실적 발표인 경우 특별 필드 처리
+    if (group.includes('EARNINGS') && toss.stockEarnings) {
+        if (toss.stockEarnings.salesDisplay) {
+            ev.actual = toss.stockEarnings.salesDisplay;
+        }
+    }
 
     return ev;
 }
