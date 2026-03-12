@@ -26,7 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // 시황 분석 (MarketAnalysis -> /market/[slug])
   const marketAnalyses = allMarketAnalyses.map((post) => ({
     url: `${BASE_URL}${post.url}`,
-    lastModified: post.date,
+    lastModified: new Date(post.date).toISOString().split('T')[0],
     changeFrequency: 'weekly' as const,
     priority: 0.6,
   }))
@@ -34,7 +34,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // 유망 종목 (StockPick -> /picks/[slug])
   const stockPicks = allStockPicks.map((post) => ({
     url: `${BASE_URL}${post.url}`,
-    lastModified: post.updatedAt || post.date,
+    lastModified: new Date(post.updatedAt || post.date).toISOString().split('T')[0],
     changeFrequency: 'daily' as const,
     priority: 0.7,
   }))
@@ -42,7 +42,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // 종목 리포트 (StockReport -> /analysis/[slug])
   const stockReports = allStockReports.map((post) => ({
     url: `${BASE_URL}${post.url}`,
-    lastModified: post.updatedAt || post.date,
+    lastModified: new Date(post.updatedAt || post.date).toISOString().split('T')[0],
     changeFrequency: 'weekly' as const,
     priority: 0.6,
   }))
@@ -50,11 +50,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // 투자 교육 (Education -> /education/[slug])
   const educations = allEducation.map((post) => ({
     url: `${BASE_URL}${post.url}`,
-    lastModified: post.date,
+    lastModified: new Date(post.date).toISOString().split('T')[0],
     changeFrequency: 'monthly' as const,
     priority: 0.5,
   }))
 
   return [...routes, ...marketAnalyses, ...stockPicks, ...stockReports, ...educations]
 }
+
 
