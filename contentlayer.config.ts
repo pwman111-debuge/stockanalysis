@@ -40,7 +40,7 @@ export const StockPick = defineDocumentType(() => ({
         thumbnail: { type: 'string' },
     },
     computedFields: {
-        url: { type: 'string', resolve: (post) => `/picks/${new Date(post.date).toISOString().split('T')[0]}/${post._raw.flattenedPath.split('/').pop()}` },
+        url: { type: 'string', resolve: (post) => `/picks/${post._raw.flattenedPath.split('/').pop()}` },
     },
 }))
 
