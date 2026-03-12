@@ -1,3 +1,6 @@
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 import { Calendar, Clock, Globe, AlertTriangle, ChevronRight, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getEconomicEvents, getFlag, type EconomicEvent } from '@/lib/api/economic-calendar';
