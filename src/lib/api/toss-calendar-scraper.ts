@@ -1,11 +1,12 @@
 
 /**
- * KRX Intelligence - 토스 증권 증시 캘린더 수집 모듈
+ * KRX Intelligence - 토스 증권 증시 캘린더 수집 모듈 (예측치 보강 버전)
  */
 
 import { EconomicEvent } from './economic-calendar';
 
 const TOSS_API_URL = 'https://wts-cert-api.tossinvest.com/api/v4/calendar/monthly';
+const TOSS_DETAIL_API_URL = 'https://wts-cert-api.tossinvest.com/api/v4/calendar/economic-indicators';
 
 const HEADERS = {
     'Content-Type': 'application/json',
@@ -26,6 +27,7 @@ interface TossEvent {
         };
         resourceUrl?: string;
         economicIndicatorValue?: {
+            ric?: string;
             actual?: number;
             forecast?: number;
             historical?: number;
@@ -40,6 +42,33 @@ interface TossEvent {
         salesDisplay?: string;
         epsSurpriseDisplay?: string;
     };
+}
+
+/**
+ * 릭(RIC) 리스트를 기반으로 지표 상세 정보를 가져옵니다. (예측치 확보용)
+ */
+async function fetchTossIndicatorsDetail(rics: string[]): Promise<Record<string, any>> {
+    if (rics.length === 0) return {};
+    
+    // 릭이 너무 많으면 API 제한이 있을 수 있으므로 나눠서 호출 (Toss는 대략 30~50개까지 가능할 것으로 추정)
+    const url = `${TOSS_DETAIL_API_URL}?rics=${rics.join(',')}`;
+    try {
+        const res = await fetch(url, { headers: HEADERS });
+        if (!res.ok) return {};
+        const data = await res.json();
+        
+        // RIC별로 맵 생성
+        const map: Record<string, any> = {};
+        if (data.result && Array.isArray(data.result)) {
+            data.result.forEach((item: any) => {
+                if (item.ric) map[item.ric] = item;
+            });
+        }
+        return map;
+    } catch (err) {
+        console.error(`[Toss Scraper] Detail fetch error:`, err);
+        return {};
+    }
 }
 
 /**
@@ -70,8 +99,9 @@ async function fetchTossMonthlyData(yearMonth: string): Promise<TossEvent[]> {
 
 /**
  * 토스 이벤트를 우리 앱의 EconomicEvent 형식으로 변환합니다.
+ * @param detailsMap 상세 API에서 가져온 추가 데이터 (예측치 포함)
  */
-function mapTossEvent(toss: TossEvent): EconomicEvent {
+function mapTossEvent(toss: TossEvent, detailsMap: Record<string, any>): EconomicEvent {
     const group = toss.id.group;
     const title = toss.view.title;
     const date = toss.date;
@@ -80,7 +110,6 @@ function mapTossEvent(toss: TossEvent): EconomicEvent {
     let country: 'KR' | 'US' | 'EU' | 'JP' | 'CN' = 'KR';
     let countryName = '한국';
     
-    // 아이콘 기반 국가 판별
     const icon = toss.view.resourceUrl || '';
     if (icon.includes('us')) {
         country = 'US'; countryName = '미국';
@@ -119,7 +148,6 @@ function mapTossEvent(toss: TossEvent): EconomicEvent {
         categoryName = '휴장일';
     }
 
-    // 중요도 판별 (임의 기준: 경제 지표 및 실적 발표 여부)
     let importance: 'high' | 'medium' | 'low' = 'low';
     if (group === 'ECONOMIC' || group.includes('EARNINGS')) {
         importance = 'medium';
@@ -130,6 +158,20 @@ function mapTossEvent(toss: TossEvent): EconomicEvent {
 
     const indicator = toss.view.economicIndicatorValue;
     const unit = indicator?.unitPrefix || '';
+    
+    // 예측치(Forecast) 보강 로직
+    let forecastValue = indicator?.forecast;
+    if ((forecastValue === undefined || forecastValue === null) && indicator?.ric) {
+        const detail = detailsMap[indicator.ric];
+        if (detail && detail.historicalData) {
+            // 해당 날짜의 예측치 찾기
+            const historical = detail.historicalData.find((h: any) => h.announceDate === date);
+            if (historical && historical.forecastValue !== undefined && historical.forecastValue !== null) {
+                forecastValue = historical.forecastValue;
+            }
+        }
+    }
+
     const formatVal = (v?: number) => (v !== undefined && v !== null) ? `${v}${unit}` : undefined;
 
     const ev: EconomicEvent = {
@@ -143,12 +185,11 @@ function mapTossEvent(toss: TossEvent): EconomicEvent {
         category,
         categoryName,
         previous: formatVal(indicator?.historical),
-        forecast: formatVal(indicator?.forecast),
+        forecast: formatVal(forecastValue),
         actual: formatVal(indicator?.actual),
         description: subtitle
     };
 
-    // 실적 발표인 경우 특별 필드 처리
     if (group.includes('EARNINGS') && toss.stockEarnings) {
         if (toss.stockEarnings.salesDisplay) {
             ev.actual = toss.stockEarnings.salesDisplay;
@@ -164,8 +205,6 @@ function mapTossEvent(toss: TossEvent): EconomicEvent {
 export async function fetchTossCalendarData(): Promise<EconomicEvent[]> {
     const now = new Date();
     const currentYM = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    
-    // 다음 달 계산
     const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     const nextYM = `${nextMonth.getFullYear()}-${String(nextMonth.getMonth() + 1).padStart(2, '0')}`;
 
@@ -177,5 +216,18 @@ export async function fetchTossCalendarData(): Promise<EconomicEvent[]> {
     ]);
 
     const allTossEvents = [...currentEvents, ...nextEvents];
-    return allTossEvents.map(mapTossEvent);
+    
+    // 수집된 이벤트 중 경제 지표(ECONOMIC)의 RIC 리스트 추출
+    const rics = allTossEvents
+        .filter(e => e.id.group === 'ECONOMIC' && e.view.economicIndicatorValue?.ric)
+        .map(e => e.view.economicIndicatorValue!.ric!);
+    
+    // 중복 제거
+    const uniqueRics = Array.from(new Set(rics));
+    
+    // 상세 정보(예측치) 일괄 수집
+    console.log(`[Toss Scraper] Fetching details for ${uniqueRics.length} RICs to get forecasts`);
+    const detailsMap = await fetchTossIndicatorsDetail(uniqueRics);
+
+    return allTossEvents.map(ev => mapTossEvent(ev, detailsMap));
 }
