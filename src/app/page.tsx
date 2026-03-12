@@ -21,7 +21,7 @@ try {
 export default async function Home() {
   const marketData = await getLatestMarketData();
   const fearGreed = calculateFearGreed(marketData);
-  const nextEvent = getNextHighImpactEvent();
+  const nextEvent = await getNextHighImpactEvent();
 
   // 최근 시황 분석 (Contentlayer MDX에서 최대 3개)
   const recentAnalyses = [...allMarketAnalyses]

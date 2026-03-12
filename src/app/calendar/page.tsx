@@ -14,9 +14,9 @@ const CATEGORY_ICONS: Record<string, string> = {
     housing: '🏠', earnings: '💰', other: '📋',
 };
 
-export default function CalendarPage() {
+export default async function CalendarPage() {
     const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
-    const allEvents = getEconomicEvents();
+    const allEvents = await getEconomicEvents();
 
     // 이벤트를 날짜별로 그룹핑
     const groupedByDate: Record<string, EconomicEvent[]> = {};
