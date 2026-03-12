@@ -1,7 +1,8 @@
 import { MetadataRoute } from 'next'
 
-// TODO: 실제 배포된 사이트의 도메인 주소로 변경하세요.
-const BASE_URL = 'https://krx-intelligence.com'
+// 실제 배포된 사이트의 도메인 주소입니다.
+const BASE_URL = 'https://stockanalysis2.pages.dev'
+
 
 export default function robots(): MetadataRoute.Robots {
   return {

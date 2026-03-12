@@ -11,7 +11,11 @@ const notoSansKR = Noto_Sans_KR({
 export const metadata: Metadata = {
   title: "KRX Intelligence | 한국 증시 분석 플랫폼",
   description: "한국 주식시장의 시황 분석, 유망 종목 발굴, 핵심 지표를 한눈에 제공하는 전문 투자 정보 플랫폼",
+  verification: {
+    google: "Qq9Sl-g4NINDCZEPLXqJXe7a_S9CcNaxs3RdwtR70ts",
+  }
 };
+
 
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Navbar } from "@/components/layout/Navbar";
