@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { allMarketAnalyses } from 'contentlayer/generated';
+import { allMarketAnalyses } from 'contentlayer2/generated';
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
