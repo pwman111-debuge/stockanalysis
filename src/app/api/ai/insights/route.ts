@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { allMarketAnalyses } from 'contentlayer/generated';
 
 export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
 
 /**
  * Contentlayer가 미리 빌드해둔 정적 데이터를 반환합니다.
