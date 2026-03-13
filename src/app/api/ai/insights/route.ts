@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
+export const runtime = 'edge';
+
 /**
  * GitHub Actions로 생성된 최신 MDX 인사이트 파일을 읽어옵니다.
  */

@@ -86,7 +86,7 @@ async function generate() {
 ---
 title: "제목"
 date: "${new Date().toISOString().split('T')[0]}"
-description: "짧은 요약"
+summary: "짧은 요약"
 category: "Genesis"
 ---
 
