@@ -6,7 +6,7 @@ import { Activity, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const CACHE_KEY = "ai_insight_cache";
-const CACHE_TTL = 12 * 60 * 60 * 1000; // 12시간
+const CACHE_TTL = 60 * 60 * 1000; // 1시간 (서버 데이터가 9시/4시에 갱신되므로 더 자주 확인)
 
 export function AIInsight() {
     const [insight, setInsight] = useState<string>("시장 데이터를 분석하여 오늘의 전략을 도출하고 있습니다...");
@@ -20,7 +20,7 @@ export function AIInsight() {
                 const cached = localStorage.getItem(CACHE_KEY);
                 if (cached) {
                     const { data, timestamp, displayTime } = JSON.parse(cached);
-                    // 12시간 이내라면 서버 요청 없이 캐시 사용
+                    // 1시간 이내라면 서버 요청 없이 캐시 사용
                     if (Date.now() - timestamp < CACHE_TTL) {
                         setInsight(data);
                         setGeneratedAt(displayTime);
@@ -29,7 +29,7 @@ export function AIInsight() {
                     }
                 }
 
-                // 2. 캐시가 없거나 만료된 경우에만 API 호출
+                // 2. 캐시가 없거나 만료된 구역에만 API 호출
                 const response = await fetch("/api/ai/insights");
                 const data = await response.json();
                 
@@ -37,7 +37,7 @@ export function AIInsight() {
                     setInsight(data.insight);
                     if (data.generatedAt) {
                         const date = new Date(data.generatedAt);
-                        const displayTime = `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+                        const displayTime = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
                         setGeneratedAt(displayTime);
                         
                         // 결과 저장
@@ -48,11 +48,27 @@ export function AIInsight() {
                         }));
                     }
                 } else if (data.error) {
-                    setInsight("최근 시장 분석 데이터를 불러오는 중입니다.");
+                    // 데이터가 없는 경우 (KV가 비어있을 때 등)
+                    const cached = localStorage.getItem(CACHE_KEY);
+                    if (cached) {
+                        const { data: cachedInsight, displayTime } = JSON.parse(cached);
+                        setInsight(cachedInsight);
+                        setGeneratedAt(displayTime);
+                    } else {
+                        setInsight("최근 시장 분석 데이터를 불러오는 중입니다.");
+                    }
                 }
             } catch (error) {
                 console.error("AI Insight Fetch Error:", error);
-                setInsight("AI 분석 데이터 연결에 실패했습니다.");
+                // 에러 발생 시 캐시가 있다면 캐시라도 보여줌
+                const cached = localStorage.getItem(CACHE_KEY);
+                if (cached) {
+                    const { data: cachedInsight, displayTime } = JSON.parse(cached);
+                    setInsight(cachedInsight);
+                    setGeneratedAt(displayTime);
+                } else {
+                    setInsight("AI 분석 데이터 연결에 실패했습니다.");
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -95,7 +111,7 @@ export function AIInsight() {
             
             <div className="mt-4 pt-4 border-t border-blue-100/50">
                 <p className="text-[10px] text-blue-400/80 font-medium">
-                    * 인공지능이 12시간 주기로 시장의 수급과 지수를 종합 분석합니다.
+                    * 인공지능이 매일 오전 9시, 오후 4시 정밀 시황 분석을 수행합니다.
                 </p>
             </div>
         </div>

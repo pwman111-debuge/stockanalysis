@@ -1,86 +1,53 @@
 import { NextResponse } from 'next/server';
-import { getLatestMarketData } from '@/lib/api/market-api';
-import { generateMarketInsight } from '@/lib/ai/gemini';
 
-// Cloudflare Pages를 위한 Edge Runtime 설정
 export const runtime = 'edge';
 
-/**
- * 에지 워커가 살아있는 동안 유지되는 글로벌 메모리 캐시입니다.
- * (모든 노드에 공유되지는 않으나, 핫 인스턴스의 중복 호출을 효과적으로 방해함)
- */
-let globalInsightCache: { data: any; expiry: number } | null = null;
+// Cloudflare KV 바인딩 이름 (Cloudflare Dashboard에서 설정한 이름과 일치해야 함)
+const KV_BINDING = 'KV_STORAGE';
 
 /**
- * 시간을 12시간 단위로 반올림합니다. (00:00 또는 12:00)
- * 이를 통해 응답 바디가 12시간 동안 동일하게 유지되어 CDN 캐싱을 돕습니다.
- */
-function getRounded12hTimestamp() {
-    const now = new Date();
-    const hours = now.getHours();
-    const slot = hours < 12 ? 0 : 12;
-    const rounded = new Date(now.getFullYear(), now.getMonth(), now.getDate(), slot, 0, 0, 0);
-    return rounded.toISOString();
-}
-
-/**
- * 시장 데이터를 기반으로 AI 인사이트를 가져옵니다.
+ * KV Storage에서 이미 생성된 인사이트만 가져옵니다.
+ * 이 구조는 Gemini API 쿼터를 소모하지 않으며, 실시간 생성 대신 캐시된 값을 즉시 반환합니다.
  */
 export async function GET() {
-    const now = Date.now();
-    
-    // 1. 글로벌 메모리 캐시 확인 (만료되지 않았다면 즉시 반환)
-    if (globalInsightCache && now < globalInsightCache.expiry) {
-        return NextResponse.json(globalInsightCache.data, {
-            headers: {
-                'Cache-Control': 'public, max-age=43200, s-maxage=43200, immutable',
-                'X-Source': 'Edge-Memory-Cache'
-            }
-        });
-    }
-
     try {
-        const roundedAt = getRounded12hTimestamp();
+        // @ts-ignore - Cloudflare KV binding은 빌드 타임이 아닌 런타임에 주입됨
+        const KV = process.env[KV_BINDING] as any;
         
-        // 2. 최신 시장 데이터를 가져옵니다.
-        const marketData = await getLatestMarketData();
+        if (!KV) {
+            console.error('KV Storage binding not found. Please check Cloudflare dashboard.');
+            // 바인딩이 없는 경우 에러를 반환하여 관리자가 알 수 있게 함
+            return NextResponse.json({ 
+                error: "KV storage가 설정되지 않았습니다. 개발자 설정을 확인하세요.",
+                insight: "시장 데이터를 불러오는 중입니다 (KV 미설정)."
+            }, { status: 500 });
+        }
 
-        // 3. AI 인사이트 생성 (Gemini API 호출)
-        const insight = await generateMarketInsight(marketData);
-
-        const responseData = {
-            insight,
-            lastUpdated: marketData.lastUpdated,
-            generatedAt: roundedAt, // 12시간 정각 시각으로 고정
-            isCached: true
-        };
-
-        // 4. 메모리 캐시 업데이트 (다음 12시간 슬롯까지)
-        // 현재 슬롯의 끝 시점을 계산하여 만료 시간 설정
-        const currentSlotHours = new Date().getHours() < 12 ? 12 : 24;
-        const expiryDate = new Date();
-        expiryDate.setHours(currentSlotHours, 0, 0, 0);
+        // KV에서 최신 인사이트 데이터 읽기
+        const data = await KV.get('latest_market_insight');
         
-        globalInsightCache = {
-            data: responseData,
-            expiry: expiryDate.getTime()
-        };
+        if (!data) {
+            return NextResponse.json({ 
+                insight: "오늘의 인사이트가 아직 생성되지 않았습니다. 오전 9시와 오후 4시에 자동 업데이트됩니다.",
+                generatedAt: null,
+                isStale: true
+            });
+        }
 
-        return NextResponse.json(responseData, {
+        const parsedData = JSON.parse(data);
+
+        return NextResponse.json(parsedData, {
             headers: {
-                // 브라우저와 CDN 모두 12시간 동안 캐시하도록 강제
-                'Cache-Control': 'public, max-age=43200, s-maxage=43200, immutable',
-                'X-Source': 'Fresh-Gemini-Analysis'
+                // 브라우저 캐시는 짧게(1분) 유지하여 KV 업데이트가 빠르게 반영되게 함
+                'Cache-Control': 'public, max-age=60',
+                'X-Source': 'Cloudflare-KV'
             }
         });
     } catch (error) {
-        console.error("Insight API Error:", error);
-        return NextResponse.json(
-            { error: "최근 생성된 인사이트를 불러오는 중 오류가 발생했습니다." }, 
-            { status: 500 }
-        );
+        console.error("KV Read Error:", error);
+        return NextResponse.json({ 
+            error: "인사이트를 불러오는 중 오류가 발생했습니다.",
+            insight: "최근 데이터를 불러올 수 없습니다."
+        }, { status: 500 });
     }
 }
-
-
-
