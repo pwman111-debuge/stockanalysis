@@ -94,7 +94,7 @@ export function AIInsight() {
                 </div>
                 
                 <p className={cn(
-                    "text-sm leading-relaxed text-blue-900 transition-opacity duration-500",
+                    "text-sm leading-relaxed text-blue-900 transition-opacity duration-500 line-clamp-6",
                     isLoading ? "opacity-50" : "opacity-100"
                 )}>
                     {insight}
@@ -110,8 +110,8 @@ export function AIInsight() {
             </div>
             
             <div className="mt-4 pt-4 border-t border-blue-100/50">
-                <p className="text-[10px] text-blue-400/80 font-medium">
-                    * 인공지능이 매일 오전 9시, 오후 4시 정밀 시황 분석을 수행합니다.
+                <p className="text-[10px] text-blue-400/80 font-medium italic">
+                    * AI 제네시스가 매일 오전 9시, 오후 4시에 최신 시장 인사이트를 자동 업데이트합니다.
                 </p>
             </div>
         </div>
