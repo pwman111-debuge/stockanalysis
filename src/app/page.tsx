@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 import { getLatestMarketData } from "@/lib/api/market-api";
 import { calculateFearGreed } from "@/lib/api/fear-greed";
 import { getNextHighImpactEvent, getFlag } from "@/lib/api/economic-calendar";
-import { AIInsight } from "@/components/dashboard/AIInsight";
 import { RefreshButton } from "@/components/dashboard/RefreshButton";
 
 // Contentlayer가 빌드 시간에 생성 — dynamic import로 안전하게
@@ -146,9 +145,6 @@ export default async function Home() {
 
       {/* Overview Cards Section */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* AI Insight - 임시로 주석 처리하여 오류 확인 */}
-        {/* <AIInsight /> */}
-
         {/* ② Fear & Greed 지수 — 실시간 산출 */}
         <div className="rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 p-6 shadow-sm">
           <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center">
