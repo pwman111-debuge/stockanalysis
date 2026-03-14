@@ -70,31 +70,27 @@ async function fetchVix(): Promise<any> {
 }
 
 async function fetchUSDKRW(): Promise<any> {
-    const url = 'https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_USDKRW';
-    const res = await fetch(url, { headers: { ...NAVER_HEADERS, 'Accept': 'text/html' }, cache: 'no-store' });
-    const buf = await res.arrayBuffer();
-    const html = new TextDecoder('euc-kr').decode(new Uint8Array(buf));
-    const todayMatch = html.match(/class="no_today"[\s\S]*?<em class="(no_up|no_down)"[\s\S]*?<\/em>/);
-    const rateMatch = html.match(/(\d,?\d{3}\.\d{2})/);
-    const exdayMatch = html.match(/class="no_exday"[\s\S]*?(\d+\.\d{2})/);
+    const url = 'https://api.stock.naver.com/marketindex/exchange/FX_USDKRW';
+    const res = await fetch(url, { headers: NAVER_HEADERS, cache: 'no-store' });
+    if (!res.ok) throw new Error(`[Naver] HTTP ${res.status} – USD/KRW`);
+    const data = await res.json();
+    const info = data.exchangeInfo;
 
-    if (!rateMatch) throw new Error('[Naver] 환율 파싱 실패');
-    
-    const isUp = todayMatch?.[1] === 'no_up';
-    const change = exdayMatch?.[1] ?? '0.00';
-    const rateVal = rateMatch[1];
-    const rateNum = parseFloat(rateVal.replace(/,/g, ''));
-    const changeNum = parseFloat(change);
-    const percent = ((changeNum / (rateNum - (isUp ? changeNum : -changeNum))) * 100).toFixed(2);
+    const direction = info.fluctuationsType?.name ?? 'SAME';
+    const isUp = direction === 'RISING' || direction === 'UPPER_LIMIT';
+    const isDown = direction === 'FALLING' || direction === 'LOWER_LIMIT';
+    const status = isUp ? 'up' : isDown ? 'down' : 'steady';
+    const sign = isUp ? '+' : isDown ? '-' : '';
 
     return {
         name: 'USD/KRW',
-        value: rateVal,
-        change: `${isUp ? '+' : '-'}${change}`,
-        percent: `${isUp ? '+' : '-'}${percent}%`,
-        status: isUp ? 'up' : 'down',
+        value: info.closePrice,
+        change: `${sign}${info.fluctuations.replace(/^[+-]/, '')}`,
+        percent: `${sign}${info.fluctuationsRatio.replace(/^[+-]/, '')}%`,
+        status,
     };
 }
+
 
 async function fetchInvestorSupply(): Promise<any[]> {
     const url = 'https://m.stock.naver.com/api/index/KOSPI/trend';
