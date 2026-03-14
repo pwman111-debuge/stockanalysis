@@ -10,9 +10,7 @@ import {
     Search,
     BookOpen,
     Calendar,
-    LayoutDashboard,
-    Bell,
-    Settings
+    LayoutDashboard
 } from "lucide-react";
 
 const menuItems = [
@@ -60,15 +58,10 @@ export function Sidebar() {
                     })}
                 </nav>
 
-                <div className="mt-auto space-y-1 border-t border-border pt-4">
-                    <button className="group flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground">
-                        <Bell className="mr-3 h-5 w-5" />
-                        알림
-                    </button>
-                    <button className="group flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground">
-                        <Settings className="mr-3 h-5 w-5" />
-                        설정
-                    </button>
+                <div className="mt-auto border-t border-border pt-4">
+                    <p className="px-3 py-2 text-[10px] text-muted-foreground text-center">
+                        © {new Date().getFullYear()} KRX Intelligence
+                    </p>
                 </div>
             </div>
         </aside>
