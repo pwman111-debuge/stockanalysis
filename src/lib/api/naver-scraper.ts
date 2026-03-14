@@ -179,27 +179,6 @@ async function fetchInvestorSupply(): Promise<MarketData['supply']> {
     ];
 }
 
-/** 장단기 금리차 계산 유틸 */
-function calculateSpread(long: any, short: any, displayName: string): any {
-    const lVal = parseFloat(long.value.replace(/,/g, ''));
-    const sVal = parseFloat(short.value.replace(/,/g, ''));
-    const spread = lVal - sVal;
-
-    const lChange = parseFloat(long.change.replace(/[+]/g, ''));
-    const sChange = parseFloat(short.change.replace(/[+]/g, ''));
-    const change = lChange - sChange;
-
-    const cSign = change > 0 ? '+' : '';
-
-    return {
-        name: displayName,
-        value: spread.toFixed(3),
-        change: `${cSign}${change.toFixed(3)}`,
-        percent: '',
-        status: spread >= 0 ? 'up' : 'down'
-    };
-}
-
 // ────────────────────────────────────────────
 // 한국 시간 포맷 유틸
 // ────────────────────────────────────────────
@@ -220,26 +199,17 @@ function getKoreaTimeString(): string {
 // ────────────────────────────────────────────
 
 export async function fetchNaverMarketData(): Promise<MarketData> {
-    const [kospi, kosdaq, kospi200, usdkrw, supply, wti, us10y, us2y, kr10y, kr2y] = await Promise.allSettled([
+    const [kospi, kosdaq, kospi200, usdkrw, supply] = await Promise.allSettled([
         fetchIndex('KOSPI', 'KOSPI'),
         fetchIndex('KOSDAQ', 'KOSDAQ'),
         fetchIndex('KPI200', 'KOSPI 200'),
         fetchUSDKRW(),
         fetchInvestorSupply(),
-        fetchIndex('OIL_CL', 'WTI 유가'),
-        fetchIndex('IRR_US10Y', '미국채 10년'),
-        fetchIndex('IRR_US02Y', '미국채 2년'),
-        fetchIndex('IRR_GOVT10Y', '한국채 10년'),
-        fetchIndex('IRR_GOVT02Y', '한국채 2년'),
     ]);
 
     // 수집 실패 로깅
-    [
-        { k: 'KOSPI', r: kospi }, { k: 'KOSDAQ', r: kosdaq }, { k: 'KOSPI200', r: kospi200 },
-        { k: 'USD/KRW', r: usdkrw }, { k: 'Supply', r: supply },
-        { k: 'WTI', r: wti }, { k: 'US10Y', r: us10y }, { k: 'US2Y', r: us2y },
-        { k: 'KR10Y', r: kr10y }, { k: 'KR2Y', r: kr2y }
-    ].forEach(({ k, r }) => {
+    [{ k: 'KOSPI', r: kospi }, { k: 'KOSDAQ', r: kosdaq }, { k: 'KOSPI200', r: kospi200 },
+    { k: 'USD/KRW', r: usdkrw }, { k: 'Supply', r: supply }].forEach(({ k, r }) => {
         if (r.status === 'rejected') {
             console.error(`[Naver Scraper] ${k} 수집 실패:`, (r as PromiseRejectedResult).reason?.message ?? r);
         }
@@ -251,24 +221,8 @@ export async function fetchNaverMarketData(): Promise<MarketData> {
     if (kospi200.status === 'fulfilled') indices.push(kospi200.value);
     if (usdkrw.status === 'fulfilled') indices.push(usdkrw.value);
 
-    // 글로벌 지표 (WTI, 금리 등)를 '지수' 그리드에 포함 (코스피 지수처럼 표시)
-    if (wti.status === 'fulfilled') indices.push(wti.value);
-    if (us10y.status === 'fulfilled') indices.push(us10y.value);
-    if (us2y.status === 'fulfilled') indices.push(us2y.value);
-    if (kr10y.status === 'fulfilled') indices.push(kr10y.value);
-    if (kr2y.status === 'fulfilled') indices.push(kr2y.value);
-
-    // 장단기 금리차 계산
-    const yieldSpreads: MarketData['indices'] = [];
-    if (us10y.status === 'fulfilled' && us2y.status === 'fulfilled') {
-        yieldSpreads.push(calculateSpread(us10y.value, us2y.value, '미 장단기 금리차'));
-    }
-    if (kr10y.status === 'fulfilled' && kr2y.status === 'fulfilled') {
-        yieldSpreads.push(calculateSpread(kr10y.value, kr2y.value, '한 장단기 금리차'));
-    }
-
     if (indices.length === 0) {
-        throw new Error('[Naver Scraper] 모든 데이터 수집 실패');
+        throw new Error('[Naver Scraper] 모든 지수 데이터 수집 실패');
     }
 
     const supplyData = supply.status === 'fulfilled' ? supply.value : [];
@@ -276,7 +230,6 @@ export async function fetchNaverMarketData(): Promise<MarketData> {
     return {
         indices,
         supply: supplyData,
-        yieldSpreads,
         lastUpdated: `${getKoreaTimeString()} (네이버 실시간)`,
     };
 }
