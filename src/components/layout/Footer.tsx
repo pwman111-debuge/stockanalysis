@@ -35,6 +35,7 @@ export function Footer() {
                         <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground">정보</h3>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li><Link href="/about" className="hover:text-primary">서비스 소개</Link></li>
+                            <li><Link href="/contact" className="hover:text-primary">문의하기</Link></li>
                             <li><Link href="/privacy" className="font-medium text-foreground hover:text-primary">개인정보처리방침</Link></li>
                             <li><Link href="/terms" className="hover:text-primary">이용약관</Link></li>
                         </ul>
@@ -42,9 +43,15 @@ export function Footer() {
 
                     <div>
                         <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground">문의</h3>
-                        <p className="text-sm text-muted-foreground">
-                            support@krxintel.example.com
-                        </p>
+                        <Link 
+                            href="/contact" 
+                            className="inline-flex items-center text-sm font-medium text-primary hover:underline"
+                        >
+                            전용 문의 폼 바로가기
+                            <svg xmlns="http://www.w3.org/2000/svg" className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                        </Link>
                     </div>
                 </div>
 

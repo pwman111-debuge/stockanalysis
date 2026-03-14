@@ -1,5 +1,5 @@
-
 import React from 'react';
+import Link from 'next/link';
 
 export default function PrivacyPage() {
     const lastUpdated = "2026년 3월 14일";
@@ -48,8 +48,12 @@ export default function PrivacyPage() {
 
                 <section>
                     <h2 className="text-xl font-semibold text-foreground mb-3">5. 개인정보 보호책임자</h2>
-                    <p>서비스 이용 중 발생하는 모든 개인정보 보호 관련 민원은 아래 이메일로 문의해 주시기 바랍니다.</p>
-                    <p>이메일: support@krxintel.example.com</p>
+                    <p>서비스 이용 중 발생하는 모든 개인정보 보호 관련 민원은 아래 전용 문의 폼을 통해 문의해 주시기 바랍니다.</p>
+                    <p className="mt-2">
+                        <Link href="/contact" className="text-primary font-bold hover:underline">
+                            문의하기 페이지 바로가기
+                        </Link>
+                    </p>
                 </section>
 
                 <p className="pt-8 border-t border-border">

@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Link from 'next/link';
 
 export default function AboutPage() {
     return (
@@ -32,10 +33,15 @@ export default function AboutPage() {
                     </p>
                 </section>
 
-                <section className="bg-primary/5 p-8 rounded-2xl border border-primary/20">
-                    <h2 className="text-xl font-semibold text-primary mb-3">연락처 및 피드백</h2>
-                    <p>서비스 이용 관련 제안이나 비즈니스 문의는 아래 이메일을 이용해 주세요.</p>
-                    <p className="font-bold text-foreground mt-2 underline">support@krxintel.example.com</p>
+                <section className="bg-primary/5 p-8 rounded-2xl border border-primary/20 text-center">
+                    <h2 className="text-xl font-semibold text-primary mb-4">연락처 및 피드백</h2>
+                    <p className="mb-6">서비스 이용 관련 제안이나 비즈니스 문의는 전용 문의 폼을 이용해 주세요.</p>
+                    <Link 
+                        href="/contact"
+                        className="inline-block bg-primary text-white font-bold px-8 py-3 rounded-xl hover:bg-primary/90 transition-colors"
+                    >
+                        문의하기 페이지로 이동
+                    </Link>
                 </section>
             </div>
         </div>
