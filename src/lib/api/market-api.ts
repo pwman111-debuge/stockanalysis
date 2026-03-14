@@ -25,6 +25,7 @@ export interface MarketData {
     indices: MarketIndex[];
     supply: InvestorSupply[];
     yieldSpreads?: MarketIndex[];
+    vix?: MarketIndex;
     lastUpdated: string;
 }
 

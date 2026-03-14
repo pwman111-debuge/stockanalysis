@@ -48,6 +48,27 @@ async function fetchNaverIndex(code: string, displayName: string): Promise<any> 
     };
 }
 
+async function fetchVix(): Promise<any> {
+    const url = 'https://api.stock.naver.com/index/.VIX/basic';
+    const res = await fetch(url, { headers: NAVER_HEADERS, cache: 'no-store' });
+    if (!res.ok) throw new Error(`[Naver] HTTP ${res.status} – VIX`);
+    const data = await res.json();
+
+    const direction = data.compareToPreviousPrice?.name ?? 'SAME';
+    const isUp = direction === 'RISING' || direction === 'UPPER_LIMIT';
+    const isDown = direction === 'FALLING' || direction === 'LOWER_LIMIT';
+    const status = isUp ? 'up' : isDown ? 'down' : 'steady';
+    const sign = isUp ? '+' : isDown ? '-' : '';
+
+    return {
+        name: 'VIX',
+        value: data.closePrice,
+        change: `${sign}${data.compareToPreviousClosePrice.replace(/^[+-]/, '')}`,
+        percent: `${sign}${data.fluctuationsRatio.replace(/^[+-]/, '')}%`,
+        status,
+    };
+}
+
 async function fetchUSDKRW(): Promise<any> {
     const url = 'https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_USDKRW';
     const res = await fetch(url, { headers: { ...NAVER_HEADERS, 'Accept': 'text/html' }, cache: 'no-store' });
@@ -147,7 +168,7 @@ function getKoreaTimeString(): string {
 }
 
 export async function fetchNaverMarketData(): Promise<MarketData> {
-    const [kospi, kosdaq, kospi200, usdkrw, supply, wti, us10y, us2y, kr10y, kr2y] = await Promise.allSettled([
+    const [kospi, kosdaq, kospi200, usdkrw, supply, wti, us10y, us2y, kr10y, kr2y, vix] = await Promise.allSettled([
         fetchNaverIndex('KOSPI', 'KOSPI'),
         fetchNaverIndex('KOSDAQ', 'KOSDAQ'),
         fetchNaverIndex('KPI200', 'KOSPI 200'),
@@ -158,6 +179,7 @@ export async function fetchNaverMarketData(): Promise<MarketData> {
         fetchTossIndex('ROB.US2YT-RR', '미국채 2년', true),
         fetchTossIndex('KR1BENCH0010', '한국채 10년', true),
         fetchTossIndex('KR1BENCH0002', '한국채 2년', true),
+        fetchVix(),
     ]);
 
     const indices: any[] = [];
@@ -177,6 +199,7 @@ export async function fetchNaverMarketData(): Promise<MarketData> {
         indices,
         supply: supply.status === 'fulfilled' ? supply.value : [],
         yieldSpreads,
+        vix: vix.status === 'fulfilled' ? vix.value : undefined,
         lastUpdated: `${getKoreaTimeString()} (네이버/토스 실시간)`,
     };
 }

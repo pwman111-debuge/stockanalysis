@@ -143,12 +143,73 @@ export default async function Home() {
 
       {/* Overview Cards Section */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* ② 공포 지수 영역 (VIX) - 추후 구현 예정 */}
-        <div className="rounded-xl border-2 border-dashed border-muted p-6 flex items-center justify-center min-h-[180px]">
-          <div className="text-center">
-            <Zap className="h-8 w-8 text-muted mx-auto mb-2 opacity-20" />
-            <p className="text-sm text-muted-foreground italic">전문적인 변동성 분석(VIX)을 위한 준비 중...</p>
+        {/* ② VIX 공포 지수 — 실시간 데이터 기반 */}
+        <div className="rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider flex items-center">
+              <Zap className="mr-1.5 h-4 w-4" />
+              VIX (변동성 지수)
+            </h3>
+            {marketData.vix && (
+              <span className={cn("text-[10px] font-bold px-1.5 py-0.5 rounded", marketData.vix.status === 'up' ? "bg-red-100 text-kr-down" : "bg-green-100 text-kr-up")}>
+                {marketData.vix.change} ({marketData.vix.percent})
+              </span>
+            )}
           </div>
+
+          {marketData.vix ? (() => {
+            const val = parseFloat(marketData.vix.value.replace(/,/g, ''));
+            let status = { label: "알 수 없음", color: "text-slate-500", border: "border-slate-400", bg: "bg-slate-400", desc: "데이터 수집 중입니다." };
+            
+            if (val < 15) status = { label: "극도의 평온", color: "text-blue-600", border: "border-blue-400", bg: "bg-blue-400", desc: "시장이 매우 안정적입니다. 낙관론이 지배적입니다." };
+            else if (val < 20) status = { label: "안정적", color: "text-green-600", border: "border-green-400", bg: "bg-green-400", desc: "정상적인 범위 내의 변동성입니다." };
+            else if (val < 30) status = { label: "공포/주의", color: "text-yellow-600", border: "border-yellow-400", bg: "bg-yellow-400", desc: "시장의 불안감이 커지고 있습니다. 주의가 필요합니다." };
+            else status = { label: "패닉", color: "text-red-600", border: "border-red-400", bg: "bg-red-400", desc: "시장 공포가 극에 달했습니다. 변동성에 대비하세요." };
+
+            return (
+              <>
+                <div className="flex items-center space-x-4">
+                  <div className={cn("h-14 w-14 rounded-full border-4 flex items-center justify-center font-black text-lg", status.border, status.color)}>
+                    {val.toFixed(2)}
+                  </div>
+                  <div className="flex-1">
+                    <p className={cn("text-sm font-bold flex items-center gap-1.5", status.color)}>
+                      {status.label}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground mt-1 leading-tight">
+                      {status.desc}
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Gauge Bar */}
+                <div className="mt-5 space-y-1.5">
+                  <div className="relative h-2 w-full bg-gray-200 rounded-full overflow-hidden flex">
+                    <div className="h-full bg-blue-400 w-[30%]" title="평온" />
+                    <div className="h-full bg-green-400 w-[10%]" title="안정" />
+                    <div className="h-full bg-yellow-400 w-[20%]" title="주의" />
+                    <div className="h-full bg-red-400 w-[40%]" title="패닉" />
+                    {/* Indicator */}
+                    <div 
+                      className="absolute top-0 bottom-0 w-1 bg-black shadow-lg z-10" 
+                      style={{ left: `${Math.min((val / 50) * 100, 100)}%` }} 
+                    />
+                  </div>
+                  <div className="flex justify-between text-[9px] font-bold text-muted-foreground px-0.5">
+                    <span>0</span>
+                    <span>15</span>
+                    <span>20</span>
+                    <span>30</span>
+                    <span>50+</span>
+                  </div>
+                </div>
+              </>
+            );
+          })() : (
+            <div className="py-8 text-center text-sm text-muted-foreground italic">
+              VIX 데이터를 불러올 수 없습니다.
+            </div>
+          )}
         </div>
 
         {/* ③ 경제 캘린더 — 자동 이벤트 표시 */}
