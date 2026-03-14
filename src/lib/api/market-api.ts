@@ -24,6 +24,7 @@ export interface InvestorSupply {
 export interface MarketData {
     indices: MarketIndex[];
     supply: InvestorSupply[];
+    yieldSpreads?: MarketIndex[];
     lastUpdated: string;
 }
 
@@ -36,6 +37,11 @@ let cachedData: MarketData = {
         { name: 'KOSDAQ', value: '1,154.67', change: '+38.26', percent: '+3.43%', status: 'up' },
         { name: 'KOSPI 200', value: '828.83', change: '-2.39', percent: '-0.29%', status: 'down' },
         { name: 'USD/KRW', value: '1,485.00', change: '+6.00', percent: '+0.41%', status: 'up' },
+        { name: 'WTI 유가', value: '78.50', change: '+1.20', percent: '+1.55%', status: 'up' },
+        { name: '미국채 10년', value: '4.250', change: '+0.015', percent: '+0.35%', status: 'up' },
+        { name: '미국채 2년', value: '4.520', change: '-0.010', percent: '-0.22%', status: 'down' },
+        { name: '한국채 10년', value: '3.380', change: '+0.005', percent: '+0.15%', status: 'up' },
+        { name: '한국채 2년', value: '3.420', change: '0.000', percent: '0.00%', status: 'steady' },
     ],
     supply: [
         { name: '개인', value: '+29,488억', status: 'up' },
