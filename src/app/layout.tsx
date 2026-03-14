@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   description: "한국 주식시장의 시황 분석, 유망 종목 발굴, 핵심 지표를 한눈에 제공하는 전문 투자 정보 플랫폼",
   verification: {
     google: "Qq9Sl-g4NINDCZEPLXqJXe7a_S9CcNaxs3RdwtR70ts",
+  },
+  other: {
+    "google-adsense-account": "ca-pub-5479680289617146"
   }
 };
 
@@ -28,6 +31,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
+      <head>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5479680289617146" crossOrigin="anonymous"></script>
+      </head>
       <body className={`${notoSansKR.variable} font-sans antialiased text-foreground`}>
         <div className="flex min-h-screen bg-background">
           <Sidebar />
