@@ -6,7 +6,6 @@ import { TrendingUp, TrendingDown, Users, Activity, ArrowRight, Calendar, Zap, G
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { getLatestMarketData } from "@/lib/api/market-api";
-import { calculateFearGreed } from "@/lib/api/fear-greed";
 import { getNextHighImpactEvent, getFlag } from "@/lib/api/economic-calendar";
 import { RefreshButton } from "@/components/dashboard/RefreshButton";
 
@@ -19,7 +18,6 @@ try {
 
 export default async function Home() {
   const marketData = await getLatestMarketData();
-  const fearGreed = calculateFearGreed(marketData);
   const nextEvent = await getNextHighImpactEvent();
 
   // 최근 시황 분석 (Contentlayer MDX에서 최대 3개)
@@ -145,48 +143,11 @@ export default async function Home() {
 
       {/* Overview Cards Section */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* ② Fear & Greed 지수 — 실시간 산출 */}
-        <div className="rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 p-6 shadow-sm">
-          <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center">
-            <Zap className="mr-1.5 h-4 w-4" />
-            Fear &amp; Greed Index
-          </h3>
-          <div className="flex items-center space-x-4">
-            <div className={cn(
-              "h-14 w-14 rounded-full border-4 flex items-center justify-center font-bold text-lg",
-              fearGreed.score > 60 ? "border-green-400 text-green-600" :
-                fearGreed.score > 40 ? "border-yellow-400 text-yellow-600" :
-                  "border-red-400 text-red-600"
-            )}>
-              {fearGreed.score}
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-bold flex items-center gap-1.5">
-                <span>{fearGreed.emoji}</span>
-                {fearGreed.label} ({fearGreed.labelEn})
-              </p>
-              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                {fearGreed.description}
-              </p>
-            </div>
-          </div>
-          {/* Mini breakdown */}
-          <div className="mt-4 grid grid-cols-4 gap-2 text-center">
-            {[
-              { label: '모멘텀', val: fearGreed.breakdown.momentum },
-              { label: '변동성', val: fearGreed.breakdown.volatility },
-              { label: '수급', val: fearGreed.breakdown.foreignFlow },
-              { label: '환율', val: fearGreed.breakdown.currencyStability },
-            ].map(item => (
-              <div key={item.label}>
-                <p className="text-[10px] text-muted-foreground">{item.label}</p>
-                <div className="mt-1 h-1.5 bg-muted rounded-full overflow-hidden">
-                  <div className={cn("h-full rounded-full", item.val > 15 ? "bg-green-400" : item.val > 8 ? "bg-yellow-400" : "bg-red-400")}
-                    style={{ width: `${(item.val / 25) * 100}%` }} />
-                </div>
-                <p className="text-[10px] font-bold mt-0.5">{item.val}/25</p>
-              </div>
-            ))}
+        {/* ② 공포 지수 영역 (VIX) - 추후 구현 예정 */}
+        <div className="rounded-xl border-2 border-dashed border-muted p-6 flex items-center justify-center min-h-[180px]">
+          <div className="text-center">
+            <Zap className="h-8 w-8 text-muted mx-auto mb-2 opacity-20" />
+            <p className="text-sm text-muted-foreground italic">전문적인 변동성 분석(VIX)을 위한 준비 중...</p>
           </div>
         </div>
 
