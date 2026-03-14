@@ -10,11 +10,27 @@ export default function ContactPage() {
         e.preventDefault();
         setStatus('submitting');
         
-        // 실제 백엔드 연동 전까지는 1.5초 후 성공 메시지를 보여주는 시뮬레이션을 합니다.
-        // 애드센스 승인을 위한 UI 구현이 목적이므로 이 정도로 충분합니다.
-        setTimeout(() => {
-            setStatus('success');
-        }, 1500);
+        const formData = new FormData(e.currentTarget);
+        formData.append("access_key", "6db6d5a4-e3af-4848-966d-728af57b5c24");
+
+        try {
+            const response = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setStatus('success');
+            } else {
+                console.error("Error", data);
+                setStatus('error');
+            }
+        } catch (error) {
+            console.error("Error", error);
+            setStatus('error');
+        }
     };
 
     return (
@@ -45,12 +61,16 @@ export default function ContactPage() {
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* 스팸 방지를 위한 허니팟 필드 (사용자에게는 보이지 않음) */}
+                        <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label htmlFor="name" className="block text-sm font-medium mb-2">이름</label>
                                 <input
                                     type="text"
                                     id="name"
+                                    name="name"
                                     required
                                     className="w-full px-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                     placeholder="성함을 입력해주세요"
@@ -61,6 +81,7 @@ export default function ContactPage() {
                                 <input
                                     type="email"
                                     id="email"
+                                    name="email"
                                     required
                                     className="w-full px-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                     placeholder="답변 받으실 이메일을 입력해주세요"
@@ -73,6 +94,7 @@ export default function ContactPage() {
                             <input
                                 type="text"
                                 id="subject"
+                                name="subject"
                                 required
                                 className="w-full px-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                 placeholder="문의 제목을 입력해주세요"
@@ -83,6 +105,7 @@ export default function ContactPage() {
                             <label htmlFor="message" className="block text-sm font-medium mb-2">내용</label>
                             <textarea
                                 id="message"
+                                name="message"
                                 rows={6}
                                 required
                                 className="w-full px-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
@@ -90,6 +113,10 @@ export default function ContactPage() {
                             ></textarea>
                         </div>
                         
+                        {status === 'error' && (
+                            <p className="text-red-500 text-sm text-center">전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.</p>
+                        )}
+
                         <div className="pt-4">
                             <button
                                 type="submit"
