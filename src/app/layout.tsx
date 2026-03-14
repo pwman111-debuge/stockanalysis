@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 
 export default function RootLayout({
   children,
@@ -32,9 +33,12 @@ export default function RootLayout({
           <Sidebar />
           <div className="flex flex-1 flex-col pl-64">
             <Navbar />
-            <main className="flex-1 p-8">
-              {children}
-            </main>
+            <div className="flex flex-1 flex-col overflow-y-auto">
+              <main className="flex-1 p-8">
+                {children}
+              </main>
+              <Footer />
+            </div>
           </div>
         </div>
       </body>
