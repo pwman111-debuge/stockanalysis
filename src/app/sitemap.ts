@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export const runtime = 'nodejs';
-export const dynamic = 'force-auto';
+export const dynamic = 'auto';
 
 // 실제 배포된 사이트의 도메인 주소입니다.
 const BASE_URL = 'https://stockanalysis2.pages.dev'
