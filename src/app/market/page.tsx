@@ -2,11 +2,26 @@
 import Link from 'next/link';
 import { allMarketAnalyses } from 'contentlayer2/generated';
 import { compareDesc, format, parseISO } from 'date-fns';
-import { Activity, ArrowRight, Calendar, Tag } from 'lucide-react';
+import { Activity, ArrowRight, Calendar, Tag, ChevronLeft, ChevronRight } from 'lucide-react';
 
-export default function MarketAnalysisPage() {
-    const posts = allMarketAnalyses.sort((a, b) =>
+const POSTS_PER_PAGE = 9;
+
+interface PageProps {
+    searchParams: Promise<{ page?: string }>;
+}
+
+export default async function MarketAnalysisPage({ searchParams }: PageProps) {
+    const resolvedParams = await searchParams;
+    const currentPage = Number(resolvedParams.page) || 1;
+    
+    const allPosts = allMarketAnalyses.sort((a, b) =>
         compareDesc(parseISO(a.date), parseISO(b.date))
+    );
+
+    const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+    const posts = allPosts.slice(
+        (currentPage - 1) * POSTS_PER_PAGE,
+        currentPage * POSTS_PER_PAGE
     );
 
     return (
@@ -57,7 +72,43 @@ export default function MarketAnalysisPage() {
                 ))}
             </div>
 
-            {posts.length === 0 && (
+            {allPosts.length > POSTS_PER_PAGE && (
+                <div className="flex items-center justify-center space-x-2 pt-8">
+                    <Link
+                        href={currentPage > 1 ? `/market?page=${currentPage - 1}` : '#'}
+                        className={`flex h-9 w-9 items-center justify-center rounded-md border border-border transition-colors ${
+                            currentPage > 1 ? 'hover:bg-accent hover:text-accent-foreground' : 'pointer-events-none opacity-50'
+                        }`}
+                    >
+                        <ChevronLeft className="h-4 w-4" />
+                    </Link>
+
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <Link
+                            key={page}
+                            href={`/market?page=${page}`}
+                            className={`flex h-9 w-9 items-center justify-center rounded-md border text-sm font-medium transition-colors ${
+                                currentPage === page
+                                    ? 'bg-primary text-primary-foreground border-primary'
+                                    : 'border-border hover:bg-accent hover:text-accent-foreground'
+                            }`}
+                        >
+                            {page}
+                        </Link>
+                    ))}
+
+                    <Link
+                        href={currentPage < totalPages ? `/market?page=${currentPage + 1}` : '#'}
+                        className={`flex h-9 w-9 items-center justify-center rounded-md border border-border transition-colors ${
+                            currentPage < totalPages ? 'hover:bg-accent hover:text-accent-foreground' : 'pointer-events-none opacity-50'
+                        }`}
+                    >
+                        <ChevronRight className="h-4 w-4" />
+                    </Link>
+                </div>
+            )}
+
+            {allPosts.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-dashed border-border bg-muted/20">
                     <Activity className="h-10 w-10 text-muted-foreground mb-4 opacity-20" />
                     <p className="text-muted-foreground">아직 작성된 분석글이 없습니다.</p>
