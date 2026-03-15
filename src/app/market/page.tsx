@@ -4,6 +4,8 @@ import { allMarketAnalyses } from 'contentlayer2/generated';
 import { compareDesc, format, parseISO } from 'date-fns';
 import { Activity, ArrowRight, Calendar, Tag, ChevronLeft, ChevronRight } from 'lucide-react';
 
+export const runtime = 'edge';
+
 const POSTS_PER_PAGE = 9;
 
 interface PageProps {
