@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+export const dynamicParams = false;
 
 import { allStockReports } from 'contentlayer2/generated';
 import { notFound } from 'next/navigation';

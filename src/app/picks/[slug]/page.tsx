@@ -1,4 +1,5 @@
-
+export const runtime = 'edge';
+export const dynamicParams = false;
 
 import { allStockPicks } from 'contentlayer2/generated';
 import { notFound } from 'next/navigation';

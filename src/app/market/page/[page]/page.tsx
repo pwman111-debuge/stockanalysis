@@ -5,6 +5,9 @@ import { Activity, ArrowRight, Calendar, Tag, ChevronLeft, ChevronRight } from '
 
 const POSTS_PER_PAGE = 9;
 
+export const runtime = 'edge';
+export const dynamicParams = false;
+
 export function generateStaticParams() {
     const totalPosts = allMarketAnalyses.length;
     const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);

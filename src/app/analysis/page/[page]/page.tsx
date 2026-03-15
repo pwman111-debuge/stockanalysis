@@ -5,6 +5,9 @@ import Link from 'next/link';
 
 const POSTS_PER_PAGE = 10;
 
+export const runtime = 'edge';
+export const dynamicParams = false;
+
 export function generateStaticParams() {
     const totalReports = allStockReports.length;
     const totalPages = Math.ceil(totalReports / POSTS_PER_PAGE);

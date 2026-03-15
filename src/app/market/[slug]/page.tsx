@@ -1,4 +1,5 @@
-
+export const runtime = 'edge';
+export const dynamicParams = false;
 
 import { allMarketAnalyses } from 'contentlayer2/generated';
 import { notFound } from 'next/navigation';

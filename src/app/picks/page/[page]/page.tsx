@@ -5,6 +5,9 @@ import Link from 'next/link';
 
 const POSTS_PER_PAGE = 9;
 
+export const runtime = 'edge';
+export const dynamicParams = false;
+
 export function generateStaticParams() {
     const allReports = allStockPicks
         .filter(pick => pick.ticker === 'GENESIS');
