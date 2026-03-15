@@ -1,13 +1,30 @@
 import { allStockPicks } from 'contentlayer2/generated';
 import { compareDesc, format, parseISO } from 'date-fns';
-import { Search, ArrowRight, Calendar, Layers, CheckCircle2, TrendingUp } from 'lucide-react';
+import { Search, ArrowRight, Calendar, Layers, CheckCircle2, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
-export default function PicksPage() {
+export const runtime = 'edge';
+
+const POSTS_PER_PAGE = 9;
+
+interface PageProps {
+    searchParams: Promise<{ page?: string }>;
+}
+
+export default async function PicksPage({ searchParams }: PageProps) {
+    const resolvedParams = await searchParams;
+    const currentPage = Number(resolvedParams.page) || 1;
+
     // 일일 통합 리포트(GENESIS) 형식 필터링 및 정렬
-    const dailyReports = allStockPicks
+    const allReports = allStockPicks
         .filter(pick => pick.ticker === 'GENESIS')
         .sort((a, b) => compareDesc(parseISO(a.date), parseISO(b.date)));
+
+    const totalPages = Math.ceil(allReports.length / POSTS_PER_PAGE);
+    const dailyReports = allReports.slice(
+        (currentPage - 1) * POSTS_PER_PAGE,
+        currentPage * POSTS_PER_PAGE
+    );
 
     return (
         <div className="space-y-12 pb-20">
@@ -99,7 +116,44 @@ export default function PicksPage() {
                 })}
             </div>
 
-            {dailyReports.length === 0 && (
+            {/* Pagination Controls */}
+            {allReports.length > POSTS_PER_PAGE && (
+                <div className="flex items-center justify-center space-x-2 pt-8">
+                    <Link
+                        href={currentPage > 1 ? `/picks?page=${currentPage - 1}` : '#'}
+                        className={`flex h-10 w-10 items-center justify-center rounded-xl border border-border transition-all ${
+                            currentPage > 1 ? 'hover:bg-primary hover:text-white hover:border-primary' : 'pointer-events-none opacity-30'
+                        }`}
+                    >
+                        <ChevronLeft className="h-5 w-5" />
+                    </Link>
+
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <Link
+                            key={page}
+                            href={`/picks?page=${page}`}
+                            className={`flex h-10 w-10 items-center justify-center rounded-xl border text-sm font-bold transition-all ${
+                                currentPage === page
+                                    ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20'
+                                    : 'border-border hover:bg-muted'
+                            }`}
+                        >
+                            {page}
+                        </Link>
+                    ))}
+
+                    <Link
+                        href={currentPage < totalPages ? `/picks?page=${currentPage + 1}` : '#'}
+                        className={`flex h-10 w-10 items-center justify-center rounded-xl border border-border transition-all ${
+                            currentPage < totalPages ? 'hover:bg-primary hover:text-white hover:border-primary' : 'pointer-events-none opacity-30'
+                        }`}
+                    >
+                        <ChevronRight className="h-5 w-5" />
+                    </Link>
+                </div>
+            )}
+
+            {allReports.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-40 text-center rounded-[3rem] border-2 border-dashed border-border bg-muted/5">
                     <div className="relative mb-6">
                         <Search className="h-16 w-16 text-muted-foreground opacity-10" />
