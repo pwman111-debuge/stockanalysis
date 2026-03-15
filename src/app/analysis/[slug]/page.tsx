@@ -12,6 +12,40 @@ export async function generateStaticParams() {
     }));
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const post = allStockReports.find(
+        (p) => p._raw.flattenedPath.split('/').pop() === slug
+    );
+
+    if (!post) return {};
+
+    return {
+        title: `${post.title} | KRX Intelligence`,
+        description: post.summary,
+        openGraph: {
+            title: post.title,
+            description: post.summary,
+            type: 'article',
+            url: `https://stockanalysis2.pages.dev/analysis/${slug}`,
+            images: [
+                {
+                    url: post.thumbnail || '/og-image.png',
+                    width: 1200,
+                    height: 630,
+                    alt: post.title,
+                },
+            ],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: post.title,
+            description: post.summary,
+            images: [post.thumbnail || '/og-image.png'],
+        },
+    };
+}
+
 export default async function StockReportDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     const post = allStockReports.find(

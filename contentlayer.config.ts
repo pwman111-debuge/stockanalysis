@@ -63,6 +63,7 @@ export const StockReport = defineDocumentType(() => ({
         marketCap: { type: 'string' },
         tags: { type: 'list', of: { type: 'string' } },
         summary: { type: 'string', required: true },
+        thumbnail: { type: 'string' },
     },
     computedFields: {
         url: { type: 'string', resolve: (post) => `/analysis/${post._raw.flattenedPath.split('/').pop()}` },
