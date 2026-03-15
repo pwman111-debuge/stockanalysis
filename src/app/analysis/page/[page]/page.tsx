@@ -1,4 +1,3 @@
-
 import { allStockReports } from 'contentlayer2/generated';
 import { format, parseISO } from 'date-fns';
 import { BarChart3, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -6,8 +5,22 @@ import Link from 'next/link';
 
 const POSTS_PER_PAGE = 10;
 
-export default function AnalysisPage() {
-    const currentPage = 1;
+export function generateStaticParams() {
+    const totalReports = allStockReports.length;
+    const totalPages = Math.ceil(totalReports / POSTS_PER_PAGE);
+    
+    return Array.from({ length: totalPages - 1 }, (_, i) => ({
+        page: (i + 2).toString(),
+    }));
+}
+
+interface PageProps {
+    params: Promise<{ page: string }>;
+}
+
+export default async function AnalysisSubPage({ params }: PageProps) {
+    const resolvedParams = await params;
+    const currentPage = Number(resolvedParams.page);
 
     const allReports = allStockReports.sort((a, b) =>
         new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -22,7 +35,7 @@ export default function AnalysisPage() {
     return (
         <div className="space-y-8 pb-10">
             <section>
-                <h1 className="text-3xl font-bold tracking-tight">종목 리포트</h1>
+                <h1 className="text-3xl font-bold tracking-tight">종목 리포트 - {currentPage}페이지</h1>
                 <p className="text-muted-foreground mt-2">개별 종목에 대한 심층 적인 펀더멘털 및 기술적 분석 리포트를 확인하세요.</p>
             </section>
 
@@ -71,8 +84,8 @@ export default function AnalysisPage() {
             {allReports.length > POSTS_PER_PAGE && (
                 <div className="flex items-center justify-center space-x-2 pt-8">
                     <Link
-                        href="#"
-                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-border transition-all pointer-events-none opacity-30"
+                        href={currentPage === 2 ? '/analysis' : `/analysis/page/${currentPage - 1}`}
+                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-border transition-all hover:bg-primary hover:text-white hover:border-primary"
                     >
                         <ChevronLeft className="h-5 w-5" />
                     </Link>
@@ -99,14 +112,6 @@ export default function AnalysisPage() {
                     >
                         <ChevronRight className="h-5 w-5" />
                     </Link>
-                </div>
-            )}
-
-            {allReports.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-24 text-center rounded-2xl border border-dashed border-border bg-muted/5">
-                    <BarChart3 className="h-12 w-12 text-muted-foreground mb-4 opacity-20" />
-                    <h3 className="text-lg font-medium text-muted-foreground">분석 리포트가 없습니다.</h3>
-                    <p className="text-sm text-muted-foreground mt-1">연구원들이 종목을 심도 있게 분석 중입니다.</p>
                 </div>
             )}
         </div>

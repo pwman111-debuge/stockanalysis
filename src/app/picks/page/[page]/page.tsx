@@ -5,8 +5,23 @@ import Link from 'next/link';
 
 const POSTS_PER_PAGE = 9;
 
-export default function PicksPage() {
-    const currentPage = 1;
+export function generateStaticParams() {
+    const allReports = allStockPicks
+        .filter(pick => pick.ticker === 'GENESIS');
+    const totalPages = Math.ceil(allReports.length / POSTS_PER_PAGE);
+    
+    return Array.from({ length: totalPages - 1 }, (_, i) => ({
+        page: (i + 2).toString(),
+    }));
+}
+
+interface PageProps {
+    params: Promise<{ page: string }>;
+}
+
+export default async function PicksSubPage({ params }: PageProps) {
+    const resolvedParams = await params;
+    const currentPage = Number(resolvedParams.page);
 
     // 일일 통합 리포트(GENESIS) 형식 필터링 및 정렬
     const allReports = allStockPicks
@@ -33,11 +48,10 @@ export default function PicksPage() {
                         <span className="text-sm font-bold tracking-widest text-primary-foreground/80 uppercase">Genesis AI Engine</span>
                     </div>
                     <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl mb-6">
-                        유망 종목 발굴 <span className="text-primary italic">인사이트</span>
+                        유망 종목 발굴 - {currentPage}페이지
                     </h1>
                     <p className="text-lg text-slate-300 leading-relaxed">
-                        제네시스 AI가 매일 시장의 수급과 모멘텀을 분석하여 선정합니다. <br className="hidden md:block" />
-                        단기 급등 가능성이 높은 핵심 종목들을 확인하세요.
+                        제네시스 AI가 매일 시장의 수급과 모멘텀을 분석하여 선정합니다.
                     </p>
                 </div>
             </section>
@@ -45,7 +59,6 @@ export default function PicksPage() {
             {/* Reports Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {dailyReports.map((report) => {
-                    // summary에서 종목명 추출 (예: "금일의 발굴 종목: 삼성중공업, 유니온머티리얼, 한전기술")
                     const stockList = report.summary
                         .replace('금일의 발굴 종목:', '')
                         .split(',')
@@ -54,9 +67,7 @@ export default function PicksPage() {
                     return (
                         <Link key={report._id} href={report.url} className="block group">
                             <article className="h-full relative overflow-hidden rounded-[2rem] border border-border bg-card p-8 shadow-sm transition-all duration-500 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2">
-                                {/* Decor Circle */}
                                 <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/5 blur-3xl group-hover:bg-primary/10 transition-colors" />
-                                
                                 <div className="relative flex flex-col h-full">
                                     <div className="flex items-center justify-between mb-8">
                                         <div className="flex items-center gap-2.5">
@@ -70,12 +81,10 @@ export default function PicksPage() {
                                             {format(parseISO(report.date), 'yyyy.MM.dd')}
                                         </div>
                                     </div>
-
                                     <h2 className="text-2xl font-black tracking-tight mb-6 group-hover:text-primary transition-colors leading-tight">
                                         {format(parseISO(report.date), 'MM월 dd일')} <br />
                                         포착된 유망 섹터
                                     </h2>
-
                                     <div className="flex-grow space-y-4 mb-8">
                                         <div className="bg-muted/30 rounded-2xl p-5 border border-border/40 backdrop-blur-sm group-hover:bg-muted/50 transition-colors">
                                             <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4">Focus Elements</p>
@@ -95,7 +104,6 @@ export default function PicksPage() {
                                             </div>
                                         </div>
                                     </div>
-
                                     <div className="mt-auto flex items-center justify-between pt-6 border-t border-border/50">
                                         <span className="text-xs font-bold text-muted-foreground group-hover:text-primary transition-colors">상세 분석 리포트 보기</span>
                                         <div className="h-10 w-10 rounded-2xl bg-primary/5 flex items-center justify-center group-hover:bg-primary group-hover:text-white group-hover:rotate-[360deg] transition-all duration-700">
@@ -105,7 +113,7 @@ export default function PicksPage() {
                                 </div>
                             </article>
                         </Link>
-                    )
+                    );
                 })}
             </div>
 
@@ -113,8 +121,8 @@ export default function PicksPage() {
             {allReports.length > POSTS_PER_PAGE && (
                 <div className="flex items-center justify-center space-x-2 pt-8">
                     <Link
-                        href="#"
-                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-border transition-all pointer-events-none opacity-30"
+                        href={currentPage === 2 ? '/picks' : `/picks/page/${currentPage - 1}`}
+                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-border transition-all hover:bg-primary hover:text-white hover:border-primary"
                     >
                         <ChevronLeft className="h-5 w-5" />
                     </Link>
@@ -141,19 +149,6 @@ export default function PicksPage() {
                     >
                         <ChevronRight className="h-5 w-5" />
                     </Link>
-                </div>
-            )}
-
-            {allReports.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-40 text-center rounded-[3rem] border-2 border-dashed border-border bg-muted/5">
-                    <div className="relative mb-6">
-                        <Search className="h-16 w-16 text-muted-foreground opacity-10" />
-                        <div className="absolute inset-0 animate-pulse bg-primary/5 rounded-full scale-150 blur-xl" />
-                    </div>
-                    <h3 className="text-xl font-black">새로운 분석 로딩 중</h3>
-                    <p className="text-muted-foreground mt-2 max-w-xs mx-auto text-sm">
-                        제네시스 알고리즘이 실시간 시장 데이터를 바탕으로 최고의 기회를 탐색하고 있습니다.
-                    </p>
                 </div>
             )}
         </div>

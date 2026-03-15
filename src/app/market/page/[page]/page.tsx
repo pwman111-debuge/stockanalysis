@@ -1,4 +1,3 @@
-
 import Link from 'next/link';
 import { allMarketAnalyses } from 'contentlayer2/generated';
 import { compareDesc, format, parseISO } from 'date-fns';
@@ -6,8 +5,23 @@ import { Activity, ArrowRight, Calendar, Tag, ChevronLeft, ChevronRight } from '
 
 const POSTS_PER_PAGE = 9;
 
-export default function MarketAnalysisPage() {
-    const currentPage = 1;
+export function generateStaticParams() {
+    const totalPosts = allMarketAnalyses.length;
+    const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
+    
+    // 1페이지는 /market에서 처리하므로 2페이지부터 생성
+    return Array.from({ length: totalPages - 1 }, (_, i) => ({
+        page: (i + 2).toString(),
+    }));
+}
+
+interface PageProps {
+    params: Promise<{ page: string }>;
+}
+
+export default async function MarketAnalysisSubPage({ params }: PageProps) {
+    const resolvedParams = await params;
+    const currentPage = Number(resolvedParams.page);
     
     const allPosts = allMarketAnalyses.sort((a, b) =>
         compareDesc(parseISO(a.date), parseISO(b.date))
@@ -22,7 +36,7 @@ export default function MarketAnalysisPage() {
     return (
         <div className="space-y-8 pb-10">
             <section>
-                <h1 className="text-3xl font-bold tracking-tight">시황 분석</h1>
+                <h1 className="text-3xl font-bold tracking-tight">시황 분석 - {currentPage}페이지</h1>
                 <p className="text-muted-foreground mt-2">전문가와 AI가 분석한 국내외 시장의 흐름과 핵심 지표를 확인하세요.</p>
             </section>
 
@@ -70,8 +84,8 @@ export default function MarketAnalysisPage() {
             {allPosts.length > POSTS_PER_PAGE && (
                 <div className="flex items-center justify-center space-x-2 pt-8">
                     <Link
-                        href="#"
-                        className="flex h-9 w-9 items-center justify-center rounded-md border border-border transition-colors pointer-events-none opacity-50"
+                        href={currentPage === 2 ? '/market' : `/market/page/${currentPage - 1}`}
+                        className="flex h-9 w-9 items-center justify-center rounded-md border border-border transition-colors hover:bg-accent hover:text-accent-foreground"
                     >
                         <ChevronLeft className="h-4 w-4" />
                     </Link>
@@ -98,13 +112,6 @@ export default function MarketAnalysisPage() {
                     >
                         <ChevronRight className="h-4 w-4" />
                     </Link>
-                </div>
-            )}
-
-            {allPosts.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-dashed border-border bg-muted/20">
-                    <Activity className="h-10 w-10 text-muted-foreground mb-4 opacity-20" />
-                    <p className="text-muted-foreground">아직 작성된 분석글이 없습니다.</p>
                 </div>
             )}
         </div>
