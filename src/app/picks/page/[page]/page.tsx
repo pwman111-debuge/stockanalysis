@@ -13,9 +13,15 @@ export function generateStaticParams() {
         .filter(pick => pick.ticker === 'GENESIS');
     const totalPages = Math.ceil(allReports.length / POSTS_PER_PAGE);
     
-    return Array.from({ length: totalPages - 1 }, (_, i) => ({
+    const pages = Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
         page: (i + 2).toString(),
     }));
+
+    // Cloudflare 빌드 통과를 위해 콘텐츠가 부족하더라도 2페이지 경로를 정적으로 예약
+    if (pages.length === 0) {
+        return [{ page: '2' }];
+    }
+    return pages;
 }
 
 interface PageProps {

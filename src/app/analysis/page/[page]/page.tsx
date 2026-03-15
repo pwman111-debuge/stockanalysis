@@ -12,9 +12,15 @@ export function generateStaticParams() {
     const totalReports = allStockReports.length;
     const totalPages = Math.ceil(totalReports / POSTS_PER_PAGE);
     
-    return Array.from({ length: totalPages - 1 }, (_, i) => ({
+    const pages = Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
         page: (i + 2).toString(),
     }));
+
+    // 빌드 에러 방지를 위한 더미 경로 반환
+    if (pages.length === 0) {
+        return [{ page: '2' }];
+    }
+    return pages;
 }
 
 interface PageProps {
