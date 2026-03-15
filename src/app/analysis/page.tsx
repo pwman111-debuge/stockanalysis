@@ -6,6 +6,8 @@ import Link from 'next/link';
 
 const POSTS_PER_PAGE = 10;
 
+export const dynamic = 'force-static';
+
 export default function AnalysisPage() {
     const currentPage = 1;
 

@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+export const dynamic = 'force-static';
 export const dynamicParams = false;
 
 import { allMarketAnalyses } from 'contentlayer2/generated';

@@ -5,6 +5,8 @@ import Link from 'next/link';
 
 const POSTS_PER_PAGE = 9;
 
+export const dynamic = 'force-static';
+
 export default function PicksPage() {
     const currentPage = 1;
 

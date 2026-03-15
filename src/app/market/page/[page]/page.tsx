@@ -5,7 +5,7 @@ import { Activity, ArrowRight, Calendar, Tag, ChevronLeft, ChevronRight } from '
 
 const POSTS_PER_PAGE = 9;
 
-export const runtime = 'edge';
+export const dynamic = 'force-static';
 export const dynamicParams = false;
 
 export function generateStaticParams() {

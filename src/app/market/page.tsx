@@ -6,6 +6,8 @@ import { Activity, ArrowRight, Calendar, Tag, ChevronLeft, ChevronRight } from '
 
 const POSTS_PER_PAGE = 9;
 
+export const dynamic = 'force-static';
+
 export default function MarketAnalysisPage() {
     const currentPage = 1;
     
