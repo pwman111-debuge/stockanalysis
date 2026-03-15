@@ -21,6 +21,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
     if (!post) return {};
 
+    const imageUrl = '/og-image.png'; // thumbnail 필드가 없으므로 기본 이미지 사용
+
     return {
         title: `${post.title} | KRX Intelligence`,
         description: post.summary,
@@ -31,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             url: `https://stockanalysis2.pages.dev/analysis/${slug}`,
             images: [
                 {
-                    url: post.thumbnail || '/og-image.png',
+                    url: imageUrl,
                     width: 1200,
                     height: 630,
                     alt: post.title,
@@ -42,7 +44,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             card: 'summary_large_image',
             title: post.title,
             description: post.summary,
-            images: [post.thumbnail || '/og-image.png'],
+            images: [imageUrl],
         },
     };
 }
