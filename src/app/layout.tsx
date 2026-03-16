@@ -10,11 +10,11 @@ const notoSansKR = Noto_Sans_KR({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://stockanalysis2.pages.dev"),
-  title: "KRX Intelligence | 한국 주식 증시 분석 플랫폼",
-  description: "한국 주식시장의 시황 분석, 유망 종목 발굴, 핵심 지표를 한눈에 제공하는 전문 투자 정보 플랫폼",
+  title: "KRX Intelligence | 한국 증시 분석 및 실시간 주식 시황 플랫폼",
+  description: "한국 주식시장의 실시간 시황 분석, 유망 종목 발굴, 핵심 지표를 한눈에 제공하는 전문 투자 정보 플랫폼",
   openGraph: {
-    title: "KRX Intelligence | 한국 주식 증시 분석 플랫폼",
-    description: "한국 주식시장의 시황 분석, 유망 종목 발굴, 핵심 지표를 한눈에 제공하는 전문 투자 정보 플랫폼",
+    title: "KRX Intelligence | 한국 증시 분석 및 실시간 주식 시황 플랫폼",
+    description: "한국 주식시장의 실시간 시황 분석, 유망 종목 발굴, 핵심 지표를 한눈에 제공하는 전문 투자 정보 플랫폼",
     url: "https://stockanalysis2.pages.dev",
     siteName: "KRX Intelligence",
     locale: "ko_KR",
@@ -30,8 +30,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "KRX Intelligence | 한국 주식 증시 분석 플랫폼",
-    description: "한국 주식시장의 시황 분석, 유망 종목 발굴, 핵심 지표를 한눈에 제공하는 전문 투자 정보 플랫폼",
+    title: "KRX Intelligence | 한국 증시 분석 및 실시간 주식 시황 플랫폼",
+    description: "한국 주식시장의 실시간 시황 분석, 유망 종목 발굴, 핵심 지표를 한눈에 제공하는 전문 투자 정보 플랫폼",
     images: ["/og-image.png"],
   },
   verification: {
