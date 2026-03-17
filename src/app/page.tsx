@@ -9,21 +9,29 @@ import { getLatestMarketData } from "@/lib/api/market-api";
 import { getNextHighImpactEvent, getFlag } from "@/lib/api/economic-calendar";
 import { RefreshButton } from "@/components/dashboard/RefreshButton";
 
-// Contentlayer가 빌드 시간에 생성 — dynamic import로 안전하게
-let allMarketAnalyses: any[] = [];
-try {
-  const cl = require('contentlayer2/generated');
-  allMarketAnalyses = cl.allMarketAnalyses ?? [];
-} catch { }
+  // Contentlayer가 빌드 시간에 생성 — dynamic import로 안전하게
+  let allMarketAnalyses: any[] = [];
+  let allStockReports: any[] = [];
+  try {
+    const cl = require('contentlayer2/generated');
+    allMarketAnalyses = cl.allMarketAnalyses ?? [];
+    allStockReports = cl.allStockReports ?? [];
+  } catch { }
 
-export default async function Home() {
-  const marketData = await getLatestMarketData();
-  const nextEvent = await getNextHighImpactEvent();
+  export default async function Home() {
+    const marketData = await getLatestMarketData();
+    const nextEvent = await getNextHighImpactEvent();
 
-  // 최근 시황 분석 (Contentlayer MDX에서 최대 3개)
-  const recentAnalyses = [...allMarketAnalyses]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 3);
+    // 최근 시황 분석 (최대 3개)
+    const recentAnalyses = [...allMarketAnalyses]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 3);
+
+    // 최근 종목 리포트 (최대 3개)
+    const recentReports = [...allStockReports]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 3);
+
 
   return (
     <div className="space-y-8">
@@ -93,7 +101,7 @@ export default async function Home() {
         </div>
 
         {/* ① Latest Market Analysis Section — 실제 MDX 연동 */}
-        <div className="lg:col-span-2 rounded-xl border border-border bg-card p-6 shadow-sm">
+        <div className="lg:col-span-1 rounded-xl border border-border bg-card p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold flex items-center">
               <Activity className="mr-2 h-5 w-5 text-primary" />
@@ -116,30 +124,60 @@ export default async function Home() {
                         <span className="text-[11px] text-muted-foreground">
                           {new Date(post.date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\. /g, '-').replace('.', '')}
                         </span>
-                        <div className="flex space-x-1">
-                          {post.tags?.slice(0, 2).map((tag: string) => (
-                            <span key={tag} className="inline-flex items-center rounded-full bg-muted/50 px-2 py-0.5 text-[9px] font-medium text-muted-foreground uppercase border border-border/50">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
                       </div>
-                      {post.summary && (
-                        <p className="text-xs text-muted-foreground line-clamp-1 mt-1">{post.summary}</p>
-                      )}
                     </div>
                   </div>
                 </div>
               ))
             ) : (
               <div className="py-8 text-center text-sm text-muted-foreground">
-                <Activity className="h-8 w-8 mx-auto mb-2 opacity-20" />
-                시황 분석 글이 아직 없습니다. <code className="text-xs">content/market-analysis/</code>에 MDX 파일을 추가하세요.
+                시황 분석 글이 없습니다.
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ② Latest Stock Reports Section — 새로 추가 */}
+        <div className="lg:col-span-1 rounded-xl border border-border bg-card p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-semibold flex items-center">
+              <BarChart3 className="mr-2 h-5 w-5 text-primary" />
+              최근 종목 리포트
+            </h2>
+            <Link href="/analysis" className="text-xs font-medium text-primary hover:underline flex items-center">
+              전체보기 <ArrowRight className="ml-1 h-3 w-3" />
+            </Link>
+          </div>
+          <div className="divide-y divide-border">
+            {recentReports.length > 0 ? (
+              recentReports.map((report, idx) => (
+                <div key={report._id ?? idx} className="py-4 first:pt-0 last:pb-0">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <Link href={report.url} className="font-medium hover:text-primary transition-colors text-sm">
+                        [{report.ticker}] {report.title}
+                      </Link>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-[11px] text-muted-foreground">
+                          {new Date(report.date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\. /g, '-').replace('.', '')}
+                        </span>
+                        <span className="inline-flex items-center rounded bg-slate-100 px-1 py-0.5 text-[9px] font-bold text-slate-600 uppercase">
+                          {report.rating}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="py-8 text-center text-sm text-muted-foreground">
+                분석 리포트가 없습니다.
               </div>
             )}
           </div>
         </div>
       </div>
+
 
       {/* Overview Cards Section */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">

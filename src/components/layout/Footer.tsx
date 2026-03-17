@@ -26,10 +26,13 @@ export function Footer() {
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li><Link href="/" className="hover:text-primary">대시보드</Link></li>
                             <li><Link href="/market" className="hover:text-primary">시황 분석</Link></li>
+                            <li><Link href="/analysis" className="hover:text-primary">종목 리포트</Link></li>
                             <li><Link href="/picks" className="hover:text-primary">유망 종목</Link></li>
                             <li><Link href="/calendar" className="hover:text-primary">경제 캘린더</Link></li>
+                            <li><Link href="/education" className="hover:text-primary">투자 교육</Link></li>
                         </ul>
                     </div>
+
 
                     <div>
                         <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground">정보</h3>
