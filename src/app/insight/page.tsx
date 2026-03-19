@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+export const dynamic = 'force-static';
 
 import Link from 'next/link';
 import { allMarketInsights } from 'contentlayer2/generated';
@@ -5,8 +7,6 @@ import { compareDesc, format, parseISO } from 'date-fns';
 import { Zap, ArrowRight, Calendar, Tag, ChevronLeft, ChevronRight, Activity } from 'lucide-react';
 
 const POSTS_PER_PAGE = 9;
-
-export const dynamic = 'force-static';
 
 export default function MarketInsightPage() {
     const currentPage = 1;
