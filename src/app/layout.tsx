@@ -10,18 +10,22 @@ const notoSansKR = Noto_Sans_KR({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://stockanalysis2.pages.dev"),
-  title: "KRX Intelligence | 한국 증시 분석 및 실시간 주식 시황 플랫폼",
-  description: "한국 주식시장의 실시간 시황 분석, 유망 종목 발굴, 핵심 지표를 한눈에 제공하는 전문 투자 정보 플랫폼",
+  title: {
+    default: "KRX Intelligence | 실시간 주식 시황 및 국내 종목 분석 리포트",
+    template: "%s | KRX Intelligence"
+  },
+  description: "코스피, 코스닥 실시간 시황 분석부터 국내 유망 종목 리포트, 테마주 발굴까지. 데이터 기반의 명확한 투자 인사이트를 제공하는 전문 주식 정보 플랫폼입니다.",
+  keywords: ["주식", "코스피", "코스닥", "주식시황", "종목분석", "투자전략", "경제지표", "테마주", "국내주식"],
   openGraph: {
-    title: "KRX Intelligence | 한국 증시 분석 및 실시간 주식 시황 플랫폼",
-    description: "한국 주식시장의 실시간 시황 분석, 유망 종목 발굴, 핵심 지표를 한눈에 제공하는 전문 투자 정보 플랫폼",
+    title: "KRX Intelligence | 실시간 주식 시황 및 국내 종목 분석 리포트",
+    description: "코스피, 코스닥 실시간 시황 분석부터 국내 유망 종목 리포트, 테마주 발굴까지. 명확한 투자 인사이트를 확인하세요.",
     url: "https://stockanalysis2.pages.dev",
     siteName: "KRX Intelligence",
     locale: "ko_KR",
     type: "website",
     images: [
       {
-        url: "/og-image.png", // Ensure this exists or provide a default
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "KRX Intelligence",
@@ -30,8 +34,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "KRX Intelligence | 한국 증시 분석 및 실시간 주식 시황 플랫폼",
-    description: "한국 주식시장의 실시간 시황 분석, 유망 종목 발굴, 핵심 지표를 한눈에 제공하는 전문 투자 정보 플랫폼",
+    title: "KRX Intelligence | 실시간 주식 시황 및 국내 종목 분석 리포트",
+    description: "데이터 기반의 명확한 투자 인사이트, 실시간 시황 분석 및 국내 종목 리포트를 제공합니다.",
     images: ["/og-image.png"],
   },
   verification: {

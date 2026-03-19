@@ -4,6 +4,13 @@ import { allMarketAnalyses } from 'contentlayer2/generated';
 import { compareDesc, format, parseISO } from 'date-fns';
 import { Activity, ArrowRight, Calendar, Tag, ChevronLeft, ChevronRight } from 'lucide-react';
 
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "실시간 시황 분석",
+    description: "국내외 주식시장의 흐름과 핵심 지표를 실시간으로 분석하여 투자 전략을 제시합니다.",
+};
+
 const POSTS_PER_PAGE = 9;
 
 export const dynamic = 'force-static';

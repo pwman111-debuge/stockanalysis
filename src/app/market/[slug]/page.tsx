@@ -14,6 +14,42 @@ export async function generateStaticParams() {
     }));
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const post = allMarketAnalyses.find(
+        (p) => p._raw.flattenedPath.split('/').pop() === slug
+    );
+
+    if (!post) return {};
+
+    const imageUrl = '/og-image.png';
+
+    return {
+        title: post.title,
+        description: post.summary,
+        openGraph: {
+            title: post.title,
+            description: post.summary,
+            type: 'article',
+            url: `https://stockanalysis2.pages.dev/market/${slug}`,
+            images: [
+                {
+                    url: imageUrl,
+                    width: 1200,
+                    height: 630,
+                    alt: post.title,
+                },
+            ],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: post.title,
+            description: post.summary,
+            images: [imageUrl],
+        },
+    };
+}
+
 export default async function MarketDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     const post = allMarketAnalyses.find(

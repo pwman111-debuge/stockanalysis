@@ -4,6 +4,13 @@ import { format, parseISO } from 'date-fns';
 import { BarChart3, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "국내 종목 분석 리포트",
+    description: "전문가와 AI가 분석한 개별 종목의 펀더멘털, 기술적 분석 및 투자 의견을 확인하세요.",
+};
+
 const POSTS_PER_PAGE = 10;
 
 export const dynamic = 'force-static';
