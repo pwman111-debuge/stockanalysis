@@ -70,6 +70,7 @@ export const StockReport = defineDocumentType(() => ({
     },
 }))
 
+
 export const Education = defineDocumentType(() => ({
     name: 'Education',
     filePathPattern: `education/**/*.mdx`,
@@ -83,12 +84,29 @@ export const Education = defineDocumentType(() => ({
         summary: { type: 'string', required: true },
     },
     computedFields: {
-        url: { type: 'string', resolve: (post) => `/education/${post._raw.flattenedPath.split('/').pop()}` },
-        slug: { type: 'string', resolve: (post) => post._raw.flattenedPath.split('/').pop() },
+        url: { type: 'string', resolve: (post) => `/education/${post._raw.flattenedPath.substring(post._raw.flattenedPath.lastIndexOf('/') + 1)}` },
+        slug: { type: 'string', resolve: (post) => post._raw.flattenedPath.substring(post._raw.flattenedPath.lastIndexOf('/') + 1) },
+    },
+}))
+
+export const MarketInsight = defineDocumentType(() => ({
+    name: 'MarketInsight',
+    filePathPattern: `market-insight/**/*.mdx`,
+    contentType: 'mdx',
+    fields: {
+        title: { type: 'string', required: true },
+        date: { type: 'date', required: true },
+        category: { type: 'enum', options: ['fomc', 'macro', 'special', 'trend'], required: true },
+        tags: { type: 'list', of: { type: 'string' } },
+        summary: { type: 'string', required: true },
+        thumbnail: { type: 'string' },
+    },
+    computedFields: {
+        url: { type: 'string', resolve: (post) => `/insight/${post._raw.flattenedPath.substring(post._raw.flattenedPath.lastIndexOf('/') + 1)}` },
     },
 }))
 
 export default makeSource({
     contentDirPath: 'content',
-    documentTypes: [MarketAnalysis, StockPick, StockReport, Education],
+    documentTypes: [MarketAnalysis, StockPick, StockReport, Education, MarketInsight],
 })

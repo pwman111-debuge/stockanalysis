@@ -10,12 +10,14 @@ import {
     Search,
     BookOpen,
     Calendar,
-    LayoutDashboard
+    LayoutDashboard,
+    Zap
 } from "lucide-react";
 
 const menuItems = [
     { name: "대시보드", href: "/", icon: LayoutDashboard },
     { name: "시황 분석", href: "/market", icon: TrendingUp },
+    { name: "마켓 인사이트", href: "/insight", icon: Zap },
     { name: "유망 종목", href: "/picks", icon: Search },
     { name: "종목 리포트", href: "/analysis", icon: BarChart3 },
     { name: "경제 캘린더", href: "/calendar", icon: Calendar },
