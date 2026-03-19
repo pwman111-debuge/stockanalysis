@@ -7,6 +7,7 @@ import { format, parseISO } from 'date-fns';
 import { ArrowLeft, Calendar, Tag, Share2, Bookmark } from 'lucide-react';
 import Link from 'next/link';
 import { MdxRenderer } from '@/components/content/MdxRenderer';
+import { ShareButton } from '@/components/common/ShareButton';
 
 export async function generateStaticParams() {
     return allMarketAnalyses.map((post) => ({
@@ -86,10 +87,11 @@ export default async function MarketDetailPage({ params }: { params: Promise<{ s
                     </p>
 
                     <div className="mt-8 pt-8 border-t border-border flex items-center justify-center space-x-4">
-                        <button className="flex items-center space-x-1 text-sm text-muted-foreground hover:text-primary transition-colors">
-                            <Share2 className="h-4 w-4" />
-                            <span>공유</span>
-                        </button>
+                        <ShareButton 
+                            title={post.title}
+                            text={post.summary}
+                            url={`https://stockanalysis2.pages.dev/market/${slug}`}
+                        />
                         <button className="flex items-center space-x-1 text-sm text-muted-foreground hover:text-primary transition-colors">
                             <Bookmark className="h-4 w-4" />
                             <span>저장</span>
