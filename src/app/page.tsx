@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { getLatestMarketData } from "@/lib/api/market-api";
 import { getNextHighImpactEvent, getFlag } from "@/lib/api/economic-calendar";
 import { RefreshButton } from "@/components/dashboard/RefreshButton";
+import Image from "next/image";
 
   // Contentlayer가 빌드 시간에 생성 — dynamic import로 안전하게
   let allMarketAnalyses: any[] = [];
@@ -34,18 +35,45 @@ import { RefreshButton } from "@/components/dashboard/RefreshButton";
 
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Section */}
-      <section className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">시장 대시보드</h1>
-          <p className="text-muted-foreground">현재 한국 주식시장의 핵심 지표를 실제 데이터 기반으로 확인하세요.</p>
+    <div className="space-y-10">
+      {/* Premium Hero Section */}
+      <section className="relative overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-sm">
+        {/* Decorative Background Image */}
+        <div className="absolute right-0 top-0 h-full w-1/2 opacity-80 md:opacity-100">
+          <div className="absolute inset-0 z-10 bg-gradient-to-l from-transparent via-card/50 to-card" />
+          <Image 
+            src="/images/hero-wisdom.png" 
+            alt="Wisdom and Strategy" 
+            fill 
+            className="object-cover object-right"
+            priority
+          />
         </div>
-        <div className="flex flex-col items-end gap-2">
-          <p className="text-sm font-medium">{marketData.lastUpdated}</p>
-          <div className="flex items-center gap-2">
-            <p className="text-xs text-muted-foreground">네이버 증권 자동 수집</p>
-            <RefreshButton />
+
+        <div className="relative z-20 flex flex-col md:flex-row md:items-center justify-between gap-8">
+          <div className="max-w-xl">
+            <div className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary mb-4">
+              Intelligence Market Analysis
+            </div>
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mb-4 leading-tight">
+              시장의 흐름을 읽는 <br />
+              <span className="text-primary italic">현명한 전략</span>의 시작
+            </h1>
+            <p className="text-muted-foreground text-lg max-w-md">
+              실시간 데이터와 최첨단 분석 결과를 통해 <br className="hidden md:block" />
+              당신의 투자 통찰력을 극대화하세요.
+            </p>
+          </div>
+
+          <div className="flex flex-col items-end justify-end gap-3 self-end md:self-auto pt-4 md:pt-0">
+            <div className="text-right">
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Last Updated</p>
+              <p className="text-sm font-black tabular-nums">{marketData.lastUpdated}</p>
+            </div>
+            <div className="flex items-center gap-2 bg-muted/30 p-2 rounded-xl border border-border">
+              <span className="text-xs text-muted-foreground px-1">실시간 수집 중</span>
+              <RefreshButton />
+            </div>
           </div>
         </div>
       </section>
