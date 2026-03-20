@@ -1,4 +1,3 @@
-
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
@@ -10,68 +9,85 @@ import { getNextHighImpactEvent, getFlag } from "@/lib/api/economic-calendar";
 import { RefreshButton } from "@/components/dashboard/RefreshButton";
 import Image from "next/image";
 
-  // Contentlayer가 빌드 시간에 생성 — dynamic import로 안전하게
-  let allMarketAnalyses: any[] = [];
-  let allStockReports: any[] = [];
-  try {
-    const cl = require('contentlayer2/generated');
-    allMarketAnalyses = cl.allMarketAnalyses ?? [];
-    allStockReports = cl.allStockReports ?? [];
-  } catch { }
+// Contentlayer가 빌드 시간에 생성 — dynamic import로 안전하게
+let allMarketAnalyses: any[] = [];
+let allStockReports: any[] = [];
+try {
+  const cl = require('contentlayer2/generated');
+  allMarketAnalyses = cl.allMarketAnalyses ?? [];
+  allStockReports = cl.allStockReports ?? [];
+} catch { }
 
-  export default async function Home() {
-    const marketData = await getLatestMarketData();
-    const nextEvent = await getNextHighImpactEvent();
+export default async function Home() {
+  const marketData = await getLatestMarketData();
+  const nextEvent = await getNextHighImpactEvent();
 
-    // 최근 시황 분석 (최대 3개)
-    const recentAnalyses = [...allMarketAnalyses]
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 3);
+  // 최근 시황 분석 (최대 3개)
+  const recentAnalyses = [...allMarketAnalyses]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 3);
 
-    // 최근 종목 리포트 (최대 3개)
-    const recentReports = [...allStockReports]
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 3);
+  // 최근 종목 리포트 (최대 3개)
+  const recentReports = [...allStockReports]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 3);
 
 
   return (
     <div className="space-y-10">
-      {/* Premium Hero Section */}
+      {/* Premium Hero Section with SEO Optimization */}
       <section className="relative overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-sm">
         {/* Decorative Background Image */}
-        <div className="absolute right-0 top-0 h-full w-1/2 opacity-80 md:opacity-100">
+        <div className="absolute right-0 top-0 h-full w-1/2 opacity-30 md:opacity-100 pointer-events-none">
           <div className="absolute inset-0 z-10 bg-gradient-to-l from-transparent via-card/50 to-card" />
-          <Image 
-            src="/images/hero-wisdom.png" 
-            alt="Wisdom and Strategy" 
-            fill 
-            className="object-cover object-right"
+          <Image
+            src="/images/hero-wisdom.png"
+            alt="KRX Intelligence - 전술적 주식 분석"
+            fill
+            className="object-contain object-right"
             priority
           />
         </div>
 
         <div className="relative z-20 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div className="max-w-xl">
-            <div className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary mb-4">
-              Intelligence Market Analysis
+            <div className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary mb-4 border border-primary/20">
+              <span className="mr-2 flex h-2 w-2 animate-pulse rounded-full bg-primary"></span>
+              실시간 한국 증시 인텔리전스
             </div>
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mb-4 leading-tight">
-              시장의 흐름을 읽는 <br />
-              <span className="text-primary italic">현명한 전략</span>의 시작
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground mb-4 leading-tight">
+              KRX Intelligence: <br />
+              <span className="text-primary">한국 주식 분석</span> & 시황
             </h1>
-            <p className="text-muted-foreground text-lg max-w-md">
-              실시간 데이터와 최첨단 분석 결과를 통해 <br className="hidden md:block" />
-              당신의 투자 통찰력을 극대화하세요.
+            <p className="text-muted-foreground text-lg max-w-md leading-relaxed">
+              시장 흐름을 읽는 명확한 시선. <br className="hidden md:block" />
+              코스피·코스닥 핵심 지표와 종목 리포트를 통해 <br className="hidden md:block" />
+              당신의 투자 인사이트를 극대화하세요.
             </p>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Link href="/analysis" className="rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90 flex items-center shadow-lg">
+                분석 리포트 읽기 <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+              <div className="flex items-center gap-6 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <Globe className="h-3.5 w-3.5" />
+                  <span>실시간 데이터</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <BarChart3 className="h-3.5 w-3.5" />
+                  <span>기술적 분석</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="flex flex-col items-end justify-end gap-3 self-end md:self-auto pt-4 md:pt-0">
             <div className="text-right">
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Last Updated</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Last Updated</p>
               <p className="text-sm font-black tabular-nums">{marketData.lastUpdated}</p>
             </div>
             <div className="flex items-center gap-2 bg-muted/30 p-2 rounded-xl border border-border">
-              <span className="text-xs text-muted-foreground px-1">실시간 수집 중</span>
+              <span className="text-[11px] text-muted-foreground px-1 font-medium">네이버 자동 수집</span>
               <RefreshButton />
             </div>
           </div>
@@ -226,7 +242,7 @@ import Image from "next/image";
           {marketData.vix ? (() => {
             const val = parseFloat(marketData.vix.value.replace(/,/g, ''));
             let status = { label: "알 수 없음", color: "text-slate-500", border: "border-slate-400", bg: "bg-slate-400", desc: "데이터 수집 중입니다." };
-            
+
             if (val < 15) status = { label: "극도의 평온", color: "text-blue-600", border: "border-blue-400", bg: "bg-blue-400", desc: "시장이 매우 안정적입니다. 낙관론이 지배적입니다." };
             else if (val < 20) status = { label: "안정적", color: "text-green-600", border: "border-green-400", bg: "bg-green-400", desc: "정상적인 범위 내의 변동성입니다." };
             else if (val < 30) status = { label: "공포/주의", color: "text-yellow-600", border: "border-yellow-400", bg: "bg-yellow-400", desc: "시장의 불안감이 커지고 있습니다. 주의가 필요합니다." };
@@ -247,7 +263,7 @@ import Image from "next/image";
                     </p>
                   </div>
                 </div>
-                
+
                 {/* Gauge Bar */}
                 <div className="mt-5 space-y-1.5">
                   <div className="relative h-2 w-full bg-gray-200 rounded-full overflow-hidden flex">
@@ -256,9 +272,9 @@ import Image from "next/image";
                     <div className="h-full bg-yellow-400 w-[20%]" title="주의" />
                     <div className="h-full bg-red-400 w-[40%]" title="패닉" />
                     {/* Indicator */}
-                    <div 
-                      className="absolute top-0 bottom-0 w-1 bg-black shadow-lg z-10" 
-                      style={{ left: `${Math.min((val / 50) * 100, 100)}%` }} 
+                    <div
+                      className="absolute top-0 bottom-0 w-1 bg-black shadow-lg z-10"
+                      style={{ left: `${Math.min((val / 50) * 100, 100)}%` }}
                     />
                   </div>
                   <div className="flex justify-between text-[9px] font-bold text-muted-foreground px-0.5">
@@ -361,7 +377,7 @@ import Image from "next/image";
             })}
           </div>
           <p className="mt-5 text-[10px] text-muted-foreground leading-tight">
-            * 토스 증권 실시간 데이터 기반<br/>
+            * 토스 증권 실시간 데이터 기반<br />
             * <strong>역전(마이너스)</strong> 발생 시 경기 침체의 강력한 신호로 해석됩니다.
           </p>
         </div>

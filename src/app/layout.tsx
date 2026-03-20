@@ -11,14 +11,14 @@ const notoSansKR = Noto_Sans_KR({
 export const metadata: Metadata = {
   metadataBase: new URL("https://stockanalysis2.pages.dev"),
   title: {
-    default: "KRX Intelligence | 실시간 주식 시황 및 국내 종목 분석 리포트",
+    default: "KRX Intelligence | 한국 주식 분석 및 실시간 증시 시황 플랫폼",
     template: "%s | KRX Intelligence"
   },
-  description: "코스피, 코스닥 실시간 시황 분석부터 국내 유망 종목 리포트, 테마주 발굴까지. 데이터 기반의 명확한 투자 인사이트를 제공하는 전문 주식 정보 플랫폼입니다.",
-  keywords: ["주식", "코스피", "코스닥", "주식시황", "종목분석", "투자전략", "경제지표", "테마주", "국내주식"],
+  description: "한국 주식시장의 코스피·코스닥 실시간 시황 분석, 유망 종목 리포트, 테마주 발굴 및 투자 전략을 데이터 기반으로 제공하는 전문 정보 플랫폼입니다.",
+  keywords: ["주식", "코스피", "코스닥", "주식분석", "시황리포트", "투자전략", "경제지표", "테마주", "국내주식", "KRX"],
   openGraph: {
-    title: "KRX Intelligence | 실시간 주식 시황 및 국내 종목 분석 리포트",
-    description: "코스피, 코스닥 실시간 시황 분석부터 국내 유망 종목 리포트, 테마주 발굴까지. 명확한 투자 인사이트를 확인하세요.",
+    title: "KRX Intelligence | 한국 주식 분석 및 실시간 증시 시황 플랫폼",
+    description: "실시간 시황 분석부터 종목 리포트, 테마주 발굴까지. 명확한 투자 인사이트를 확인하세요.",
     url: "https://stockanalysis2.pages.dev",
     siteName: "KRX Intelligence",
     locale: "ko_KR",
@@ -28,14 +28,14 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "KRX Intelligence",
+        alt: "KRX Intelligence - 한국 주식 분석 플랫폼",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "KRX Intelligence | 실시간 주식 시황 및 국내 종목 분석 리포트",
-    description: "데이터 기반의 명확한 투자 인사이트, 실시간 시황 분석 및 국내 종목 리포트를 제공합니다.",
+    title: "KRX Intelligence | 한국 주식 분석 및 실시간 증시 시황 플랫폼",
+    description: "데이터 기반의 명확한 투자 인사이트, 실시간 시황 분석 및 국내 종목 리포트",
     images: ["/og-image.png"],
   },
   verification: {
@@ -43,6 +43,23 @@ export const metadata: Metadata = {
   },
   other: {
     "google-adsense-account": "ca-pub-5479680289617146"
+  }
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "KRX Intelligence",
+  "url": "https://stockanalysis2.pages.dev",
+  "description": "한국 주식시장의 실시간 시황 분석 및 종목 리포트 플랫폼",
+  "publisher": {
+    "@type": "Organization",
+    "name": "KRX Intelligence"
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://stockanalysis2.pages.dev/analysis?q={search_term_string}",
+    "query-input": "required name=search_term_string"
   }
 };
 
@@ -60,6 +77,10 @@ export default function RootLayout({
     <html lang="ko">
       <head>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5479680289617146" crossOrigin="anonymous"></script>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body className={`${notoSansKR.variable} font-sans antialiased text-foreground`}>
         <div className="flex min-h-screen bg-background">
