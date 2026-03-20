@@ -11,6 +11,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@next/third-parties": "^16.2.0",
     "clsx": "^2.1.1",
     "contentlayer2": "^0.5.8",
     "date-fns": "^4.1.0",

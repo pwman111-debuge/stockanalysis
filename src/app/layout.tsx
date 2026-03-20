@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Noto_Sans_KR } from "next/font/google";
+import { GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 
 const notoSansKR = Noto_Sans_KR({
@@ -83,6 +85,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${notoSansKR.variable} font-sans antialiased text-foreground`}>
+        <GoogleTagManager gtmId="GTM-PCFN2MSK" />
         <div className="flex min-h-screen bg-background">
           <Sidebar />
           <div className="flex flex-1 flex-col pl-64">
@@ -99,3 +102,4 @@ export default function RootLayout({
     </html>
   );
 }
+
