@@ -1,4 +1,5 @@
-export const runtime = 'edge';
+export const dynamic = 'force-static';
+export const dynamicParams = false;
 
 import { allMarketInsights } from 'contentlayer2/generated';
 import { notFound } from 'next/navigation';
@@ -7,6 +8,12 @@ import { ArrowLeft, Calendar, Tag, Share2, Bookmark } from 'lucide-react';
 import Link from 'next/link';
 import { MdxRenderer } from '@/components/content/MdxRenderer';
 import { ShareButton } from '@/components/common/ShareButton';
+
+export async function generateStaticParams() {
+    return allMarketInsights.map((post) => ({
+        slug: post._raw.flattenedPath.split('/').pop() || '',
+    }));
+}
 
 export default async function InsightDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;

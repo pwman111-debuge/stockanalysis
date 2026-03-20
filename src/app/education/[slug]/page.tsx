@@ -1,4 +1,5 @@
-export const runtime = 'edge';
+export const dynamic = 'force-static';
+export const dynamicParams = false;
 
 import { notFound } from 'next/navigation';
 import { allEducation } from 'contentlayer2/generated';
@@ -7,6 +8,12 @@ import { BookOpen, Clock, Calendar, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+
+export async function generateStaticParams() {
+    return allEducation.map((post: any) => ({
+        slug: post.slug,
+    }));
+}
 
 const LEVEL_STYLE: Record<string, string> = {
     '초급': 'bg-green-100 text-green-700',

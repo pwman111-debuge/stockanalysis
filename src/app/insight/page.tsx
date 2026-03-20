@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+export const dynamic = 'force-static';
 
 import Link from 'next/link';
 import { allMarketInsights } from 'contentlayer2/generated';
