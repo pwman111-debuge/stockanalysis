@@ -4,7 +4,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://stockanalysis2.pages.dev'
 
     // Static routes
-    const routes = [
+    const staticRoutes = [
         '',
         '/market',
         '/analysis',
@@ -18,10 +18,34 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: route === '' ? 1 : 0.8,
     }))
 
-    // In a real scenario, we would fetch all MDX slugs here.
-    // Since I don't have a direct way to run FS in the sitemap.ts (it's a route),
-    // for now, I'll provide a robust list or the user can implement a fetcher.
-    // But wait, in Next.js App Router sitemap.ts, you CAN use FS if it's running in Node.
+    // Dynamic routes (Contentlayer 연동)
+    let dynamicRoutes: any[] = []
+    try {
+        // Note: build 타임에 파일이 생성되므로 require 활용
+        const { allMarketAnalyses, allStockReports } = require('contentlayer2/generated')
 
-    return [...routes]
+        if (allMarketAnalyses) {
+            const marketEntries = allMarketAnalyses.map((post: any) => ({
+                url: `${baseUrl}${post.url}`,
+                lastModified: new Date(post.date),
+                changeFrequency: 'weekly' as const,
+                priority: 0.6,
+            }))
+            dynamicRoutes = [...dynamicRoutes, ...marketEntries]
+        }
+
+        if (allStockReports) {
+            const stockEntries = allStockReports.map((post: any) => ({
+                url: `${baseUrl}${post.url}`,
+                lastModified: new Date(post.date),
+                changeFrequency: 'weekly' as const,
+                priority: 0.7,
+            }))
+            dynamicRoutes = [...dynamicRoutes, ...stockEntries]
+        }
+    } catch (e) {
+        console.warn('Sitemap dynamic generation failed (this is normal during dev before build):', e)
+    }
+
+    return [...staticRoutes, ...dynamicRoutes]
 }
