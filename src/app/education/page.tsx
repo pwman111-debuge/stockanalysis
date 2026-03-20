@@ -1,5 +1,5 @@
 import { allEducation, type Education } from 'contentlayer2/generated';
-import { BookOpen, GraduationCap, TrendingUp, BarChart3, Shield, Target, ArrowRight, Clock } from 'lucide-react';
+import { BookOpen, GraduationCap, TrendingUp, BarChart3, Shield, Target, ArrowRight, Clock, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
@@ -8,6 +8,7 @@ const CATEGORIES = [
     { title: '주식 투자 기초', icon: GraduationCap, color: 'bg-blue-50 border-blue-200 text-blue-700', iconColor: 'text-blue-600' },
     { title: '기술적 분석', icon: TrendingUp, color: 'bg-green-50 border-green-200 text-green-700', iconColor: 'text-green-600' },
     { title: '펀더멘털 분석', icon: BarChart3, color: 'bg-purple-50 border-purple-200 text-purple-700', iconColor: 'text-purple-600' },
+    { title: '단기 매매', icon: Zap, color: 'bg-orange-50 border-orange-200 text-orange-700', iconColor: 'text-orange-600' },
     { title: '리스크 관리', icon: Shield, color: 'bg-red-50 border-red-200 text-red-700', iconColor: 'text-red-600' },
 ];
 
