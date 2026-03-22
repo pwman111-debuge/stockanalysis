@@ -11,6 +11,7 @@ export const MarketAnalysis = defineDocumentType(() => ({
         category: { type: 'enum', options: ['daily', 'weekly', 'monthly', 'special', 'Genesis'], required: true },
         tags: { type: 'list', of: { type: 'string' } },
         summary: { type: 'string', required: true },
+        ticker: { type: 'string' },
         thumbnail: { type: 'string' },
     },
     computedFields: {
