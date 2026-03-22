@@ -41,11 +41,19 @@ async function getAllEvents(): Promise<EconomicEvent[]> {
         try {
             console.log('[economic-calendar] 캐시 만료 → 토스 증권 데이터 수집 시작');
             const fresh = await fetchTossCalendarData();
-            cachedEvents = fresh;
-            lastFetchedTimestamp = Date.now();
-            console.log(`[economic-calendar] 데이터 갱신 완료: ${fresh.length}건`);
+            
+            if (fresh.length > 0) {
+                cachedEvents = fresh;
+                lastFetchedTimestamp = Date.now();
+                console.log(`[economic-calendar] 데이터 갱신 완료: ${fresh.length}건`);
+            } else {
+                console.warn('[economic-calendar] 토스 증권 캘린더 데이터가 비어 있습니다. (상태 점검 등). 5분 후 재시도합니다.');
+                // 기존 캐시를 유지하되, 5분 후 다시 수집하도록 타임스탬프 조작
+                lastFetchedTimestamp = Date.now() - CALENDAR_CACHE_TTL + (5 * 60 * 1000);
+            }
         } catch (err) {
             console.error('[economic-calendar] 실시간 수집 실패:', err);
+            lastFetchedTimestamp = Date.now() - CALENDAR_CACHE_TTL + (5 * 60 * 1000);
         }
     }
     
