@@ -113,6 +113,9 @@ export function StockChart({ code, title, className }: StockChartProps) {
 
                 fetchData();
 
+                // 1분마다 실시간 데이터 폴링 (장중 실시간 업데이트)
+                const interval = setInterval(fetchData, 60000);
+
                 const handleResize = () => {
                     if (chartContainerRef.current) {
                         chart.applyOptions({ width: chartContainerRef.current.clientWidth });
@@ -122,6 +125,7 @@ export function StockChart({ code, title, className }: StockChartProps) {
                 window.addEventListener('resize', handleResize);
 
                 return () => {
+                    clearInterval(interval);
                     window.removeEventListener('resize', handleResize);
                     chart.remove();
                 };
