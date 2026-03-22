@@ -8,6 +8,7 @@ import { getLatestMarketData } from "@/lib/api/market-api";
 import { getNextHighImpactEvent, getFlag } from "@/lib/api/economic-calendar";
 import { RefreshButton } from "@/components/dashboard/RefreshButton";
 import Image from "next/image";
+import { StockChart } from "@/components/common/StockChart";
 
 // Contentlayer가 빌드 시간에 생성 — dynamic import로 안전하게
 let allMarketAnalyses: any[] = [];
@@ -94,21 +95,29 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Market Indices Grid */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {marketData.indices.map((idx) => (
-          <div key={idx.name} className="rounded-xl border border-border bg-card p-5 shadow-sm transition-all hover:border-primary/50 hover:shadow-md">
+      {/* Market Indices - Featured Charts */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <StockChart code="KOSPI" title="KOSPI" className="w-full h-full" />
+        <StockChart code="KOSDAQ" title="KOSDAQ" className="w-full h-full" />
+      </div>
+
+      {/* Market Indices Grid - Other Indicators */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+        {marketData.indices
+          .filter(idx => idx.name !== 'KOSPI' && idx.name !== 'KOSDAQ')
+          .map((idx) => (
+          <div key={idx.name} className="rounded-xl border border-border bg-card p-4 shadow-sm transition-all hover:border-primary/50 hover:shadow-md">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-muted-foreground">{idx.name}</span>
+              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-tight">{idx.name}</span>
               {idx.status === "up" ? (
                 <TrendingUp className="h-4 w-4 text-kr-up" />
               ) : (
-                <TrendingDown className="h-4 w-4 text-kr-down" />
+                <TrendingDown className="h-3.5 w-3.5 text-kr-down" />
               )}
             </div>
             <div className="flex items-end justify-between">
-              <span className="text-2xl font-bold">{idx.value}</span>
-              <div className={cn("flex flex-col items-end text-xs font-semibold", idx.status === "up" ? "text-kr-up" : "text-kr-down")}>
+              <span className="text-xl font-bold tabular-nums tracking-tight">{idx.value}</span>
+              <div className={cn("flex flex-col items-end text-[10px] font-black leading-tight", idx.status === "up" ? "text-kr-up" : "text-kr-down")}>
                 <span>{idx.change}</span>
                 <span>{idx.percent}</span>
               </div>
