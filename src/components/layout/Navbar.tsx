@@ -1,11 +1,13 @@
 
 "use client";
 
-import { Search, UserCircle } from "lucide-react";
+import { Search, UserCircle, Menu } from "lucide-react";
 import { useState } from "react";
+import { useSidebar } from "./SidebarContext";
 
 export function Navbar() {
     const [searchQuery, setSearchQuery] = useState("");
+    const { toggle } = useSidebar();
 
     const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && searchQuery.trim() !== "") {
@@ -21,8 +23,17 @@ export function Navbar() {
     };
 
     return (
-        <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border bg-background/95 px-8 backdrop-blur">
-            <div className="flex w-full max-w-xl items-center">
+        <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border bg-background/95 px-4 md:px-8 backdrop-blur">
+            <div className="flex items-center space-x-4 flex-1">
+                <button 
+                    onClick={toggle}
+                    className="rounded-md p-2 hover:bg-accent text-muted-foreground"
+                    aria-label="Toggle Sidebar"
+                >
+                    <Menu className="h-5 w-5" />
+                </button>
+                
+                <div className="flex w-full max-w-xl items-center">
                 <div className="relative w-full">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                         <Search className="h-4 w-4 text-muted-foreground" />
@@ -35,6 +46,7 @@ export function Navbar() {
                         className="block w-full rounded-full border border-border bg-background py-2 pl-10 pr-4 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                         placeholder="종목명, 코드 또는 테마 검색..."
                     />
+                </div>
                 </div>
             </div>
 

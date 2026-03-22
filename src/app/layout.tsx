@@ -69,6 +69,8 @@ const jsonLd = {
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { SidebarProvider } from "@/components/layout/SidebarContext";
+import { LayoutWrapper } from "@/components/layout/LayoutWrapper";
 
 export default function RootLayout({
   children,
@@ -99,18 +101,20 @@ export default function RootLayout({
       </head>
       <body className={`${notoSansKR.variable} font-sans antialiased text-foreground`}>
         <GoogleTagManager gtmId="GTM-PCFN2MSK" />
-        <div className="flex min-h-screen bg-background">
-          <Sidebar />
-          <div className="flex flex-1 flex-col pl-64">
-            <Navbar />
-            <div className="flex flex-1 flex-col overflow-y-auto">
-              <main className="flex-1 p-8">
-                {children}
-              </main>
-              <Footer />
-            </div>
+        <SidebarProvider>
+          <div className="flex min-h-screen bg-background relative overflow-hidden">
+            <Sidebar />
+            <LayoutWrapper>
+              <Navbar />
+              <div className="flex flex-1 flex-col overflow-y-auto">
+                <main className="flex-1 p-4 md:p-8">
+                  {children}
+                </main>
+                <Footer />
+              </div>
+            </LayoutWrapper>
           </div>
-        </div>
+        </SidebarProvider>
       </body>
     </html>
   );

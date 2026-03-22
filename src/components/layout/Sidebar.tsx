@@ -24,13 +24,39 @@ const menuItems = [
     { name: "투자 교육", href: "/education", icon: BookOpen },
 ];
 
+import { useSidebar } from "./SidebarContext";
+import { X } from "lucide-react";
+
 export function Sidebar() {
     const pathname = usePathname();
+    const { isOpen, setIsOpen } = useSidebar();
 
     return (
-        <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-border bg-white">
-            <div className="flex h-full flex-col px-3 py-4">
-                <div className="mb-10 flex items-center px-2">
+        <>
+            {/* Mobile Overlay */}
+            {isOpen && (
+                <div 
+                    className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+                    onClick={() => setIsOpen(false)}
+                />
+            )}
+            
+            <aside 
+                className={cn(
+                    "fixed left-0 top-0 z-40 h-screen w-64 border-r border-border bg-white transition-transform duration-300 ease-in-out",
+                    isOpen ? "translate-x-0" : "-translate-x-full"
+                )}
+            >
+                <div className="flex h-full flex-col px-3 py-4 relative">
+                    {/* Close button for mobile */}
+                    <button 
+                        className="absolute right-4 top-4 rounded-md p-1 lg:hidden hover:bg-accent"
+                        onClick={() => setIsOpen(false)}
+                    >
+                        <X className="h-5 w-5" />
+                    </button>
+
+                    <div className="mb-10 flex items-center px-2">
                     <div className="mr-3 h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
                         <span className="font-bold text-background">KI</span>
                     </div>
@@ -65,7 +91,8 @@ export function Sidebar() {
                         © {new Date().getFullYear()} KRX Intelligence
                     </p>
                 </div>
-            </div>
-        </aside>
+                </div>
+            </aside>
+        </>
     );
 }
