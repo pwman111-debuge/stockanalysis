@@ -7,10 +7,10 @@ export default function PrivacyPage() {
     return (
         <div className="max-w-4xl mx-auto py-12 px-4">
             <h1 className="text-3xl font-bold mb-8">개인정보처리방침</h1>
-            
+
             <div className="prose prose-slate max-w-none space-y-6 text-muted-foreground">
                 <p>
-                    KRX Intelligence(이하 '회사' 또는 '서비스')는 정보통신망 이용촉진 및 정보보호 등에 관한 법률, 개인정보보호법 등 관련 법령상의 개인정보보호 규정을 준수하며, 이용자의 개인정보 보호를 최우선으로 생각합니다.
+                    제네시스 주식 리포트(이하 '회사' 또는 '서비스')는 정보통신망 이용촉진 및 정보보호 등에 관한 법률, 개인정보보호법 등 관련 법령상의 개인정보보호 규정을 준수하며, 이용자의 개인정보 보호를 최우선으로 생각합니다.
                 </p>
 
                 <section>
@@ -39,7 +39,7 @@ export default function PrivacyPage() {
 
                 <section>
                     <h2 className="text-xl font-semibold text-foreground mb-3">4. 제3자 광고 플랫폼 이용</h2>
-                    <p>본 서비스는 구글 애드센스(Google AdSense)를 이용하며, 구글의 개인정보 보호 및 약관에 따릅니다. 이용자는 구글의 
+                    <p>본 서비스는 구글 애드센스(Google AdSense)를 이용하며, 구글의 개인정보 보호 및 약관에 따릅니다. 이용자는 구글의
                         <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline ml-1">
                             광고 설정
                         </a>을 통해 맞춤형 광고를 선택 해제할 수 있습니다.

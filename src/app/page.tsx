@@ -57,7 +57,7 @@ export default async function Home() {
               실시간 한국 증시 인텔리전스
             </div>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground mb-4 leading-tight">
-              KRX Intelligence: <br />
+              제네시스 주식 리포트: <br />
               <span className="text-primary">한국 주식 분석</span> & 시황
             </h1>
             <p className="text-muted-foreground text-lg max-w-md leading-relaxed">

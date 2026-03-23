@@ -6,12 +6,12 @@ export default function AboutPage() {
     return (
         <div className="max-w-4xl mx-auto py-12 px-4">
             <h1 className="text-3xl font-bold mb-8">서비스 소개</h1>
-            
+
             <div className="prose prose-slate max-w-none space-y-8 text-muted-foreground">
                 <section>
-                    <h2 className="text-2xl font-bold text-foreground mb-4">KRX Intelligence: 데이터 기반 한국 증시 인사이트</h2>
+                    <h2 className="text-2xl font-bold text-foreground mb-4">제네시스 주식 리포트: 데이터 기반 한국 증시 인사이트</h2>
                     <p className="text-lg leading-relaxed">
-                        KRX Intelligence는 방대한 시장 데이터를 정밀하게 분석하여 투자자들에게 명확하고 신뢰할 수 있는 정보를 제공하기 위해 탄생한 플랫폼입니다. 복잡한 차트와 수치 속에 숨겨진 시장의 흐름을 읽어내고, 개인 투자자들이 보다 현명한 의사결정을 내릴 수 있도록 돕습니다.
+                        제네시스 주식 리포트는 방대한 시장 데이터를 정밀하게 분석하여 투자자들에게 명확하고 신뢰할 수 있는 정보를 제공하기 위해 탄생한 플랫폼입니다. 복잡한 차트와 수치 속에 숨겨진 시장의 흐름을 읽어내고, 개인 투자자들이 보다 현명한 의사결정을 내릴 수 있도록 돕습니다.
                     </p>
                 </section>
 
@@ -29,14 +29,14 @@ export default function AboutPage() {
                 <section>
                     <h2 className="text-xl font-semibold text-foreground mb-3">우리의 미션</h2>
                     <p>
-                        정보의 불균형을 해소하고 전업 투자자와 일반 개인 투자자 모두가 데이터에 기반한 투자를 할 수 있는 환경을 만드는 것이 KRX Intelligence의 목표입니다. 
+                        정보의 불균형을 해소하고 전업 투자자와 일반 개인 투자자 모두가 데이터에 기반한 투자를 할 수 있는 환경을 만드는 것이 제네시스 주식 리포트의 목표입니다.
                     </p>
                 </section>
 
                 <section className="bg-primary/5 p-8 rounded-2xl border border-primary/20 text-center">
                     <h2 className="text-xl font-semibold text-primary mb-4">연락처 및 피드백</h2>
                     <p className="mb-6">서비스 이용 관련 제안이나 비즈니스 문의는 전용 문의 폼을 이용해 주세요.</p>
-                    <Link 
+                    <Link
                         href="/contact"
                         className="inline-block bg-primary text-white font-bold px-8 py-3 rounded-xl hover:bg-primary/90 transition-colors"
                     >

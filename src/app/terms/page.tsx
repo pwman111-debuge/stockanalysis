@@ -5,11 +5,11 @@ export default function TermsPage() {
     return (
         <div className="max-w-4xl mx-auto py-12 px-4">
             <h1 className="text-3xl font-bold mb-8">이용약관</h1>
-            
+
             <div className="prose prose-slate max-w-none space-y-6 text-muted-foreground">
                 <section>
                     <h2 className="text-xl font-semibold text-foreground mb-3">제1조 (목적)</h2>
-                    <p>본 약관은 KRX Intelligence(이하 '서비스')가 제공하는 모든 정보 및 서비스의 이용 조건 및 절차에 관한 사항을 규정함을 목적으로 합니다.</p>
+                    <p>본 약관은 제네시스 주식 리포트(이하 '서비스')가 제공하는 모든 정보 및 서비스의 이용 조건 및 절차에 관한 사항을 규정함을 목적으로 합니다.</p>
                 </section>
 
                 <section>
