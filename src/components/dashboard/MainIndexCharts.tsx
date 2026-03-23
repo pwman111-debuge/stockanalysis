@@ -58,12 +58,12 @@ export function MainIndexCharts() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <div className="rounded-2xl border border-border bg-card p-4 shadow-sm overflow-hidden">
                 <h3 className="text-sm font-bold text-muted-foreground mb-4 px-2">KOSPI 지수 (3개월)</h3>
-                <PortfolioChart symbol="KRX:KOSPI" title="KOSPI" />
+                <PortfolioChart symbol="TVC:KOSPI" title="KOSPI" />
                 <p className="mt-2 text-[10px] text-right text-muted-foreground px-2">제공: TradingView / KRX Intelligence</p>
             </div>
             <div className="rounded-2xl border border-border bg-card p-4 shadow-sm overflow-hidden">
                 <h3 className="text-sm font-bold text-muted-foreground mb-4 px-2">KOSDAQ 지수 (3개월)</h3>
-                <PortfolioChart symbol="KRX:KOSDAQ" title="KOSDAQ" />
+                <PortfolioChart symbol="TVC:KOSDAQ" title="KOSDAQ" />
                 <p className="mt-2 text-[10px] text-right text-muted-foreground px-2">제공: TradingView / KRX Intelligence</p>
             </div>
         </div>
