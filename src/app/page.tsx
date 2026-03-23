@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { getLatestMarketData } from "@/lib/api/market-api";
 import { getNextHighImpactEvent, getFlag } from "@/lib/api/economic-calendar";
 import { RefreshButton } from "@/components/dashboard/RefreshButton";
-import { MainIndexCharts } from "@/components/dashboard/MainIndexCharts";
+import { StockChart } from "@/components/common/StockChart";
 import Image from "next/image";
 
 // Contentlayer가 빌드 시간에 생성 — dynamic import로 안전하게
@@ -95,41 +95,44 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Main KOSPI/KOSDAQ Charts Section (Reference to user image) */}
-      <section className="mb-10">
-        <MainIndexCharts />
-      </section>
+      {/* Market Indices - Featured Charts (Restored from previous version) */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <StockChart code="KOSPI" title="KOSPI" className="w-full" />
+        <StockChart code="KOSDAQ" title="KOSDAQ" className="w-full" />
+      </div>
 
-      {/* Market Indices Grid */}
+      {/* Market Indices Grid - Other Indicators */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-        {marketData.indices.map((idx) => (
-          <div key={idx.name} className="rounded-xl border border-border bg-card p-5 shadow-sm transition-all hover:border-primary/50 hover:shadow-md">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-extrabold text-muted-foreground uppercase tracking-tight">{idx.name}</span>
-              {idx.status === "up" ? (
-                <TrendingUp className="h-4 w-4 text-kr-up" />
-              ) : (
-                <TrendingDown className="h-4 w-4 text-kr-down" />
-              )}
-            </div>
-            <div className="flex items-end justify-between">
-              <span className={cn("text-2xl font-bold tabular-nums",
-                idx.status === "up" ? "text-kr-up font-black" :
-                  idx.status === "down" ? "text-kr-down font-black" : ""
-              )}>
-                {idx.value}
-              </span>
-              <div className={cn("flex flex-col items-end text-[11px] font-bold",
-                idx.status === "up" ? "text-kr-up" :
-                  idx.status === "down" ? "text-kr-down" :
-                    "text-muted-foreground"
-              )}>
-                <span>{idx.change}</span>
-                <span>{idx.percent}</span>
+        {marketData.indices
+          .filter(idx => idx.name !== 'KOSPI' && idx.name !== 'KOSDAQ')
+          .map((idx) => (
+            <div key={idx.name} className="rounded-xl border border-border bg-card p-5 shadow-sm transition-all hover:border-primary/50 hover:shadow-md">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-extrabold text-muted-foreground uppercase tracking-tight">{idx.name}</span>
+                {idx.status === "up" ? (
+                  <TrendingUp className="h-4 w-4 text-kr-up" />
+                ) : (
+                  <TrendingDown className="h-4 w-4 text-kr-down" />
+                )}
+              </div>
+              <div className="flex items-end justify-between">
+                <span className={cn("text-2xl font-bold tabular-nums",
+                  idx.status === "up" ? "text-kr-up font-black" :
+                    idx.status === "down" ? "text-kr-down font-black" : ""
+                )}>
+                  {idx.value}
+                </span>
+                <div className={cn("flex flex-col items-end text-[11px] font-bold",
+                  idx.status === "up" ? "text-kr-up" :
+                    idx.status === "down" ? "text-kr-down" :
+                      "text-muted-foreground"
+                )}>
+                  <span>{idx.change}</span>
+                  <span>{idx.percent}</span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
