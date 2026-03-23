@@ -125,9 +125,10 @@ async function fetchTossIndex(id: string, displayName: string, isYield: boolean 
     if (!res.ok) throw new Error(`[Toss] HTTP ${res.status} – ${id}`);
     const { result }: TossPriceResponse = await res.json();
 
-    const change = Math.abs(result.close - result.base);
+    const diff = result.close - result.base;
+    const change = Math.abs(diff);
     const percent = ((change / result.base) * 100).toFixed(2);
-    const status = result.changeType === 'UP' ? 'up' : result.changeType === 'DOWN' ? 'down' : 'steady';
+    const status = diff > 0 ? 'up' : diff < 0 ? 'down' : 'steady';
     const sign = status === 'up' ? '+' : status === 'down' ? '-' : '';
 
     return {
