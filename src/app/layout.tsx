@@ -13,16 +13,16 @@ const notoSansKR = Noto_Sans_KR({
 export const metadata: Metadata = {
   metadataBase: new URL("https://stockanalysis2.pages.dev"),
   title: {
-    default: "KRX Intelligence | 한국 주식 분석 및 실시간 증시 시황 플랫폼",
-    template: "%s | KRX Intelligence"
+    default: "제네시스 주식 리포트 | 한국 주식 분석 및 실시간 증시 시황 플랫폼",
+    template: "%s | 제네시스 주식 리포트"
   },
   description: "한국 주식시장의 코스피·코스닥 실시간 시황 분석, 유망 종목 리포트, 테마주 발굴 및 투자 전략을 데이터 기반으로 제공하는 전문 정보 플랫폼입니다.",
-  keywords: ["주식", "코스피", "코스닥", "주식분석", "시황리포트", "투자전략", "경제지표", "테마주", "국내주식", "KRX"],
+  keywords: ["주식", "코스피", "코스닥", "주식분석", "시황리포트", "투자전략", "경제지표", "테마주", "국내주식", "제네시스", "주식리포트"],
   openGraph: {
-    title: "KRX Intelligence | 한국 주식 분석 및 실시간 증시 시황 플랫폼",
+    title: "제네시스 주식 리포트 | 한국 주식 분석 및 실시간 증시 시황 플랫폼",
     description: "실시간 시황 분석부터 종목 리포트, 테마주 발굴까지. 명확한 투자 인사이트를 확인하세요.",
     url: "https://stockanalysis2.pages.dev",
-    siteName: "KRX Intelligence",
+    siteName: "제네시스 주식 리포트",
     locale: "ko_KR",
     type: "website",
     images: [
@@ -30,15 +30,19 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "KRX Intelligence - 한국 주식 분석 플랫폼",
+        alt: "제네시스 주식 리포트 - 한국 주식 분석 플랫폼",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "KRX Intelligence | 한국 주식 분석 및 실시간 증시 시황 플랫폼",
+    title: "제네시스 주식 리포트 | 한국 주식 분석 및 실시간 증시 시황 플랫폼",
     description: "데이터 기반의 명확한 투자 인사이트, 실시간 시황 분석 및 국내 종목 리포트",
     images: ["/og-image.png"],
+  },
+  icons: {
+    icon: "/favicon.png",
+    apple: "/favicon.png",
   },
   verification: {
     google: "Qq9Sl-g4NINDCZEPLXqJXe7a_S9CcNaxs3RdwtR70ts",
@@ -51,12 +55,12 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "KRX Intelligence",
+  "name": "제네시스 주식 리포트",
   "url": "https://stockanalysis2.pages.dev",
   "description": "한국 주식시장의 실시간 시황 분석 및 종목 리포트 플랫폼",
   "publisher": {
     "@type": "Organization",
-    "name": "KRX Intelligence"
+    "name": "제네시스 주식 리포트"
   },
   "potentialAction": {
     "@type": "SearchAction",

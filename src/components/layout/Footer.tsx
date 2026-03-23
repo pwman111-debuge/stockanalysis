@@ -9,10 +9,10 @@ export function Footer() {
                     <div className="space-y-4">
                         <div className="flex items-center">
                             <div className="mr-3 h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                                <span className="font-bold text-background text-xs">KI</span>
+                                <span className="font-bold text-background text-xs">GR</span>
                             </div>
                             <span className="text-xl font-bold tracking-tight text-foreground">
-                                KRX Intel
+                                Genesis Report
                             </span>
                         </div>
                         <p className="text-sm text-muted-foreground leading-relaxed">
@@ -46,8 +46,8 @@ export function Footer() {
 
                     <div>
                         <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground">문의</h3>
-                        <Link 
-                            href="/contact" 
+                        <Link
+                            href="/contact"
                             className="inline-flex items-center text-sm font-medium text-primary hover:underline"
                         >
                             전용 문의 폼 바로가기
@@ -61,12 +61,12 @@ export function Footer() {
                 <div className="mt-10 border-t border-border pt-8 text-center">
                     <div className="mb-4 rounded-lg bg-accent/30 p-4 text-xs leading-5 text-muted-foreground">
                         <p className="font-bold mb-1">[투자 면책조항]</p>
-                        본 서비스에서 제공하는 모든 정보는 투자 판단의 참고용이며, 투자 권유를 목적으로 하지 않습니다. 
-                        정보의 정확성을 위해 노력하나 오류나 지연이 발생할 수 있습니다. 
+                        본 서비스에서 제공하는 모든 정보는 투자 판단의 참고용이며, 투자 권유를 목적으로 하지 않습니다.
+                        정보의 정확성을 위해 노력하나 오류나 지연이 발생할 수 있습니다.
                         모든 투자의 최종 결과와 책임은 투자자 본인에게 있습니다.
                     </div>
                     <p className="text-xs text-muted-foreground">
-                        © {new Date().getFullYear()} KRX Intelligence. All rights reserved.
+                        © {new Date().getFullYear()} 제네시스 주식 리포트. All rights reserved.
                     </p>
                 </div>
             </div>

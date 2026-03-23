@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 import { getLatestMarketData } from "@/lib/api/market-api";
 import { getNextHighImpactEvent, getFlag } from "@/lib/api/economic-calendar";
 import { RefreshButton } from "@/components/dashboard/RefreshButton";
-import Image from "next/image";
 import { StockChart } from "@/components/common/StockChart";
+import Image from "next/image";
 
 // Contentlayer가 빌드 시간에 생성 — dynamic import로 안전하게
 let allMarketAnalyses: any[] = [];
@@ -57,7 +57,7 @@ export default async function Home() {
               실시간 한국 증시 인텔리전스
             </div>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground mb-4 leading-tight">
-              KRX Intelligence: <br />
+              제네시스 주식 리포트: <br />
               <span className="text-primary">한국 주식 분석</span> & 시황
             </h1>
             <p className="text-muted-foreground text-lg max-w-md leading-relaxed">
@@ -95,10 +95,10 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Market Indices - Featured Charts */}
+      {/* Market Indices - Featured Charts (Restored from previous version) */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <StockChart code="KOSPI" title="KOSPI" className="w-full h-full" />
-        <StockChart code="KOSDAQ" title="KOSDAQ" className="w-full h-full" />
+        <StockChart code="KOSPI" title="KOSPI" className="w-full" />
+        <StockChart code="KOSDAQ" title="KOSDAQ" className="w-full" />
       </div>
 
       {/* Market Indices Grid - Other Indicators */}
@@ -106,24 +106,33 @@ export default async function Home() {
         {marketData.indices
           .filter(idx => idx.name !== 'KOSPI' && idx.name !== 'KOSDAQ')
           .map((idx) => (
-          <div key={idx.name} className="rounded-xl border border-border bg-card p-4 shadow-sm transition-all hover:border-primary/50 hover:shadow-md">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-tight">{idx.name}</span>
-              {idx.status === "up" ? (
-                <TrendingUp className="h-4 w-4 text-kr-up" />
-              ) : (
-                <TrendingDown className="h-3.5 w-3.5 text-kr-down" />
-              )}
-            </div>
-            <div className="flex items-end justify-between">
-              <span className="text-xl font-bold tabular-nums tracking-tight">{idx.value}</span>
-              <div className={cn("flex flex-col items-end text-[10px] font-black leading-tight", idx.status === "up" ? "text-kr-up" : "text-kr-down")}>
-                <span>{idx.change}</span>
-                <span>{idx.percent}</span>
+            <div key={idx.name} className="rounded-xl border border-border bg-card p-5 shadow-sm transition-all hover:border-primary/50 hover:shadow-md">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-extrabold text-muted-foreground uppercase tracking-tight">{idx.name}</span>
+                {idx.status === "up" ? (
+                  <TrendingUp className="h-4 w-4 text-kr-up" />
+                ) : (
+                  <TrendingDown className="h-4 w-4 text-kr-down" />
+                )}
+              </div>
+              <div className="flex items-end justify-between">
+                <span className={cn("text-2xl font-bold tabular-nums",
+                  idx.status === "up" ? "text-kr-up font-black" :
+                    idx.status === "down" ? "text-kr-down font-black" : ""
+                )}>
+                  {idx.value}
+                </span>
+                <div className={cn("flex flex-col items-end text-[11px] font-bold",
+                  idx.status === "up" ? "text-kr-up" :
+                    idx.status === "down" ? "text-kr-down" :
+                      "text-muted-foreground"
+                )}>
+                  <span>{idx.change}</span>
+                  <span>{idx.percent}</span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -242,7 +251,9 @@ export default async function Home() {
               VIX (변동성 지수)
             </h3>
             {marketData.vix && (
-              <span className={cn("text-[10px] font-bold px-1.5 py-0.5 rounded", marketData.vix.status === 'up' ? "bg-red-100 text-kr-down" : "bg-green-100 text-kr-up")}>
+              <span className={cn("text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm",
+                marketData.vix.status === 'up' ? "bg-red-50 text-kr-up border border-red-100" : "bg-blue-50 text-kr-down border border-blue-100"
+              )}>
                 {marketData.vix.change} ({marketData.vix.percent})
               </span>
             )}
