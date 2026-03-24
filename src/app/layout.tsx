@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Noto_Sans_KR } from "next/font/google";
-import { GoogleTagManager } from "@next/third-parties/google";
+import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
 const notoSansKR = Noto_Sans_KR({
@@ -89,22 +89,10 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Google Analytics */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-SMKJLDBT10"></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-
-              gtag('config', 'G-SMKJLDBT10');
-            `,
-          }}
-        />
       </head>
       <body className={`${notoSansKR.variable} font-sans antialiased text-foreground`}>
         <GoogleTagManager gtmId="GTM-PCFN2MSK" />
+        <GoogleAnalytics gaId="G-SMKJLDBT10" />
         <SidebarProvider>
           <div className="flex min-h-screen bg-background relative overflow-hidden">
             <Sidebar />
@@ -123,4 +111,3 @@ export default function RootLayout({
     </html>
   );
 }
-
