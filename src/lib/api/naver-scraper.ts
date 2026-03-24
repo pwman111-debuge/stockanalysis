@@ -48,6 +48,30 @@ async function fetchNaverIndex(code: string, displayName: string): Promise<any> 
     };
 }
 
+// ────────────────────────────────────────────
+// 네이버 해외 지수 데이터 수집 (나스닥, S&P 500 등)
+// ────────────────────────────────────────────
+async function fetchNaverWorldIndex(code: string, displayName: string): Promise<any> {
+    const url = `https://api.stock.naver.com/index/${code}/basic`;
+    const res = await fetch(url, { headers: NAVER_HEADERS, cache: 'no-store' });
+    if (!res.ok) throw new Error(`[Naver World] HTTP ${res.status} – ${code}`);
+    const data: NaverIndexResponse = await res.json();
+
+    const direction = data.compareToPreviousPrice?.name ?? 'SAME';
+    const isUp = direction === 'RISING' || direction === 'UPPER_LIMIT';
+    const isDown = direction === 'FALLING' || direction === 'LOWER_LIMIT';
+    const status = isUp ? 'up' : isDown ? 'down' : 'steady';
+    const sign = isUp ? '+' : isDown ? '-' : '';
+
+    return {
+        name: displayName,
+        value: data.closePrice,
+        change: `${sign}${data.compareToPreviousClosePrice.replace(/^[+-]/, '')}`,
+        percent: `${sign}${data.fluctuationsRatio.replace(/^[+-]/, '')}%`,
+        status,
+    };
+}
+
 async function fetchVix(): Promise<any> {
     const url = 'https://api.stock.naver.com/index/.VIX/basic';
     const res = await fetch(url, { headers: NAVER_HEADERS, cache: 'no-store' });
@@ -127,18 +151,21 @@ async function fetchTossIndex(id: string, displayName: string, isYield: boolean 
 
     const diff = result.close - result.base;
     const change = Math.abs(diff);
-    const percent = ((change / result.base) * 100).toFixed(2);
+    // changeType이 아닌 실제 가격/금리 차이 기준(diff)으로 상승/하락 부호 결정
     const status = diff > 0 ? 'up' : diff < 0 ? 'down' : 'steady';
     const sign = status === 'up' ? '+' : status === 'down' ? '-' : '';
+
+    // 채권 금리(isYield)일 경우 주식과 같은 퍼센트 등락률 계산을 생략
+    const percentStr = isYield ? '' : `${sign}${((change / result.base) * 100).toFixed(2)}%`;
 
     return {
         name: displayName,
         value: isYield ? result.close.toFixed(3) : result.close.toLocaleString(undefined, { minimumFractionDigits: 2 }),
         change: `${sign}${isYield ? change.toFixed(3) : change.toFixed(2)}`,
-        percent: `${sign}${percent}%`,
+        percent: percentStr,
         status,
         rawClose: result.close,
-        rawChange: result.close - result.base
+        rawChange: diff
     };
 }
 
@@ -148,7 +175,7 @@ function calculateSpread(long: any, short: any, displayName: string): any {
     const prevSpread = (long.rawClose - long.rawChange) - (short.rawClose - short.rawChange);
     const change = spread - prevSpread;
     const sign = change > 0 ? '+' : '';
-    
+
     return {
         name: displayName,
         value: spread.toFixed(3),
@@ -165,13 +192,16 @@ function getKoreaTimeString(): string {
 }
 
 export async function fetchNaverMarketData(): Promise<MarketData> {
-    const [kospi, kosdaq, kospi200, usdkrw, supply, wti, us10y, us2y, kr10y, kr2y, vix] = await Promise.allSettled([
+    const [kospi, kosdaq, kospi200, nasdaq, sp500, usdkrw, supply, wti, gold, us10y, us2y, kr10y, kr2y, vix] = await Promise.allSettled([
         fetchNaverIndex('KOSPI', 'KOSPI'),
         fetchNaverIndex('KOSDAQ', 'KOSDAQ'),
         fetchNaverIndex('KPI200', 'KOSPI 200'),
+        fetchNaverWorldIndex('.IXIC', '나스닥 지수'),
+        fetchNaverWorldIndex('.INX', 'S&P 500'),
         fetchUSDKRW(),
         fetchInvestorSupply(),
         fetchTossIndex('RFU.CLv1', 'WTI 유가'),
+        fetchTossIndex('RFU.GCv1', '국제 금'),
         fetchTossIndex('ROB.US10YT-RR', '미국채 10년', true),
         fetchTossIndex('ROB.US2YT-RR', '미국채 2년', true),
         fetchTossIndex('KR1BENCH0010', '한국채 10년', true),
@@ -180,7 +210,7 @@ export async function fetchNaverMarketData(): Promise<MarketData> {
     ]);
 
     const indices: any[] = [];
-    [kospi, kosdaq, kospi200, usdkrw, wti, us10y, us2y, kr10y, kr2y].forEach(r => {
+    [kospi, kosdaq, kospi200, nasdaq, sp500, usdkrw, wti, gold, us10y, us2y, kr10y, kr2y].forEach(r => {
         if (r.status === 'fulfilled') indices.push(r.value);
     });
 

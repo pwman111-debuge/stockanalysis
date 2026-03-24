@@ -37,8 +37,11 @@ let cachedData: MarketData = {
         { name: 'KOSPI', value: '5,584.87', change: '+0.97', percent: '+0.02%', status: 'up' },
         { name: 'KOSDAQ', value: '1,154.67', change: '+38.26', percent: '+3.43%', status: 'up' },
         { name: 'KOSPI 200', value: '828.83', change: '-2.39', percent: '-0.29%', status: 'down' },
+        { name: '나스닥 지수', value: '16,000.00', change: '+100.00', percent: '+0.60%', status: 'up' },
+        { name: 'S&P 500', value: '5,100.00', change: '+30.00', percent: '+0.50%', status: 'up' },
         { name: 'USD/KRW', value: '1,485.00', change: '+6.00', percent: '+0.41%', status: 'up' },
         { name: 'WTI 유가', value: '78.50', change: '+1.20', percent: '+1.55%', status: 'up' },
+        { name: '국제 금', value: '2,150.50', change: '-10.00', percent: '-0.45%', status: 'down' },
         { name: '미국채 10년', value: '4.250', change: '+0.015', percent: '+0.35%', status: 'up' },
         { name: '미국채 2년', value: '4.520', change: '-0.010', percent: '-0.22%', status: 'down' },
         { name: '한국채 10년', value: '3.380', change: '+0.005', percent: '+0.15%', status: 'up' },
@@ -64,12 +67,12 @@ export async function getLatestMarketData(): Promise<MarketData> {
         try {
             console.log('[market-api] 캐시 만료 → 네이버 증권 데이터 수집 시작');
             const fresh = await fetchNaverMarketData();
-            
+
             // 토스 데이터 (WTI 유가, 미국채 등)가 정상 수집되었는지 확인
             const hasTossData = fresh.indices.some(idx => idx.name.includes("WTI") || idx.name.includes("미국채"));
-            
+
             cachedData = fresh;
-            
+
             if (hasTossData) {
                 cacheTimestamp = Date.now();
                 console.log('[market-api] 데이터 갱신 완료:', fresh.lastUpdated);
