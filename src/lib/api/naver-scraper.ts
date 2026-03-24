@@ -127,18 +127,21 @@ async function fetchTossIndex(id: string, displayName: string, isYield: boolean 
 
     const diff = result.close - result.base;
     const change = Math.abs(diff);
-    const percent = ((change / result.base) * 100).toFixed(2);
+    // changeType이 아닌 실제 가격/금리 차이 기준(diff)으로 상승/하락 부호 결정
     const status = diff > 0 ? 'up' : diff < 0 ? 'down' : 'steady';
     const sign = status === 'up' ? '+' : status === 'down' ? '-' : '';
+
+    // 채권 금리(isYield)일 경우 주식과 같은 퍼센트 등락률 계산을 생략
+    const percentStr = isYield ? '' : `${sign}${((change / result.base) * 100).toFixed(2)}%`;
 
     return {
         name: displayName,
         value: isYield ? result.close.toFixed(3) : result.close.toLocaleString(undefined, { minimumFractionDigits: 2 }),
         change: `${sign}${isYield ? change.toFixed(3) : change.toFixed(2)}`,
-        percent: `${sign}${percent}%`,
+        percent: percentStr,
         status,
         rawClose: result.close,
-        rawChange: result.close - result.base
+        rawChange: diff
     };
 }
 
@@ -148,7 +151,7 @@ function calculateSpread(long: any, short: any, displayName: string): any {
     const prevSpread = (long.rawClose - long.rawChange) - (short.rawClose - short.rawChange);
     const change = spread - prevSpread;
     const sign = change > 0 ? '+' : '';
-    
+
     return {
         name: displayName,
         value: spread.toFixed(3),
