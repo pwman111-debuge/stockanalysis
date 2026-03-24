@@ -25,20 +25,12 @@ export const metadata: Metadata = {
     siteName: "제네시스 주식 리포트",
     locale: "ko_KR",
     type: "website",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "제네시스 주식 리포트 - 한국 주식 분석 플랫폼",
-      },
-    ],
+
   },
   twitter: {
     card: "summary_large_image",
     title: "제네시스 주식 리포트 | 한국 주식 분석 및 실시간 증시 시황 플랫폼",
     description: "데이터 기반의 명확한 투자 인사이트, 실시간 시황 분석 및 국내 종목 리포트",
-    images: ["/og-image.png"],
   },
   icons: {
     icon: "/favicon.png",
