@@ -143,6 +143,7 @@ interface TossPriceResponse {
     };
 }
 
+
 async function fetchTossIndex(id: string, displayName: string, isYield: boolean = false): Promise<any> {
     const url = `https://wts-info-api.tossinvest.com/api/v1/index-prices/${id}`;
     const res = await fetch(url, { headers: TOSS_HEADERS, cache: 'no-store' });
@@ -165,6 +166,30 @@ async function fetchTossIndex(id: string, displayName: string, isYield: boolean 
         percent: percentStr,
         status,
         rawClose: result.close,
+        rawChange: diff
+    };
+}
+
+async function fetchNaverBondYield(symbol: string, displayName: string): Promise<any> {
+    const url = `https://stock.naver.com/api/securityService/economic/bond/${symbol}`;
+    const res = await fetch(url, { headers: NAVER_HEADERS, cache: 'no-store' });
+    if (!res.ok) throw new Error(`[Naver Bond] HTTP ${res.status} – ${symbol}`);
+    const data = await res.json();
+
+    const value = data.closePriceYield; // e.g. 4.344
+    const diff = data.yieldChange;      // e.g. -0.048
+    const percent = data.yieldChangePercent; // e.g. -1.0929
+
+    const status = diff > 0 ? 'up' : diff < 0 ? 'down' : 'steady';
+    const sign = status === 'up' ? '+' : status === 'down' ? '-' : '';
+
+    return {
+        name: displayName,
+        value: value.toFixed(3),
+        change: `${sign}${Math.abs(diff).toFixed(3)}`,
+        percent: `${sign}${Math.abs(percent).toFixed(2)}%`,
+        status,
+        rawClose: value,
         rawChange: diff
     };
 }
@@ -202,10 +227,10 @@ export async function fetchNaverMarketData(): Promise<MarketData> {
         fetchInvestorSupply(),
         fetchTossIndex('RFU.CLv1', 'WTI 유가'),
         fetchTossIndex('RFU.GCv1', '국제 금'),
-        fetchTossIndex('ROB.US10YT-RR', '미국채 10년', true),
-        fetchTossIndex('ROB.US2YT-RR', '미국채 2년', true),
-        fetchTossIndex('KR1BENCH0010', '한국채 10년', true),
-        fetchTossIndex('KR1BENCH0002', '한국채 2년', true),
+        fetchNaverBondYield('US10YT=RR', '미국채 10년'),
+        fetchNaverBondYield('US2YT=RR', '미국채 2년'),
+        fetchNaverBondYield('KR10YT=RR', '한국채 10년'),
+        fetchNaverBondYield('KR2YT=RR', '한국채 2년'),
         fetchVix(),
     ]);
 
