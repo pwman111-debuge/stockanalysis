@@ -107,7 +107,24 @@ export const MarketInsight = defineDocumentType(() => ({
     },
 }))
 
+
+export const StockPickFeedback = defineDocumentType(() => ({
+    name: 'StockPickFeedback',
+    filePathPattern: `picks-feedback/**/*.mdx`,
+    contentType: 'mdx',
+    fields: {
+        title: { type: 'string', required: true },
+        date: { type: 'date', required: true },
+        summary: { type: 'string', required: true },
+        tags: { type: 'list', of: { type: 'string' } },
+        thumbnail: { type: 'string' },
+    },
+    computedFields: {
+        url: { type: 'string', resolve: (post) => `/picks/feedback/${post._raw.flattenedPath.split('/').pop()}` },
+    },
+}))
+
 export default makeSource({
     contentDirPath: 'content',
-    documentTypes: [MarketAnalysis, StockPick, StockReport, Education, MarketInsight],
+    documentTypes: [MarketAnalysis, StockPick, StockReport, Education, MarketInsight, StockPickFeedback],
 })
