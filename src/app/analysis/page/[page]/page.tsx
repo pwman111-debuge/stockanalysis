@@ -7,7 +7,6 @@ const POSTS_PER_PAGE = 10;
 
 export const dynamic = 'force-static';
 export const dynamicParams = false;
-export const runtime = 'edge';
 
 export function generateStaticParams() {
     const totalReports = allStockReports.length;

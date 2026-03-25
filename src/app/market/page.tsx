@@ -14,7 +14,6 @@ export const metadata: Metadata = {
 const POSTS_PER_PAGE = 9;
 
 export const dynamic = 'force-static';
-export const runtime = 'edge';
 
 export default function MarketAnalysisPage() {
     const currentPage = 1;
