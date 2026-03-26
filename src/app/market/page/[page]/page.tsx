@@ -12,10 +12,15 @@ export function generateStaticParams() {
     const totalPosts = allMarketAnalyses.length;
     const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
     
-    // 1페이지는 /market에서 처리하므로 2페이지부터 생성
-    return Array.from({ length: totalPages - 1 }, (_, i) => ({
+    const pages = Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
         page: (i + 2).toString(),
     }));
+
+    // 빌드 에러 방지를 위해 콘텐츠가 부족하더라도 2페이지 이상을 정적으로 예약
+    if (pages.length === 0) {
+        return [{ page: '2' }];
+    }
+    return pages;
 }
 
 interface PageProps {
