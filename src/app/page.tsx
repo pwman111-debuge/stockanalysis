@@ -1,5 +1,5 @@
 export const dynamic = 'force-static';
-export const revalidate = 60; // 1분마다 페이지 재생성 (데이터 최신화)
+export const revalidate = 10; // 10초마다 페이지 재생성 (매우 빈번한 데이터 최신화)
 
 import { TrendingUp, TrendingDown, Users, Activity, ArrowRight, Calendar, Zap, Globe, BarChart3 } from "lucide-react";
 import Link from "next/link";

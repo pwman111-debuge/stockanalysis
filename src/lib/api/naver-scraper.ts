@@ -91,7 +91,8 @@ async function fetchVix(): Promise<any> {
 
 
 async function fetchNaverMarketIndex(category: string, code: string, displayName: string): Promise<any> {
-    const url = `https://m.stock.naver.com/front-api/marketIndex/productDetail?category=${category}&reutersCode=${code}`;
+    const timestamp = Date.now();
+    const url = `https://m.stock.naver.com/front-api/marketIndex/productDetail?category=${category}&reutersCode=${code}&_=${timestamp}`;
     const res = await fetch(url, { headers: NAVER_HEADERS, cache: 'no-store' });
     if (!res.ok) throw new Error(`[Naver Market] HTTP ${res.status} – ${code}`);
     const data = await res.json();
@@ -104,6 +105,8 @@ async function fetchNaverMarketIndex(category: string, code: string, displayName
     const isDown = direction === 'FALLING' || direction === 'LOWER_LIMIT';
     const status = isUp ? 'up' : isDown ? 'down' : 'steady';
     const sign = isUp ? '+' : isDown ? '-' : '';
+
+    console.log(`[naver-scraper] ${displayName} (${code}) 수집 완료: ${result.closePrice}`);
 
     // 환율 등 소수점이 필요한 경우를 위해 closePrice 그대로 사용 (1,508.00 형식)
     return {
@@ -216,6 +219,6 @@ export async function fetchNaverMarketData(): Promise<MarketData> {
         supply: supply.status === 'fulfilled' ? supply.value : [],
         yieldSpreads,
         vix: vix.status === 'fulfilled' ? vix.value : undefined,
-        lastUpdated: `${getKoreaTimeString()} (네이버/토스 실시간)`,
+        lastUpdated: `${getKoreaTimeString()} (네이버 실시간)`,
     };
 }
