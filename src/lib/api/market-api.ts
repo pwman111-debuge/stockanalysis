@@ -29,8 +29,8 @@ export interface MarketData {
     lastUpdated: string;
 }
 
-/** 캐시 TTL: 30분 */
-const CACHE_TTL = 30 * 60 * 1000;
+/** 캐시 TTL: 1분 (실시간성을 높이기 위해 1분으로 단축) */
+const CACHE_TTL = 1 * 60 * 1000;
 
 let cachedData: MarketData = {
     indices: [
@@ -68,17 +68,17 @@ export async function getLatestMarketData(): Promise<MarketData> {
             console.log('[market-api] 캐시 만료 → 네이버 증권 데이터 수집 시작');
             const fresh = await fetchNaverMarketData();
 
-            // 토스 데이터 (WTI 유가, 미국채 등)가 정상 수집되었는지 확인
-            const hasTossData = fresh.indices.some(idx => idx.name.includes("WTI") || idx.name.includes("미국채"));
+            // 필수 데이터 (WTI 유가, 미국채 등)가 정상 수집되었는지 확인
+            const hasMandatoryData = fresh.indices.some(idx => idx.name.includes("WTI") || idx.name.includes("미국채"));
 
             cachedData = fresh;
 
-            if (hasTossData) {
+            if (hasMandatoryData) {
                 cacheTimestamp = Date.now();
                 console.log('[market-api] 데이터 갱신 완료:', fresh.lastUpdated);
             } else {
-                console.warn('[market-api] 토스 증권 데이터 일부 수집 실패(점검 중). 5분 후 재시도합니다.');
-                cacheTimestamp = Date.now() - CACHE_TTL + (5 * 60 * 1000);
+                console.warn('[market-api] 필수 데이터 일부 수집 실패(점검 중). 30초 후 재시도합니다.');
+                cacheTimestamp = Date.now() - CACHE_TTL + (30 * 1000);
             }
         } catch (err) {
             console.error('[market-api] 실시간 수집 실패, 기존 캐시 사용:', err);
