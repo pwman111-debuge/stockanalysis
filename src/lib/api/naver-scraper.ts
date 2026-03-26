@@ -1,5 +1,5 @@
 /**
- * KRX Intelligence - 마켓 데이터 수집 모듈 (네이버 & 토스 증권 통합)
+ * KRX Intelligence - 마켓 데이터 수집 모듈 (네이버 증권 기반)
  */
 
 import { MarketData } from './market-api';
@@ -8,12 +8,6 @@ const NAVER_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
     'Accept': 'application/json',
     'Referer': 'https://m.stock.naver.com/',
-};
-
-const TOSS_HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-    'Accept': 'application/json',
-    'Origin': 'https://www.tossinvest.com',
 };
 
 // ────────────────────────────────────────────
@@ -93,32 +87,32 @@ async function fetchVix(): Promise<any> {
     };
 }
 
-async function fetchNaverMarketDetail(category: string, code: string, displayName: string): Promise<any> {
-    const url = `https://m.stock.naver.com/front-api/marketIndex/productDetail?category=${category}&reutersCode=${code}`;
+async function fetchNaverMarketIndex(category: string, code: string, displayName: string): Promise<any> {
+    const timestamp = Date.now();
+    const url = `https://m.stock.naver.com/front-api/marketIndex/productDetail?category=${category}&reutersCode=${code}&_=${timestamp}`;
     const res = await fetch(url, { headers: NAVER_HEADERS, cache: 'no-store' });
     if (!res.ok) throw new Error(`[Naver Market] HTTP ${res.status} – ${code}`);
     const data = await res.json();
-    const info = data.result;
+    const result = data.result;
 
-    const direction = info.fluctuationsType?.name ?? 'SAME';
+    if (!result) throw new Error(`[Naver Market] No result data for ${code}`);
+
+    const direction = result.fluctuationsType?.name ?? 'SAME';
     const isUp = direction === 'RISING' || direction === 'UPPER_LIMIT';
     const isDown = direction === 'FALLING' || direction === 'LOWER_LIMIT';
     const status = isUp ? 'up' : isDown ? 'down' : 'steady';
     const sign = isUp ? '+' : isDown ? '-' : '';
 
+    console.log(`[naver-scraper] ${displayName} (${code}) 수집 완료: ${result.closePrice}`);
+
     return {
         name: displayName,
-        value: info.closePrice,
-        change: `${sign}${info.fluctuations.replace(/^[+-]/, '')}`,
-        percent: `${sign}${info.fluctuationsRatio.replace(/^[+-]/, '')}%`,
+        value: result.closePrice,
+        change: `${sign}${result.fluctuations.replace(/^[+-]/, '')}`,
+        percent: `${sign}${result.fluctuationsRatio.replace(/^[+-]/, '')}%`,
         status,
     };
 }
-
-async function fetchUSDKRW(): Promise<any> {
-    return fetchNaverMarketDetail('exchange', 'FX_USDKRW', 'USD/KRW');
-}
-
 
 async function fetchInvestorSupply(): Promise<any[]> {
     const url = 'https://m.stock.naver.com/api/index/KOSPI/trend';
@@ -135,54 +129,15 @@ async function fetchInvestorSupply(): Promise<any[]> {
     ];
 }
 
-// ────────────────────────────────────────────
-// 토스 증권 데이터 수집 (WTI, 채권 금리)
-// ────────────────────────────────────────────
-
-interface TossPriceResponse {
-    result: {
-        close: number;
-        base: number;
-        changeType: 'UP' | 'DOWN' | 'SAME';
-    };
-}
-
-
-async function fetchTossIndex(id: string, displayName: string, isYield: boolean = false): Promise<any> {
-    const url = `https://wts-info-api.tossinvest.com/api/v1/index-prices/${id}`;
-    const res = await fetch(url, { headers: TOSS_HEADERS, cache: 'no-store' });
-    if (!res.ok) throw new Error(`[Toss] HTTP ${res.status} – ${id}`);
-    const { result }: TossPriceResponse = await res.json();
-
-    const diff = result.close - result.base;
-    const change = Math.abs(diff);
-    // changeType이 아닌 실제 가격/금리 차이 기준(diff)으로 상승/하락 부호 결정
-    const status = diff > 0 ? 'up' : diff < 0 ? 'down' : 'steady';
-    const sign = status === 'up' ? '+' : status === 'down' ? '-' : '';
-
-    // 채권 금리(isYield)일 경우 주식과 같은 퍼센트 등락률 계산을 생략
-    const percentStr = isYield ? '' : `${sign}${((change / result.base) * 100).toFixed(2)}%`;
-
-    return {
-        name: displayName,
-        value: isYield ? result.close.toFixed(3) : result.close.toLocaleString(undefined, { minimumFractionDigits: 2 }),
-        change: `${sign}${isYield ? change.toFixed(3) : change.toFixed(2)}`,
-        percent: percentStr,
-        status,
-        rawClose: result.close,
-        rawChange: diff
-    };
-}
-
 async function fetchNaverBondYield(symbol: string, displayName: string): Promise<any> {
     const url = `https://stock.naver.com/api/securityService/economic/bond/${symbol}`;
     const res = await fetch(url, { headers: NAVER_HEADERS, cache: 'no-store' });
     if (!res.ok) throw new Error(`[Naver Bond] HTTP ${res.status} – ${symbol}`);
     const data = await res.json();
 
-    const value = data.closePriceYield; // e.g. 4.344
-    const diff = data.yieldChange;      // e.g. -0.048
-    const percent = data.yieldChangePercent; // e.g. -1.0929
+    const value = data.closePriceYield; 
+    const diff = data.yieldChange;      
+    const percent = data.yieldChangePercent; 
 
     const status = diff > 0 ? 'up' : diff < 0 ? 'down' : 'steady';
     const sign = status === 'up' ? '+' : status === 'down' ? '-' : '';
@@ -227,10 +182,10 @@ export async function fetchNaverMarketData(): Promise<MarketData> {
         fetchNaverIndex('KPI200', 'KOSPI 200'),
         fetchNaverWorldIndex('.IXIC', '나스닥 지수'),
         fetchNaverWorldIndex('.INX', 'S&P 500'),
-        fetchUSDKRW(),
+        fetchNaverMarketIndex('exchange', 'FX_USDKRW', 'USD/KRW'),
         fetchInvestorSupply(),
-        fetchNaverMarketDetail('energy', 'CLcv1', 'WTI 유가'),
-        fetchTossIndex('RFU.GCv1', '국제 금'),
+        fetchNaverMarketIndex('energy', 'CLcv1', 'WTI 유가'),
+        fetchNaverMarketIndex('metals', 'GCcv1', '국제 금'),
         fetchNaverBondYield('US10YT=RR', '미국채 10년'),
         fetchNaverBondYield('US2YT=RR', '미국채 2년'),
         fetchNaverBondYield('KR10YT=RR', '한국채 10년'),
@@ -256,6 +211,6 @@ export async function fetchNaverMarketData(): Promise<MarketData> {
         supply: supply.status === 'fulfilled' ? supply.value : [],
         yieldSpreads,
         vix: vix.status === 'fulfilled' ? vix.value : undefined,
-        lastUpdated: `${getKoreaTimeString()} (네이버/토스 실시간)`,
+        lastUpdated: `${getKoreaTimeString()} (네이버 실시간)`,
     };
 }
