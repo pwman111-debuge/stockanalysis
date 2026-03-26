@@ -93,27 +93,32 @@ async function fetchVix(): Promise<any> {
     };
 }
 
-async function fetchUSDKRW(): Promise<any> {
-    const url = 'https://api.stock.naver.com/marketindex/exchange/FX_USDKRW';
-    const res = await fetch(url, { headers: NAVER_HEADERS, cache: 'no-store' });
-    if (!res.ok) throw new Error(`[Naver] HTTP ${res.status} – USD/KRW`);
-    const data = await res.json();
-    const info = data.exchangeInfo;
 
-    const direction = info.fluctuationsType?.name ?? 'SAME';
+async function fetchNaverMarketIndex(category: string, code: string, displayName: string): Promise<any> {
+    const url = `https://m.stock.naver.com/front-api/marketIndex/productDetail?category=${category}&reutersCode=${code}`;
+    const res = await fetch(url, { headers: NAVER_HEADERS, cache: 'no-store' });
+    if (!res.ok) throw new Error(`[Naver Market] HTTP ${res.status} – ${code}`);
+    const data = await res.json();
+    const result = data.result;
+
+    if (!result) throw new Error(`[Naver Market] No result data for ${code}`);
+
+    const direction = result.fluctuationsType?.name ?? 'SAME';
     const isUp = direction === 'RISING' || direction === 'UPPER_LIMIT';
     const isDown = direction === 'FALLING' || direction === 'LOWER_LIMIT';
     const status = isUp ? 'up' : isDown ? 'down' : 'steady';
     const sign = isUp ? '+' : isDown ? '-' : '';
 
+    // 환율 등 소수점이 필요한 경우를 위해 closePrice 그대로 사용 (1,508.00 형식)
     return {
-        name: 'USD/KRW',
-        value: info.closePrice,
-        change: `${sign}${info.fluctuations.replace(/^[+-]/, '')}`,
-        percent: `${sign}${info.fluctuationsRatio.replace(/^[+-]/, '')}%`,
+        name: displayName,
+        value: result.closePrice,
+        change: `${sign}${result.fluctuations.replace(/^[+-]/, '')}`,
+        percent: `${sign}${result.fluctuationsRatio.replace(/^[+-]/, '')}%`,
         status,
     };
 }
+
 
 
 async function fetchInvestorSupply(): Promise<any[]> {
@@ -223,9 +228,9 @@ export async function fetchNaverMarketData(): Promise<MarketData> {
         fetchNaverIndex('KPI200', 'KOSPI 200'),
         fetchNaverWorldIndex('.IXIC', '나스닥 지수'),
         fetchNaverWorldIndex('.INX', 'S&P 500'),
-        fetchUSDKRW(),
+        fetchNaverMarketIndex('exchange', 'FX_USDKRW', 'USD/KRW'),
         fetchInvestorSupply(),
-        fetchTossIndex('RFU.CLv1', 'WTI 유가'),
+        fetchNaverMarketIndex('energy', 'CLcv1', 'WTI 유가'),
         fetchTossIndex('RFU.GCv1', '국제 금'),
         fetchNaverBondYield('US10YT=RR', '미국채 10년'),
         fetchNaverBondYield('US2YT=RR', '미국채 2년'),
