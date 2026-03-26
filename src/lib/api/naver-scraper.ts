@@ -93,12 +93,12 @@ async function fetchVix(): Promise<any> {
     };
 }
 
-async function fetchUSDKRW(): Promise<any> {
-    const url = 'https://api.stock.naver.com/marketindex/exchange/FX_USDKRW';
+async function fetchNaverMarketDetail(category: string, code: string, displayName: string): Promise<any> {
+    const url = `https://m.stock.naver.com/front-api/marketIndex/productDetail?category=${category}&reutersCode=${code}`;
     const res = await fetch(url, { headers: NAVER_HEADERS, cache: 'no-store' });
-    if (!res.ok) throw new Error(`[Naver] HTTP ${res.status} – USD/KRW`);
+    if (!res.ok) throw new Error(`[Naver Market] HTTP ${res.status} – ${code}`);
     const data = await res.json();
-    const info = data.exchangeInfo;
+    const info = data.result;
 
     const direction = info.fluctuationsType?.name ?? 'SAME';
     const isUp = direction === 'RISING' || direction === 'UPPER_LIMIT';
@@ -107,12 +107,16 @@ async function fetchUSDKRW(): Promise<any> {
     const sign = isUp ? '+' : isDown ? '-' : '';
 
     return {
-        name: 'USD/KRW',
+        name: displayName,
         value: info.closePrice,
         change: `${sign}${info.fluctuations.replace(/^[+-]/, '')}`,
         percent: `${sign}${info.fluctuationsRatio.replace(/^[+-]/, '')}%`,
         status,
     };
+}
+
+async function fetchUSDKRW(): Promise<any> {
+    return fetchNaverMarketDetail('exchange', 'FX_USDKRW', 'USD/KRW');
 }
 
 
@@ -225,7 +229,7 @@ export async function fetchNaverMarketData(): Promise<MarketData> {
         fetchNaverWorldIndex('.INX', 'S&P 500'),
         fetchUSDKRW(),
         fetchInvestorSupply(),
-        fetchTossIndex('RFU.CLv1', 'WTI 유가'),
+        fetchNaverMarketDetail('energy', 'CLcv1', 'WTI 유가'),
         fetchTossIndex('RFU.GCv1', '국제 금'),
         fetchNaverBondYield('US10YT=RR', '미국채 10년'),
         fetchNaverBondYield('US2YT=RR', '미국채 2년'),
