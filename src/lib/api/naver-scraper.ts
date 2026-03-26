@@ -1,5 +1,5 @@
 /**
- * KRX Intelligence - 마켓 데이터 수집 모듈 (네이버 & 토스 증권 통합)
+ * KRX Intelligence - 마켓 데이터 수집 모듈 (네이버 증권 기반)
  */
 
 import { MarketData } from './market-api';
@@ -10,11 +10,7 @@ const NAVER_HEADERS = {
     'Referer': 'https://m.stock.naver.com/',
 };
 
-const TOSS_HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-    'Accept': 'application/json',
-    'Origin': 'https://www.tossinvest.com',
-};
+
 
 // ────────────────────────────────────────────
 // 네이버 증권 데이터 수집 (지수, 환율, 수급)
@@ -136,44 +132,7 @@ async function fetchInvestorSupply(): Promise<any[]> {
     ];
 }
 
-// ────────────────────────────────────────────
-// 토스 증권 데이터 수집 (WTI, 채권 금리)
-// ────────────────────────────────────────────
 
-interface TossPriceResponse {
-    result: {
-        close: number;
-        base: number;
-        changeType: 'UP' | 'DOWN' | 'SAME';
-    };
-}
-
-
-async function fetchTossIndex(id: string, displayName: string, isYield: boolean = false): Promise<any> {
-    const url = `https://wts-info-api.tossinvest.com/api/v1/index-prices/${id}`;
-    const res = await fetch(url, { headers: TOSS_HEADERS, cache: 'no-store' });
-    if (!res.ok) throw new Error(`[Toss] HTTP ${res.status} – ${id}`);
-    const { result }: TossPriceResponse = await res.json();
-
-    const diff = result.close - result.base;
-    const change = Math.abs(diff);
-    // changeType이 아닌 실제 가격/금리 차이 기준(diff)으로 상승/하락 부호 결정
-    const status = diff > 0 ? 'up' : diff < 0 ? 'down' : 'steady';
-    const sign = status === 'up' ? '+' : status === 'down' ? '-' : '';
-
-    // 채권 금리(isYield)일 경우 주식과 같은 퍼센트 등락률 계산을 생략
-    const percentStr = isYield ? '' : `${sign}${((change / result.base) * 100).toFixed(2)}%`;
-
-    return {
-        name: displayName,
-        value: isYield ? result.close.toFixed(3) : result.close.toLocaleString(undefined, { minimumFractionDigits: 2 }),
-        change: `${sign}${isYield ? change.toFixed(3) : change.toFixed(2)}`,
-        percent: percentStr,
-        status,
-        rawClose: result.close,
-        rawChange: diff
-    };
-}
 
 async function fetchNaverBondYield(symbol: string, displayName: string): Promise<any> {
     const url = `https://stock.naver.com/api/securityService/economic/bond/${symbol}`;
@@ -231,7 +190,7 @@ export async function fetchNaverMarketData(): Promise<MarketData> {
         fetchNaverMarketIndex('exchange', 'FX_USDKRW', 'USD/KRW'),
         fetchInvestorSupply(),
         fetchNaverMarketIndex('energy', 'CLcv1', 'WTI 유가'),
-        fetchTossIndex('RFU.GCv1', '국제 금'),
+        fetchNaverMarketIndex('metals', 'GCcv1', '국제 금'),
         fetchNaverBondYield('US10YT=RR', '미국채 10년'),
         fetchNaverBondYield('US2YT=RR', '미국채 2년'),
         fetchNaverBondYield('KR10YT=RR', '한국채 10년'),
