@@ -68,20 +68,38 @@ export async function getLatestMarketData(): Promise<MarketData> {
             console.log('[market-api] 캐시 만료 → 네이버 증권 데이터 수집 시작');
             const fresh = await fetchNaverMarketData();
 
-            // 필수 데이터 (WTI 유가, 미국채 등)가 정상 수집되었는지 확인
-            const hasMandatoryData = fresh.indices.some(idx => idx.name.includes("WTI") || idx.name.includes("미국채"));
+            // 이전 캐시 데이터에서 현재 수집되지 않은 항목을 유지하기 위한 병합 로직
+            // (예: WTI 수집 실패 시 이전 캐시의 WTI 값을 유지)
+            const mergedIndices = [...cachedData.indices];
+            fresh.indices.forEach(newIdx => {
+                const index = mergedIndices.findIndex(oldIdx => oldIdx.name === newIdx.name);
+                if (index !== -1) {
+                    mergedIndices[index] = newIdx;
+                } else {
+                    mergedIndices.push(newIdx);
+                }
+            });
 
-            cachedData = fresh;
+            // 필수 데이터 (WTI 유가, 환율, 미국채 중 최소 하나)가 정상 수집되었는지 확인
+            const hasValidData = fresh.indices.length > 5; // 주요 지수들이 수집되었는지
 
-            if (hasMandatoryData) {
+            if (hasValidData) {
+                cachedData = {
+                    ...fresh,
+                    indices: mergedIndices,
+                    supply: fresh.supply.length > 0 ? fresh.supply : cachedData.supply,
+                    yieldSpreads: fresh.yieldSpreads && fresh.yieldSpreads.length > 0 ? fresh.yieldSpreads : cachedData.yieldSpreads,
+                    vix: fresh.vix || cachedData.vix,
+                };
                 cacheTimestamp = Date.now();
                 console.log('[market-api] 데이터 갱신 완료:', fresh.lastUpdated);
             } else {
-                console.warn('[market-api] 필수 데이터 일부 수집 실패(점검 중). 30초 후 재시도합니다.');
+                console.warn('[market-api] 수집된 데이터가 너무 적습니다. 30초 후 재시도합니다.');
                 cacheTimestamp = Date.now() - CACHE_TTL + (30 * 1000);
             }
         } catch (err) {
             console.error('[market-api] 실시간 수집 실패, 기존 캐시 사용:', err);
+            // 실패 시 5분 동안 재시도 없이 기존 캐시 유지
             cacheTimestamp = Date.now() - CACHE_TTL + (5 * 60 * 1000);
         }
     }
