@@ -2,7 +2,7 @@
 /**
  * KRX Intelligence - 통합 마켓 데이터 API
  * 네이버 증권에서 실시간 데이터를 수집하고 캐싱하여 제공합니다.
- * 캐시가 30분 이상 오래된 경우 자동으로 갱신합니다.
+ * 캐시가 10분 이상 오래된 경우 자동으로 갱신합니다.
  */
 
 import { fetchNaverMarketData } from './naver-scraper';
@@ -29,8 +29,8 @@ export interface MarketData {
     lastUpdated: string;
 }
 
-/** 캐시 TTL: 1분 (실시간성을 높이기 위해 1분으로 단축) */
-const CACHE_TTL = 1 * 60 * 1000;
+/** 캐시 TTL: 10분 (네이버 차단 방지 및 안정성 확보를 위해 연장) */
+const CACHE_TTL = 10 * 60 * 1000;
 
 let cachedData: MarketData = {
     indices: [
