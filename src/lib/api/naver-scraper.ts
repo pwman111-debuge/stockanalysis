@@ -12,8 +12,6 @@ const NAVER_HEADERS = {
     'Origin': 'https://m.stock.naver.com',
 };
 
-
-
 // ────────────────────────────────────────────
 // 네이버 증권 데이터 수집 (지수, 환율, 수급)
 // ────────────────────────────────────────────
@@ -90,7 +88,6 @@ async function fetchVix(): Promise<any> {
         status,
     };
 }
-
 
 async function fetchNaverMarketMajors(): Promise<Map<string, any>> {
     const timestamp = Date.now();
@@ -180,8 +177,6 @@ async function fetchNaverMarketIndex(category: string, code: string, displayName
     }
 }
 
-
-
 async function fetchInvestorSupply(): Promise<any[]> {
     const url = 'https://m.stock.naver.com/api/index/KOSPI/trend';
     const res = await fetch(url, { headers: NAVER_HEADERS, cache: 'no-store' });
@@ -197,17 +192,15 @@ async function fetchInvestorSupply(): Promise<any[]> {
     ];
 }
 
-
-
 async function fetchNaverBondYield(symbol: string, displayName: string): Promise<any> {
     const url = `https://stock.naver.com/api/securityService/economic/bond/${symbol}`;
     const res = await fetch(url, { headers: NAVER_HEADERS, cache: 'no-store' });
     if (!res.ok) throw new Error(`[Naver Bond] HTTP ${res.status} – ${symbol}`);
     const data = await res.json();
 
-    const value = data.closePriceYield; // e.g. 4.344
-    const diff = data.yieldChange;      // e.g. -0.048
-    const percent = data.yieldChangePercent; // e.g. -1.0929
+    const value = data.closePriceYield;
+    const diff = data.yieldChange;
+    const percent = data.yieldChangePercent;
 
     const status = diff > 0 ? 'up' : diff < 0 ? 'down' : 'steady';
     const sign = status === 'up' ? '+' : status === 'down' ? '-' : '';
