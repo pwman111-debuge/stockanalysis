@@ -243,7 +243,7 @@ export default async function Home() {
 
       {/* Overview Cards Section */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* ② VIX 공포 지수 — 실시간 데이터 기반 */}
+        {/* ② VIX 공포 지수 — 네이버 데이터 기반 */}
         <div className="rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider flex items-center">
@@ -363,7 +363,7 @@ export default async function Home() {
           </Link>
         </div>
 
-        {/* ④ 장단기 금리차 (10Y-2Y) — 토계 데이터 기반 */}
+        {/* ④ 장단기 금리차 (10Y-2Y) — 네이버 데이터 기반 */}
         <div className="rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 p-6 shadow-sm">
           <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center">
             <BarChart3 className="mr-1.5 h-4 w-4" />
@@ -397,7 +397,6 @@ export default async function Home() {
             })}
           </div>
           <p className="mt-5 text-[10px] text-muted-foreground leading-tight">
-            * 토스 증권 실시간 데이터 기반<br />
             * <strong>역전(마이너스)</strong> 발생 시 경기 침체의 강력한 신호로 해석됩니다.
           </p>
         </div>
