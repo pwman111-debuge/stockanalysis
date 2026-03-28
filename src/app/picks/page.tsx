@@ -65,7 +65,17 @@ export default function PicksPage() {
                                             <div className="bg-primary/10 p-2.5 rounded-xl group-hover:scale-110 transition-transform duration-500">
                                                 <Layers className="h-5 w-5 text-primary" />
                                             </div>
-                                            <span className="text-xs font-black text-primary tracking-widest">GENESIS REPORT</span>
+                                            <span className="text-xs font-black text-primary tracking-widest uppercase">GENESIS REPORT</span>
+                                            {report.term && (
+                                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-bold shadow-sm animate-pulse ml-1 ${
+                                                    report.term === 'short' ? 'bg-amber-100 text-amber-600 border border-amber-200' :
+                                                    report.term === 'mid' ? 'bg-emerald-100 text-emerald-600 border border-emerald-200' :
+                                                    'bg-slate-100 text-slate-500 border border-slate-200'
+                                                }`}>
+                                                    {report.term === 'short' ? 'PRO | 단기' : 
+                                                     report.term === 'mid' ? '중기' : '장기'}
+                                                </span>
+                                            )}
                                         </div>
                                         <div className="flex items-center text-[xs] text-muted-foreground font-semibold bg-muted/50 px-3 py-1.5 rounded-full">
                                             <Calendar className="mr-1.5 h-3.5 w-3.5" />

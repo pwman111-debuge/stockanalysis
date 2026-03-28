@@ -60,7 +60,7 @@ export const StockReport = defineDocumentType(() => ({
         currentPrice: { type: 'number', required: true },
         targetPrice: { type: 'number', required: true },
         stopLoss: { type: 'number' },
-        term: { type: 'string' },
+        term: { type: 'enum', options: ['short', 'mid', 'long'], required: false },
         priceUpside: { type: 'string' },
         sector: { type: 'string' },
         category: { type: 'string' },
