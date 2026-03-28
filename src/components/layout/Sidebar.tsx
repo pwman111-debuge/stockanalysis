@@ -19,7 +19,7 @@ const menuItems = [
     { name: "대시보드", href: "/", icon: LayoutDashboard },
     { name: "시황 분석", href: "/market", icon: TrendingUp },
     { name: "마켓 인사이트", href: "/insight", icon: Zap },
-    { name: "유망 종목", href: "/picks", icon: Search },
+    { name: "유망 종목", href: "/picks", icon: Search, isPro: true },
     { name: "투자 성과 리포트", href: "/picks/feedback", icon: ClipboardCheck },
     { name: "종목 리포트", href: "/analysis", icon: BarChart3 },
     { name: "경제 캘린더", href: "/calendar", icon: Calendar },
@@ -82,7 +82,17 @@ export function Sidebar() {
                                     )}
                                 >
                                     <item.icon className={cn("mr-3 h-5 w-5", isActive ? "" : "text-muted-foreground group-hover:text-accent-foreground")} />
-                                    {item.name}
+                                    <span className="flex-1">{item.name}</span>
+                                    {item.isPro && (
+                                        <span className={cn(
+                                            "inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-bold shadow-sm transition-all animate-pulse",
+                                            isActive
+                                                ? "bg-white/20 text-white border border-white/30"
+                                                : "bg-amber-100 text-amber-600 border border-amber-200"
+                                        )}>
+                                            PRO
+                                        </span>
+                                    )}
                                 </Link>
                             );
                         })}
