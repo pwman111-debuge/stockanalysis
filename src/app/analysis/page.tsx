@@ -44,16 +44,6 @@ export default function AnalysisPage() {
                                     <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 uppercase">
                                         {report.reportType}
                                     </span>
-                                    {report.term && (
-                                        <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase border shadow-sm ${
-                                            report.term === 'short' ? 'bg-amber-100 text-amber-600 border-amber-200 animate-pulse' :
-                                            report.term === 'mid' ? 'bg-emerald-100 text-emerald-600 border-emerald-200' :
-                                            'bg-slate-100 text-slate-500 border-slate-200'
-                                        }`}>
-                                            {report.term === 'short' ? 'PRO | 단기' : 
-                                             report.term === 'mid' ? '중기' : '장기'}
-                                        </span>
-                                    )}
                                     <span className="text-xs text-muted-foreground">{report.market} | {report.ticker}</span>
                                 </div>
                                 <Link href={report.url}>
