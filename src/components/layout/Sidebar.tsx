@@ -20,7 +20,7 @@ const menuItems = [
     { name: "시황 분석", href: "/market", icon: TrendingUp },
     { name: "마켓 인사이트", href: "/insight", icon: Zap },
     { name: "유망 종목", href: "/picks", icon: Search },
-    { name: "투자 성과 리뷰", href: "/picks/feedback", icon: ClipboardCheck },
+    { name: "투자 성과 리포트", href: "/picks/feedback", icon: ClipboardCheck },
     { name: "종목 리포트", href: "/analysis", icon: BarChart3 },
     { name: "경제 캘린더", href: "/calendar", icon: Calendar },
     { name: "투자 교육", href: "/education", icon: BookOpen },
