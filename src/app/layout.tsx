@@ -122,12 +122,11 @@ export default function RootLayout({
             })();
           `}}
         />
-        <Script
-          id="google-adsense"
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5479680289617146"
           crossOrigin="anonymous"
-          strategy="afterInteractive"
         />
         <Script
           id="json-ld"
