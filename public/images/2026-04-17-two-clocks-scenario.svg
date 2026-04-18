@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" font-family="'Pretendard','Noto Sans KR','Segoe UI',sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#111b2e"/>
+    </linearGradient>
+    <linearGradient id="usGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1e3a8a"/>
+      <stop offset="1" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="irGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7c2d12"/>
+      <stop offset="1" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#10b981"/>
+      <stop offset="1" stop-color="#047857"/>
+    </linearGradient>
+    <linearGradient id="yellowGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f59e0b"/>
+      <stop offset="1" stop-color="#b45309"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ef4444"/>
+      <stop offset="1" stop-color="#991b1b"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="url(#bgGrad)"/>
+
+  <!-- Header -->
+  <text x="600" y="54" text-anchor="middle" font-size="30" font-weight="800" fill="#e2e8f0">
+    미·이란 전황 · 중간선거 · 이란 초인플레이션
+  </text>
+  <text x="600" y="86" text-anchor="middle" font-size="18" font-weight="500" fill="#94a3b8">
+    "Two Clocks" — 양방향 종전 압박과 한국 증시 섹터 프레임워크
+  </text>
+  <text x="600" y="110" text-anchor="middle" font-size="13" fill="#64748b">2026. 04. 17  |  Market Insight</text>
+
+  <!-- Two Clocks -->
+  <!-- US Clock -->
+  <g filter="url(#shadow)">
+    <rect x="70" y="150" width="470" height="230" rx="14" fill="url(#usGrad)" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <text x="95" y="188" font-size="22" font-weight="800" fill="#dbeafe">🇺🇸 트럼프의 정치 시계</text>
+  <text x="95" y="213" font-size="13" fill="#93c5fd">11월 3일 중간선거 D-199</text>
+
+  <text x="95" y="246" font-size="14" fill="#e2e8f0">· 지지율 <tspan font-weight="700" fill="#fca5a5">38%</tspan> (퀴니피악) / 35% (CNN) — 2기 최저</text>
+  <text x="95" y="272" font-size="14" fill="#e2e8f0">· 이란전 반대 여론 <tspan font-weight="700" fill="#fca5a5">60%</tspan>, 대응 부정 64%</text>
+  <text x="95" y="298" font-size="14" fill="#e2e8f0">· 일반투표 民 <tspan font-weight="700" fill="#fca5a5">47.5%</tspan> vs 共 41.8%</text>
+  <text x="95" y="324" font-size="14" fill="#e2e8f0">· 무소속 지지 <tspan font-weight="700" fill="#fca5a5">22%</tspan> (YouGov)</text>
+  <text x="95" y="354" font-size="13" fill="#fbbf24" font-weight="700">→ 11월 이전 "승리 선언" 출구 절박</text>
+
+  <!-- Iran Clock -->
+  <g filter="url(#shadow)">
+    <rect x="660" y="150" width="470" height="230" rx="14" fill="url(#irGrad)" stroke="#f97316" stroke-width="1.5"/>
+  </g>
+  <text x="685" y="188" font-size="22" font-weight="800" fill="#fed7aa">🇮🇷 이란의 경제 시계</text>
+  <text x="685" y="213" font-size="13" fill="#fdba74">체제 붕괴 임박 경고</text>
+
+  <text x="685" y="246" font-size="14" fill="#e2e8f0">· 중앙은행 <tspan font-weight="700" fill="#fca5a5">180%</tspan> 인플레이션 경고</text>
+  <text x="685" y="272" font-size="14" fill="#e2e8f0">· 리알화 달러당 <tspan font-weight="700" fill="#fca5a5">1,750,000</tspan> (사상 최저)</text>
+  <text x="685" y="298" font-size="14" fill="#e2e8f0">· 식품 인플레 <tspan font-weight="700" fill="#fca5a5">105%</tspan> / 유지류 219%</text>
+  <text x="685" y="324" font-size="14" fill="#e2e8f0">· 기아 <tspan font-weight="700" fill="#fca5a5">700만 명</tspan>, 빈곤율 22~50%</text>
+  <text x="685" y="354" font-size="13" fill="#fbbf24" font-weight="700">→ 최고지도자 공백 + 1979년 이후 최대 시위</text>
+
+  <!-- Converging arrows -->
+  <g stroke="#fbbf24" stroke-width="3" fill="none" marker-end="url(#arrowhead)">
+    <path d="M 310 395 Q 450 440 540 440" stroke-dasharray="none"/>
+    <path d="M 890 395 Q 750 440 660 440"/>
+  </g>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <!-- Central Convergence Badge -->
+  <g filter="url(#shadow)">
+    <rect x="470" y="415" width="260" height="72" rx="36" fill="#fbbf24"/>
+  </g>
+  <text x="600" y="450" text-anchor="middle" font-size="18" font-weight="800" fill="#0b1220">양방향 종전 압박</text>
+  <text x="600" y="472" text-anchor="middle" font-size="12" fill="#422006">Face-Saving Exit Needed</text>
+
+  <!-- Scenario Row -->
+  <text x="70" y="540" font-size="18" font-weight="800" fill="#e2e8f0">📊 시나리오별 확률</text>
+
+  <!-- Scenario A -->
+  <g filter="url(#shadow)">
+    <rect x="70" y="560" width="260" height="100" rx="10" fill="#065f46" stroke="#10b981" stroke-width="1"/>
+  </g>
+  <text x="86" y="588" font-size="13" fill="#a7f3d0">시나리오 A</text>
+  <text x="86" y="614" font-size="15" font-weight="700" fill="#ecfdf5">휴전 연장 (4~8주)</text>
+  <text x="86" y="644" font-size="26" font-weight="800" fill="#34d399">55~65%</text>
+
+  <!-- Scenario B -->
+  <g filter="url(#shadow)">
+    <rect x="345" y="560" width="260" height="100" rx="10" fill="#115e59" stroke="#14b8a6" stroke-width="1"/>
+  </g>
+  <text x="361" y="588" font-size="13" fill="#99f6e4">시나리오 B</text>
+  <text x="361" y="614" font-size="15" font-weight="700" fill="#ccfbf1">부분 종전·잠정 합의</text>
+  <text x="361" y="644" font-size="26" font-weight="800" fill="#2dd4bf">20~25%</text>
+
+  <!-- Scenario C -->
+  <g filter="url(#shadow)">
+    <rect x="620" y="560" width="260" height="100" rx="10" fill="#7f1d1d" stroke="#ef4444" stroke-width="1"/>
+  </g>
+  <text x="636" y="588" font-size="13" fill="#fecaca">시나리오 C</text>
+  <text x="636" y="614" font-size="15" font-weight="700" fill="#fef2f2">결렬·재교전</text>
+  <text x="636" y="644" font-size="26" font-weight="800" fill="#f87171">15~20%</text>
+
+  <!-- Scenario D -->
+  <g filter="url(#shadow)">
+    <rect x="895" y="560" width="235" height="100" rx="10" fill="#581c87" stroke="#a855f7" stroke-width="1"/>
+  </g>
+  <text x="911" y="588" font-size="13" fill="#e9d5ff">시나리오 D (Black Swan)</text>
+  <text x="911" y="614" font-size="15" font-weight="700" fill="#faf5ff">이란 체제 붕괴</text>
+  <text x="911" y="644" font-size="26" font-weight="800" fill="#c084fc">5~10%</text>
+
+  <!-- Sector strip -->
+  <text x="70" y="700" font-size="18" font-weight="800" fill="#e2e8f0">🇰🇷 한국 증시 섹터 민감도</text>
+
+  <g>
+    <rect x="70" y="720" width="360" height="58" rx="8" fill="url(#greenGrad)" opacity="0.9"/>
+    <text x="88" y="742" font-size="12" font-weight="700" fill="#022c22">🟢 BASE (휴전 연장·부분 종전)</text>
+    <text x="88" y="764" font-size="13" fill="#f0fdf4">반도체 · 조선 · 자동차 · 석유화학 · 콘텐츠</text>
+  </g>
+
+  <g>
+    <rect x="445" y="720" width="280" height="58" rx="8" fill="url(#yellowGrad)" opacity="0.9"/>
+    <text x="463" y="742" font-size="12" font-weight="700" fill="#451a03">🟡 중립 (유가 박스권)</text>
+    <text x="463" y="764" font-size="13" fill="#fef3c7">항공·해운 · 건설 · 방산(단기)</text>
+  </g>
+
+  <g>
+    <rect x="740" y="720" width="390" height="58" rx="8" fill="url(#redGrad)" opacity="0.9"/>
+    <text x="758" y="742" font-size="12" font-weight="700" fill="#450a0a">🔴 BEAR / 헤지 (결렬·재교전)</text>
+    <text x="758" y="764" font-size="13" fill="#fef2f2">방산 · 신재생·원자력 · 금 · 식량·비료</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="600" y="795" text-anchor="middle" font-size="10" fill="#475569">
+    ⚠ 본 인포그래픽은 시나리오 프레임워크이며 개별 종목 추천·투자 권유가 아닙니다. | Genesis AI Framework
+  </text>
+</svg>
