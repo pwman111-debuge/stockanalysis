@@ -83,7 +83,7 @@ export default async function StockPickDetailPage({ params }: { params: Promise<
                     </div>
                 </header>
 
-                <LinkPriceBanner index={0} />
+                <LinkPriceBanner index={7} />
 
                 <div className="p-8 md:p-12 prose prose-slate max-w-none
                     prose-headings:font-bold prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg
@@ -91,7 +91,7 @@ export default async function StockPickDetailPage({ params }: { params: Promise<
                     <MdxRenderer code={post.body.code} />
                 </div>
 
-                <LinkPriceBanner index={1} />
+                <LinkPriceBanner index={8} />
 
                 <footer className="px-8 md:px-12 py-8 border-t border-border bg-muted/5">
                     <div className="flex flex-wrap gap-2">

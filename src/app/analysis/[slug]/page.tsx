@@ -131,13 +131,13 @@ export default async function StockReportDetailPage({ params }: { params: Promis
                     </div>
                 </header>
 
-                <LinkPriceBanner index={0} />
+                <LinkPriceBanner index={5} />
 
                 <div className="p-6 md:p-12 prose prose-slate max-w-none prose-headings:font-bold prose-h1:text-2xl prose-h2:text-xl prose-p:leading-relaxed break-words overflow-x-hidden">
                     <MdxRenderer code={post.body.code} />
                 </div>
 
-                <LinkPriceBanner index={1} />
+                <LinkPriceBanner index={6} />
 
                 <footer className="px-6 md:px-12 py-8 border-t border-border bg-muted/5">
                     <div className="flex flex-wrap gap-2">
