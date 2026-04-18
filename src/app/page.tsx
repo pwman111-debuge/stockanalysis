@@ -402,7 +402,7 @@ export default async function Home() {
         </div>
       </div>
       {/* 광고 배너 3 — 페이지 하단 */}
-      <LinkPriceBanner index={4} />
+      <LinkPriceBanner index={9} />
     </div>
   );
 }
