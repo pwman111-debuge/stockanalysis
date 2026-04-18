@@ -127,6 +127,21 @@ const banners = [
       width: 300, height: 250,
     },
   },
+  // G마켓
+  {
+    desktop: {
+      href: 'https://click.linkprice.com/click.php?m=gmarket&a=A100704068&l=6775&u_id=',
+      src: 'https://img.linkprice.com/files/glink/gmarket/20221004/K00HwzuaHqe00_728x90.jpg',
+      track: 'https://track.linkprice.com/lpshow.php?m_id=gmarket&a_id=A100704068&p_id=0000&l_id=6775&l_cd1=2&l_cd2=0',
+      width: 728, height: 90,
+    },
+    mobile: {
+      href: 'https://click.linkprice.com/click.php?m=gmarket&a=A100704068&l=qecz&u_id=',
+      src: 'https://img.linkprice.com/files/glink/gmarket/20221004/ia00jhLbzKu00_300x250.jpg',
+      track: 'https://track.linkprice.com/lpshow.php?m_id=gmarket&a_id=A100704068&p_id=0000&l_id=qecz&l_cd1=2&l_cd2=0',
+      width: 300, height: 250,
+    },
+  },
 ];
 
 export function LinkPriceBanner({ index = 0 }: { index?: number }) {
