@@ -54,32 +54,48 @@ KOSDAQ | 2026.04.14 | 1,093.63
 
 ---
 
+## ⚠️ 핵심 주의사항: 당일 vs 전날 데이터 구분
+
+**네이버 증권 투자자별 순매매 상위 페이지는 항상 두 날짜를 나란히 표시한다:**
+- 좌측 컬럼 = **전날** 데이터 (절대 사용 금지)
+- 우측 컬럼 = **당일(오늘)** 데이터 (반드시 이것만 사용)
+
+`re.findall` 결과는 `[전날1위, 전날2위, ..., 전날20위, 당일1위, 당일2위, ..., 당일20위]` 순서로 반환된다.
+**오늘 데이터만 추출하려면 `all_items[len(all_items)//2:]` (후반부)를 반드시 사용할 것.**
+
+---
+
 ## [Function 2] 외국인 순매수 상위 종목
 
 ```python
-import urllib.request, re
+import urllib.request, re, datetime
 
 HEADERS = {'User-Agent': 'Mozilla/5.0','Accept-Language': 'ko-KR,ko;q=0.9','Referer': 'https://finance.naver.com/sise/sise_deal_rank.naver'}
+
+today_str = datetime.date.today().strftime('%y.%m.%d')  # 표시용: 26.04.22
 
 for market, sosok in [('KOSPI', '01'), ('KOSDAQ', '02')]:
     url = f'https://finance.naver.com/sise/sise_deal_rank_iframe.naver?sosok={sosok}&investor_gubun=9000&type=buy'
     req = urllib.request.Request(url, headers=HEADERS)
     with urllib.request.urlopen(req) as r:
         html = r.read().decode('euc-kr', errors='replace')
-    items = re.findall(
+    all_items = re.findall(
         r'code=(\d{6})[^>]*>(.*?)</a>.*?class="number">([\d,\-]+)</td>.*?class="number">([\d,\-]+)</td>',
         html, re.DOTALL
     )
-    print(f'\n=== 외국인 순매수 상위 ({market}) ===')
+    # 당일(우측) 데이터만 사용: 전체 결과의 후반부 = 당일, 전반부 = 전날
+    # 구조: [전날1위, 전날2위, ..., 전날20위, 당일1위, 당일2위, ..., 당일20위]
+    items = all_items[len(all_items)//2:]
+    print(f'\n=== 외국인 순매수 상위 ({market}) [{today_str} 당일 기준] ===')
     for code, name, price, amount in items[:10]:
         print(f'  {name.strip()} ({code}) | 현재가: {price} | 순매수: {amount}백만원')
 ```
 
 **출력 예시:**
 ```
-=== 외국인 순매수 상위 (KOSPI) ===
-  SK하이닉스 (000660) | 현재가: 1,040,000 | 순매수: 455,035백만원
-  한화에어로스페이스 (012450) | 현재가: 1,530,000 | 순매수: 39,585백만원
+=== 외국인 순매수 상위 (KOSPI) [26.04.22 당일 기준] ===
+  TIGER MSCI Korea TR (310970) | 현재가: 10,200 | 순매수: 433,701백만원
+  이수페타시스 (007660) | 현재가: 1,024 | 순매수: 151,845백만원
 ```
 
 ---
@@ -87,20 +103,25 @@ for market, sosok in [('KOSPI', '01'), ('KOSDAQ', '02')]:
 ## [Function 3] 기관 순매수 상위 종목
 
 ```python
-import urllib.request, re
+import urllib.request, re, datetime
 
 HEADERS = {'User-Agent': 'Mozilla/5.0','Accept-Language': 'ko-KR,ko;q=0.9','Referer': 'https://finance.naver.com/sise/sise_deal_rank.naver'}
+
+today_str = datetime.date.today().strftime('%y.%m.%d')  # 표시용: 26.04.22
 
 url = 'https://finance.naver.com/sise/sise_deal_rank_iframe.naver?sosok=01&investor_gubun=1000&type=buy'
 req = urllib.request.Request(url, headers=HEADERS)
 with urllib.request.urlopen(req) as r:
     html = r.read().decode('euc-kr', errors='replace')
 
-items = re.findall(
+all_items = re.findall(
     r'code=(\d{6})[^>]*>(.*?)</a>.*?class="number">([\d,\-]+)</td>.*?class="number">([\d,\-]+)</td>',
     html, re.DOTALL
 )
-print('=== 기관 순매수 상위 (KOSPI) ===')
+# 당일(우측) 데이터만 사용: 전체 결과의 후반부 = 당일, 전반부 = 전날
+# 구조: [전날1위, 전날2위, ..., 전날20위, 당일1위, 당일2위, ..., 당일20위]
+items = all_items[len(all_items)//2:]
+print(f'=== 기관 순매수 상위 (KOSPI) [{today_str} 당일 기준] ===')
 for code, name, price, amount in items[:10]:
     print(f'  {name.strip()} ({code}) | 현재가: {price} | 순매수: {amount}백만원')
 ```
@@ -196,3 +217,7 @@ Python Bash 실행이 불가한 경우 아래 대체 소스를 사용한다:
 | 외국인+기관 동반 순매수 | `https://comp.fnguide.com/SVO2/json/data/NH/SUPPLY_TREND_WITH_BUY.json` (WebFetch) |
 | 종목 상세 | `https://comp.fnguide.com/SVO2/ASP/SVD_Main.asp?gicode=AXXXXXX` (WebFetch) |
 | 시황 요약 | WebSearch: `코스피 코스닥 {날짜} 마감 시황` |
+
+> **⚠️ Failover 시 날짜 확인 필수:** WebSearch나 WebFetch로 수급 데이터를 수집할 때도
+> 반드시 **당일(오늘) 날짜 기준** 데이터인지 확인한다. 네이버 증권 페이지는 항상 좌측=전날, 우측=당일
+> 두 컬럼이 표시되므로, 오늘 날짜(우측)의 데이터만 사용해야 한다.
