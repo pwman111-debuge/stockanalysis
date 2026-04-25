@@ -38,7 +38,7 @@
 | 명령어 | 실행 워크플로우 |
 |--------|--------------|
 | "시황분석 제네시스하자" | 시황분석/workflows/제네시스.md |
-| "단기유망종목 제네시스하자" | 단기유망종목/.agent/workflows/제네시스-단기유망종목.md |
+| "단기유망종목 제네시스하자" | 단기유망종목/.agents/workflows/제네시스-단기유망종목.md |
 | "중기유망종목 제네시스하자" | 중기유망종목/.agents/workflows/제네시스-중기유망.md |
 | "장기유망종목 제네시스하자" | 장기유망종목/.agents/workflows/genesis-long-term.md |
 | "종목분석 제네시스하자" | 종목분석/.agents/workflows/analyze-stock.md |
@@ -80,7 +80,7 @@
 | 폴더 | 허용 항목 | 절대 금지 |
 |------|----------|----------|
 | `시황분석/` | `workflows/`, `.claude/` | content/, src/, public/, scripts/, skills/, package.json 등 Next.js 파일 |
-| `단기유망종목/` | `.agent/workflows/`, `.agent/skills/`, `.claude/` | .agents/, scratch/, *.md 보고서, *.bat |
+| `단기유망종목/` | `.agents/workflows/`, `.agents/skills/`, `.claude/` | .agent/, scratch/, *.md 보고서, *.bat |
 | `중기유망종목/` | `.agents/workflows/`, `.agents/skills/`, `.agents/rules/`, `.claude/` | content/, src/, public/, package.json 등 Next.js 파일 |
 | `장기유망종목/` | `.agents/workflows/`, `.agents/rules/`, `.claude/`, `skills/` | genesis_output/, reports/ |
 | `종목분석/` | `.agents/workflows/`, `.agents/rules/`, `.claude/`, `skills/` | *.mdx 보고서, *.html 테스트 파일 |
