@@ -248,7 +248,14 @@ description: 한국 주식 장기 유망 종목 발굴 (1~3년) 방법론
    - 기존 리포트 **덮어쓰기 금지** — 날짜별 신규 파일로 누적 관리
    - `push.md` 워크플로우를 통해 배포 실행
 
-   **6-4. 배포 후 확인**
+   **6-4. SNS 자동 포스팅 (Push 완료 직후)**
+   ```bash
+   python -X utf8 scripts/post_threads.py content/picks/YYYYMMDD-genesis-long-report.mdx
+   python -X utf8 scripts/post_linkedin.py content/picks/YYYYMMDD-genesis-long-report.mdx
+   ```
+   Threads Post ID 및 LinkedIn Post URN 보고
+
+   **6-5. 배포 후 확인**
    - 웹사이트 목록 페이지에서 해당 리포트가 정상 노출되는지 확인
    - 링크 깨짐·렌더링 오류 없는지 브라우저 최종 점검
    - 배포 완료 후 아래 한 줄 완료 메시지 출력:
