@@ -51,7 +51,20 @@
 └── 종목분석/          → 개별 종목 심층 분석 (필요 시)
 ```
 
-**GitHub 저장소:** `https://github.com/pwman111-debuge/stockanalysis`
+**GitHub 저장소 (보고서):** `https://github.com/pwman111-debuge/stockanalysis`  
+**GitHub 저장소 (코드):** `https://github.com/pwman111-debuge/webpage-automation`
+
+---
+
+## 코드·워크플로우 수정 시 Push 규칙
+
+워크플로우(.md), 스킬(SKILL.md), 스크립트(.py, .js) 등 코드 파일을 수정·보완한 경우,
+**`https://github.com/pwman111-debuge/webpage-automation`** 의 해당 경로로 push한다.
+
+- 보고서 파일(MDX)과 코드 파일은 저장소를 분리하여 관리한다.
+  - 보고서 → `pwman111-debuge/stockanalysis`
+  - 코드/워크플로우 → `pwman111-debuge/webpage-automation`
+- Push 완료 후 커밋 해시 및 경로 보고
 
 ---
 
@@ -75,7 +88,7 @@
 | 단기유망종목 | `content/picks/YYYYMMDD-genesis-report.mdx` |
 | 중기유망종목 | `content/picks/YYYYMMDD-genesis-mid-report.mdx` |
 | 장기유망종목 | `content/picks/YYYYMMDD-genesis-long-report.mdx` |
-| 종목분석 | `content/stock-reports/YYYY-MM-DD-[종목명].mdx` |
+| 종목분석 | `content/stock-reports/YYYY-MM-DD-[english-slug].mdx` (영문 소문자·하이픈, 예: `2026-04-25-sejin-heavy.mdx`) |
 
 ### 절대 하지 말 것
 
