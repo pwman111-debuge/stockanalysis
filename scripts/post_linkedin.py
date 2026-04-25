@@ -7,12 +7,14 @@ import sys
 import json
 import re
 import os
+import time
 import urllib.request
 import urllib.parse
+import urllib.error
 
 ENV_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
 SITE_URL = "https://genesis-report.com"
-OG_IMAGE_URL = "https://genesis-report.com/og-image.png"
+OG_IMAGE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public", "og-image.png")
 
 PATH_MAP = {
     "content/picks": "/picks",
@@ -99,21 +101,81 @@ def build_post_text(fm, post_url):
     return text
 
 
-def post_to_linkedin(token, person_urn, text, post_url, title="제네시스 주식 리포트", fm_summary=""):
-    """LinkedIn UGC Posts API로 포스팅 (이미지 썸네일 포함)"""
-    url = "https://api.linkedin.com/v2/ugcPosts"
+def upload_image_to_linkedin(token, person_urn):
+    """og-image.png를 LinkedIn 에셋으로 직접 업로드하고 asset URN 반환"""
+    # 1단계: 업로드 URL 등록
+    register_url = "https://api.linkedin.com/v2/assets?action=registerUpload"
+    payload = {
+        "registerUploadRequest": {
+            "recipes": ["urn:li:digitalmediaRecipe:feedshare-image"],
+            "owner": person_urn,
+            "serviceRelationships": [
+                {
+                    "relationshipType": "OWNER",
+                    "identifier": "urn:li:userGeneratedContent",
+                }
+            ],
+        }
+    }
 
+    data = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(register_url, data=data, method="POST")
+    req.add_header("Authorization", f"Bearer {token}")
+    req.add_header("Content-Type", "application/json")
+    req.add_header("X-Restli-Protocol-Version", "2.0.0")
+
+    try:
+        with urllib.request.urlopen(req) as r:
+            result = json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8")
+        print(f"[오류] 이미지 업로드 등록 실패 {e.code}: {body}")
+        sys.exit(1)
+
+    upload_url = result["value"]["uploadMechanism"][
+        "com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"
+    ]["uploadUrl"]
+    asset_urn = result["value"]["asset"]
+    print(f"[LinkedIn] 이미지 업로드 등록 완료: {asset_urn}")
+
+    # 2단계: 로컬 이미지 파일을 LinkedIn에 업로드
+    with open(OG_IMAGE_PATH, "rb") as img_file:
+        image_data = img_file.read()
+
+    upload_req = urllib.request.Request(upload_url, data=image_data, method="PUT")
+    upload_req.add_header("Authorization", f"Bearer {token}")
+    upload_req.add_header("Content-Type", "image/png")
+
+    try:
+        with urllib.request.urlopen(upload_req) as r:
+            pass  # 201 응답 (본문 없음)
+    except urllib.error.HTTPError as e:
+        if e.code not in (200, 201):
+            body = e.read().decode("utf-8")
+            print(f"[오류] 이미지 업로드 실패 {e.code}: {body}")
+            sys.exit(1)
+
+    print("[LinkedIn] 이미지 업로드 완료")
+    time.sleep(2)  # 처리 대기
+    return asset_urn
+
+
+def post_to_linkedin(token, person_urn, text, title="제네시스 주식 리포트", fm_summary=""):
+    """LinkedIn UGC Posts API로 포스팅 (이미지 직접 업로드)"""
+    asset_urn = upload_image_to_linkedin(token, person_urn)
+
+    url = "https://api.linkedin.com/v2/ugcPosts"
     payload = {
         "author": person_urn,
         "lifecycleState": "PUBLISHED",
         "specificContent": {
             "com.linkedin.ugc.ShareContent": {
                 "shareCommentary": {"text": text},
-                "shareMediaCategory": "ARTICLE",
+                "shareMediaCategory": "IMAGE",
                 "media": [
                     {
                         "status": "READY",
-                        "originalUrl": post_url,
+                        "media": asset_urn,
                         "title": {"text": title},
                         "description": {"text": fm_summary},
                     }
@@ -161,7 +223,11 @@ def main():
 
     print(f"[LinkedIn] 포스팅 내용 미리보기:\n{'='*40}\n{text}\n{'='*40}")
 
-    post_urn = post_to_linkedin(token, person_urn, text, post_url, title=fm.get("title", "제네시스 주식 리포트"), fm_summary=fm.get("summary", ""))
+    post_urn = post_to_linkedin(
+        token, person_urn, text,
+        title=fm.get("title", "제네시스 주식 리포트"),
+        fm_summary=fm.get("summary", ""),
+    )
     print(f"[LinkedIn] 포스팅 완료! URN: {post_urn}")
 
 
