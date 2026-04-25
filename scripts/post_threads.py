@@ -18,6 +18,7 @@ PATH_MAP = {
     "content/picks": "/picks",
     "content/market-analysis": "/market",
     "content/stock-reports": "/analysis",
+    "content/market-insight": "/insight",
 }
 
 

@@ -10,11 +10,13 @@ BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FORBIDDEN = {
     "시황분석": ["content", "src", "public", "scripts", "skills",
                  "package.json", "next.config.ts", "tsconfig.json"],
-    "단기유망종목": [".agents", "scratch", "push_report.bat"],
+    "단기유망종목": [".agent", "scratch", "push_report.bat"],
     "중기유망종목": ["content", "src", "public", "package.json",
                     "next.config.ts", "tsconfig.json", "gold.html"],
     "장기유망종목": ["genesis_output", "reports"],
     "종목분석": ["tv_test.html"],
+    "마켓인사이트": ["content", "src", "public", "package.json",
+                    "next.config.ts", "tsconfig.json"],
 }
 
 # 루트에 있으면 안 되는 파일 패턴
@@ -31,6 +33,7 @@ CORRECT_REPORT_PATHS = {
     "중기": "content/picks/YYYYMMDD-genesis-mid-report.mdx",
     "장기": "content/picks/YYYYMMDD-genesis-long-report.mdx",
     "종목분석": "content/stock-reports/YYYY-MM-DD-[종목명].mdx",
+    "마켓인사이트": "content/market-insight/YYYYMMDD-[slug].mdx",
 }
 
 errors = []

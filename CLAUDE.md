@@ -42,6 +42,7 @@
 | "중기유망종목 제네시스하자" | 중기유망종목/.agents/workflows/제네시스-중기유망.md |
 | "장기유망종목 제네시스하자" | 장기유망종목/.agents/workflows/genesis-long-term.md |
 | "종목분석 제네시스하자" | 종목분석/.agents/workflows/analyze-stock.md |
+| "마켓인사이트 하자" | 마켓인사이트/.agents/workflows/market-insight.md |
 
 ---
 
@@ -53,7 +54,8 @@
 ├── 단기유망종목/       → 단기 유망종목 3개 발굴 (매일)
 ├── 중기유망종목/       → 중기 유망종목 3개 발굴 (매주 금요일)
 ├── 장기유망종목/       → 장기 유망종목 3개 발굴 (매달 1일)
-└── 종목분석/          → 개별 종목 심층 분석 (필요 시)
+├── 종목분석/          → 개별 종목 심층 분석 (필요 시)
+└── 마켓인사이트/       → 황원장-우팀장 논의 → 인사이트 리포트 (수시)
 ```
 
 **GitHub 저장소 (보고서):** `https://github.com/pwman111-debuge/stockanalysis`  
@@ -84,6 +86,7 @@
 | `중기유망종목/` | `.agents/workflows/`, `.agents/skills/`, `.agents/rules/`, `.claude/` | content/, src/, public/, package.json 등 Next.js 파일 |
 | `장기유망종목/` | `.agents/workflows/`, `.agents/rules/`, `.claude/`, `skills/` | genesis_output/, reports/ |
 | `종목분석/` | `.agents/workflows/`, `.agents/rules/`, `.claude/`, `skills/` | *.mdx 보고서, *.html 테스트 파일 |
+| `마켓인사이트/` | `.agents/workflows/`, `.claude/`, `archive/` | *.mdx 보고서, content/, src/, public/ |
 
 ### 보고서 파일 저장 위치 (루트의 content/ 하위에만 저장)
 
@@ -94,6 +97,7 @@
 | 중기유망종목 | `content/picks/YYYYMMDD-genesis-mid-report.mdx` |
 | 장기유망종목 | `content/picks/YYYYMMDD-genesis-long-report.mdx` |
 | 종목분석 | `content/stock-reports/YYYY-MM-DD-[english-slug].mdx` (영문 소문자·하이픈, 예: `2026-04-25-sejin-heavy.mdx`) |
+| 마켓인사이트 | `content/market-insight/YYYYMMDD-[english-slug].mdx` (영문 소문자·하이픈, 예: `20260425-fomc-rate-hold.mdx`) |
 
 ### 절대 하지 말 것
 
