@@ -29,5 +29,11 @@ python -X utf8 scripts/post_threads.py content/market-analysis/YYYY-MM-DD-market
 ```
 포스팅 완료 후 Post ID 및 Threads 링크 보고
 
-### Step 4. 완료 보고
-커밋 해시, 푸시된 파일 경로, Threads 포스팅 링크 보고
+### Step 4. LinkedIn 자동 포스팅
+```bash
+python -X utf8 scripts/post_linkedin.py content/market-analysis/YYYY-MM-DD-market-analysis-genesis.mdx
+```
+포스팅 완료 후 Post URN 보고
+
+### Step 5. 완료 보고
+커밋 해시, 푸시된 파일 경로, Threads 포스팅 링크, LinkedIn Post URN 보고
