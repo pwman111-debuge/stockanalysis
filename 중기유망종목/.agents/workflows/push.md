@@ -17,11 +17,9 @@ description: "중기 유망종목 보고서 GitHub 자동 Push 워크플로우"
 - `title`, `date`, `term`(`"mid"`), `summary`, `tags`, `status`(`"active"`)
 - `ticker`, `market`, `currentPrice`, `targetPrice`, `stopLoss` (숫자, 없으면 0)
 
-### Step 2. Git Push
+### Step 2. Git Push (stockanalysis 레포로 자동 push)
 ```bash
-git add content/picks/YYYYMMDD-genesis-mid-report.mdx
-git commit -m "feat: [YYYY-MM-DD] 중기 유망종목 보고서 업데이트"
-git push origin main
+python -X utf8 scripts/push_report.py content/picks/YYYYMMDD-genesis-mid-report.mdx "feat: YYYY-MM-DD 중기 유망종목 보고서"
 ```
 
 ### Step 3. Threads 자동 포스팅
