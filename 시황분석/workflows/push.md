@@ -16,11 +16,9 @@ description: "시황 분석 리포트 GitHub 자동 Push 워크플로우"
 필수 필드 누락 시 수정 후 진행:
 - `title`, `date`, `category`, `summary`, `tags`, `thumbnail`
 
-### Step 2. Git Push
+### Step 2. Git Push (stockanalysis 레포로 자동 push)
 ```bash
-git add content/market-analysis/YYYY-MM-DD-market-analysis-genesis.mdx
-git commit -m "feat: [YYYY-MM-DD] 시황 분석 리포트 업데이트"
-git push origin main
+python -X utf8 scripts/push_report.py content/market-analysis/YYYY-MM-DD-market-analysis-genesis.mdx "feat: YYYY-MM-DD 시황 분석 리포트"
 ```
 
 ### Step 3. Threads 자동 포스팅
