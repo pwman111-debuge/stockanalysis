@@ -55,3 +55,4 @@ CLAUDE.md
 
 # 민감 정보 (절대 push 안 함)
 config/
+.playwright-mcp/
