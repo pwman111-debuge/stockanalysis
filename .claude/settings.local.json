@@ -3,7 +3,13 @@
     "allow": [
       "*",
       "WebSearch",
-      "WebFetch"
+      "WebFetch",
+      "Bash(git restore *)",
+      "Bash(git update-index *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git pull *)"
     ]
   }
 }
