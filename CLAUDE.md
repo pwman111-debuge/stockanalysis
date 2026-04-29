@@ -13,11 +13,15 @@
 생성된 보고서는 **`https://github.com/pwman111-debuge/stockanalysis`** 의 해당 경로로 push한다.
 
 ```
-월~목:            시황분석 → 단기유망종목(3개) → 종목분석(단기1순위)
-금요일:           시황분석 → 단기유망종목(3개) → 중기유망종목(3개) → 종목분석(단기1순위)
-매달 1일(금):     시황분석 → 단기유망종목(3개) → 중기유망종목(3개) → 장기유망종목(3개) → 종목분석(단기1순위)
-매달 1일(금 제외): 시황분석 → 단기유망종목(3개) → 장기유망종목(3개) → 종목분석(단기1순위)
+월~목:            시황분석 → 단기유망종목(3개) → 종목분석(단기1순위) → 투자성과리뷰
+금요일:           시황분석 → 단기유망종목(3개) → 중기유망종목(3개) → 종목분석(중기1순위) → 투자성과리뷰
+매달 1일(금):     시황분석 → 단기유망종목(3개) → 중기유망종목(3개) → 장기유망종목(3개) → 종목분석(장기1순위) → 투자성과리뷰
+매달 1일(금 제외): 시황분석 → 단기유망종목(3개) → 장기유망종목(3개) → 종목분석(장기1순위) → 투자성과리뷰
 ```
+
+> 투자성과리뷰 실행 기준:
+> - **매일(월~금)**: 단기 T-7 복기 (지난주 같은 요일 단기 picks ~7일 경과)
+> - **매달 1일**: 추가로 중기 T-30 + 장기 T-90 복기 (해당 기간 리포트 없으면 자동 생략)
 
 **종목분석(단기1순위) 규칙:**
 - 단기유망종목 보고서의 **섹션 2 첫 번째 종목**(R:R 기준 1순위)을 자동으로 심층 분석
@@ -42,7 +46,8 @@
 | "중기유망종목 제네시스하자" | 중기유망종목/.agents/workflows/제네시스-중기유망.md |
 | "장기유망종목 제네시스하자" | 장기유망종목/.agents/workflows/genesis-long-term.md |
 | "종목분석 제네시스하자" | 종목분석/.agents/workflows/analyze-stock.md |
-| "마켓인사이트 하자" | 마켓인사이트/.agents/workflows/market-insight.md |
+| "마켓인사이트 제네시스하자" | 마켓인사이트/.agents/workflows/market-insight.md |
+| "투자성과리뷰 제네시스하자" | 투자성과리뷰/agents/workflows/제네시스.md |
 
 ---
 
@@ -55,7 +60,8 @@
 ├── 중기유망종목/       → 중기 유망종목 3개 발굴 (매주 금요일)
 ├── 장기유망종목/       → 장기 유망종목 3개 발굴 (매달 1일)
 ├── 종목분석/          → 개별 종목 심층 분석 (필요 시)
-└── 마켓인사이트/       → 황원장-우팀장 논의 → 인사이트 리포트 (수시)
+├── 마켓인사이트/       → 황원장-우팀장 논의 → 인사이트 리포트 (수시)
+└── 투자성과리뷰/       → 과거 투자 결과 복기 및 피드백 리포트 생성 (필요 시)
 ```
 
 **GitHub 저장소 (보고서):** `https://github.com/pwman111-debuge/stockanalysis`  
@@ -87,6 +93,7 @@
 | `장기유망종목/` | `.agents/workflows/`, `.agents/rules/`, `.claude/`, `skills/` | genesis_output/, reports/ |
 | `종목분석/` | `.agents/workflows/`, `.agents/rules/`, `.claude/`, `skills/` | *.mdx 보고서, *.html 테스트 파일 |
 | `마켓인사이트/` | `.agents/workflows/`, `.claude/`, `archive/` | *.mdx 보고서, content/, src/, public/ |
+| `투자성과리뷰/` | `agents/workflows/`, `agents/skills/` | content/, src/, public/, package.json 등 Next.js 파일 |
 
 ### 보고서 파일 저장 위치 (루트의 content/ 하위에만 저장)
 
@@ -98,6 +105,11 @@
 | 장기유망종목 | `content/picks/YYYYMMDD-genesis-long-report.mdx` |
 | 종목분석 | `content/stock-reports/YYYY-MM-DD-[english-slug].mdx` (영문 소문자·하이픈, 예: `2026-04-25-sejin-heavy.mdx`) |
 | 마켓인사이트 | `content/market-insight/YYYYMMDD-[english-slug].mdx` (영문 소문자·하이픈, 예: `20260425-fomc-rate-hold.mdx`) |
+
+### 워크플로우 파일 보호 규칙
+
+각 폴더의 `workflows/`, `.agents/workflows/`, `agents/workflows/`, `agents/skills/` 파일을 **다른 폴더의 것으로 절대 덮어쓰지 않는다.**
+과거 폴더 간 워크플로우 혼선으로 시스템이 유실된 사고가 있었다. 항상 해당 폴더 내의 파일만 참조하고 수정한다.
 
 ### 절대 하지 말 것
 
