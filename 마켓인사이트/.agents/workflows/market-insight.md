@@ -160,13 +160,11 @@ python -X utf8 scripts/check-structure.py
 ## 🚀 Step 4. GitHub Push
 
 ```bash
-cd "c:/Users/hwang/OneDrive/바탕 화면/웹페이지자동화"
-git add content/market-insight/
-git commit -m "feat: 마켓인사이트 - {제목} ({YYYY-MM-DD})"
-git push origin main
+python -X utf8 scripts/push_report.py content/market-insight/YYYYMMDD-{slug}.mdx "feat: 마켓인사이트 - {제목} ({YYYY-MM-DD})"
 ```
 
-Push 완료 후 커밋 해시 및 파일 경로 보고.
+- **저장소:** `https://github.com/pwman111-debuge/stockanalysis` → Cloudflare Pages 자동 배포
+- Push 완료 후 커밋 해시 및 파일 경로 보고.
 
 ---
 
