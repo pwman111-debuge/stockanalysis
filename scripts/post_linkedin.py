@@ -17,6 +17,7 @@ SITE_URL = "https://genesis-report.com"
 OG_IMAGE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public", "og-image.png")
 
 PATH_MAP = {
+    "content/picks-feedback": "/picks/feedback",
     "content/picks": "/picks",
     "content/market-analysis": "/market",
     "content/stock-reports": "/analysis",
