@@ -2,6 +2,7 @@ import { allStockPickFeedbacks } from 'contentlayer2/generated';
 import { compareDesc, format, parseISO } from 'date-fns';
 import { Search, ArrowRight, Calendar, ClipboardCheck, TrendingUp, CheckCircle2, Award, TrendingDown } from 'lucide-react';
 import Link from 'next/link';
+import { AdFitBanner } from '@/components/common/AdFitBanner';
 
 export const dynamic = 'force-static';
 
@@ -41,6 +42,8 @@ export default function PerformanceReviewPage() {
                     </div>
                 </div>
             </section>
+
+            <AdFitBanner />
 
             {/* Reviews List */}
             <div className="space-y-8">

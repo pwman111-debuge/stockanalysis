@@ -11,6 +11,8 @@ import { RefreshButton } from "@/components/dashboard/RefreshButton";
 import { StockChart } from "@/components/common/StockChart";
 import Image from "next/image";
 import { allMarketAnalyses, allStockReports, allStockPicks } from 'contentlayer2/generated';
+import { AdFitBanner } from '@/components/common/AdFitBanner';
+
 export default async function Home() {
   const marketData = await getLatestMarketData();
   const nextEvent = await getNextHighImpactEvent();
@@ -86,6 +88,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <AdFitBanner />
 
       {/* Market Indices - Featured Charts (Restored from previous version) */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -232,6 +236,7 @@ export default async function Home() {
         </div>
       </div>
 
+      <AdFitBanner />
 
       {/* Overview Cards Section */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -393,6 +398,9 @@ export default async function Home() {
           </p>
         </div>
       </div>
+
+      <AdFitBanner />
+
     </div>
   );
 }

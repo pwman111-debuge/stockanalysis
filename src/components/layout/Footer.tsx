@@ -1,9 +1,11 @@
 
 import Link from "next/link";
+import { AdFitBanner } from "@/components/common/AdFitBanner";
 
 export function Footer() {
     return (
         <footer className="mt-auto border-t border-border bg-white px-8 py-10">
+            <AdFitBanner className="mb-6" />
             <div className="mx-auto max-w-7xl">
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                     <div className="space-y-4">

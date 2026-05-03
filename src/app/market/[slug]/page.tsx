@@ -8,6 +8,8 @@ import { ArrowLeft, Calendar, Tag, Share2, Bookmark } from 'lucide-react';
 import Link from 'next/link';
 import { MdxRenderer } from '@/components/content/MdxRenderer';
 import { ShareButton } from '@/components/common/ShareButton';
+import { AdFitBanner } from '@/components/common/AdFitBanner';
+
 export async function generateStaticParams() {
     return allMarketAnalyses.map((post) => ({
         slug: post._raw.flattenedPath.split('/').pop() || '',
@@ -98,9 +100,13 @@ export default async function MarketDetailPage({ params }: { params: Promise<{ s
                     </div>
                 </header>
 
+                <AdFitBanner />
+
                 <div className="prose prose-slate max-w-none">
                     <MdxRenderer code={post.body.code} />
                 </div>
+
+                <AdFitBanner />
 
                 <footer className="mt-12 pt-8 border-t border-border">
                     <div className="flex flex-wrap gap-2">

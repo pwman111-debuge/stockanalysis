@@ -8,6 +8,7 @@ import { ArrowLeft, Calendar, Tag, Share2, Bookmark, BarChart3, TrendingUp, Aler
 import Link from 'next/link';
 import { MdxRenderer } from '@/components/content/MdxRenderer';
 import { ShareButton } from '@/components/common/ShareButton';
+import { AdFitBanner } from '@/components/common/AdFitBanner';
 
 export async function generateStaticParams() {
     return allStockPickFeedbacks.map((post) => ({
@@ -78,6 +79,8 @@ export default async function PerformanceReviewDetailPage({ params }: { params: 
                     </div>
                 </header>
 
+                <AdFitBanner />
+
                 <div className="p-10 md:p-16 prose prose-slate max-w-none 
                     prose-headings:font-black prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
                     prose-p:leading-relaxed prose-p:text-lg prose-p:text-slate-600
@@ -87,6 +90,8 @@ export default async function PerformanceReviewDetailPage({ params }: { params: 
                     prose-td:px-6 prose-td:py-5 prose-td:border-t prose-td:text-slate-600 font-medium">
                     <MdxRenderer code={post.body.code} />
                 </div>
+
+                <AdFitBanner />
 
                 <footer className="px-10 md:px-16 py-12 border-t border-border bg-slate-50/50">
                     <div className="flex flex-wrap gap-2.5 mb-10">
