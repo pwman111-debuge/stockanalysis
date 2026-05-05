@@ -8,17 +8,49 @@ export default function AboutPage() {
             <h1 className="text-3xl font-bold mb-8">서비스 소개</h1>
 
             <div className="prose prose-slate max-w-none space-y-8 text-muted-foreground">
+
+                {/* 운영자 소개 */}
+                <section className="bg-accent/40 border border-border rounded-2xl p-8">
+                    <h2 className="text-xl font-semibold text-foreground mb-6">운영자 소개</h2>
+                    <div className="flex items-start gap-6">
+                        <div className="flex-shrink-0 w-16 h-16 rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center text-2xl font-bold text-primary">
+                            황
+                        </div>
+                        <div className="space-y-3">
+                            <div>
+                                <p className="text-xl font-bold text-foreground">황 원장</p>
+                                <p className="text-base text-primary font-medium">내과전문의</p>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                <span className="inline-block bg-primary/10 text-primary text-sm font-medium px-3 py-1 rounded-full">
+                                    의사 경력 28년 (1998년~)
+                                </span>
+                                <span className="inline-block bg-primary/10 text-primary text-sm font-medium px-3 py-1 rounded-full">
+                                    개인 투자 10년
+                                </span>
+                            </div>
+                            <p className="leading-relaxed text-sm">
+                                1998년부터 내과전문의로 활동하며 수십만 건의 임상 데이터를 분석하고 패턴을 읽어온 경험이 주식 시장을 바라보는 시선의 뿌리입니다.
+                                감정이 아닌 데이터, 추측이 아닌 근거로 시장을 해석하는 방식은 28년간의 임상 현장에서 자연스럽게 체득된 것입니다.
+                                개인 투자 10년의 경험을 바탕으로, AI 분석 시스템과 결합한 제네시스 주식 리포트를 직접 운영하고 있습니다.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
                 <section>
                     <h2 className="text-2xl font-bold text-foreground mb-4">제네시스 주식 리포트: 경험과 데이터가 만나는 한국 증시 인사이트</h2>
                     <p className="text-lg leading-relaxed">
-                        제네시스 주식 리포트는 30년간 쌓아온 임상적 관찰력과 데이터 해석 경험을 바탕으로, 정밀한 AI 분석 시스템을 결합하여 탄생한 주식 분석 플랫폼입니다. 방대한 시장 데이터 속에서 의미 있는 신호를 포착하고, 개인 투자자들이 보다 냉철하고 현명한 의사결정을 내릴 수 있도록 돕습니다.
+                        제네시스 주식 리포트는 28년간 쌓아온 임상적 관찰력과 데이터 해석 경험, 그리고 10년의 개인 투자 노하우를 바탕으로 정밀한 AI 분석 시스템을 결합하여 탄생한 주식 분석 플랫폼입니다.
+                        방대한 시장 데이터 속에서 의미 있는 신호를 포착하고, 개인 투자자들이 보다 냉철하고 현명한 의사결정을 내릴 수 있도록 돕습니다.
                     </p>
                 </section>
 
                 <section>
                     <h2 className="text-xl font-semibold text-foreground mb-3">운영 철학</h2>
                     <p className="leading-relaxed">
-                        수십 년간 수많은 데이터를 분석하고 패턴을 읽어온 경험은 주식 시장에서도 그대로 적용됩니다. 감정이 아닌 데이터, 추측이 아닌 근거. 정교하게 설계된 AI 워크플로우가 시장의 수급·기술적 지표·거시 환경을 종합 분석하면, 그 결과를 오랜 투자 경험의 안목으로 한 번 더 검증합니다. 이것이 제네시스 리포트의 방식입니다.
+                        감정이 아닌 데이터, 추측이 아닌 근거. 정교하게 설계된 AI 워크플로우가 시장의 수급·기술적 지표·거시 환경을 종합 분석하면,
+                        그 결과를 오랜 임상 경험과 투자 안목으로 한 번 더 검증합니다. 이것이 제네시스 리포트의 방식입니다.
                     </p>
                 </section>
 
@@ -29,7 +61,7 @@ export default function AboutPage() {
                     </div>
                     <div className="p-6 rounded-xl bg-accent/50 border border-border">
                         <h3 className="text-lg font-bold text-foreground mb-2">경험 기반 검증</h3>
-                        <p>데이터 분석 결과를 다년간의 투자 경험으로 교차 검증하여 신뢰도 높은 인사이트를 제공합니다.</p>
+                        <p>데이터 분석 결과를 28년 임상 경험과 10년 투자 노하우로 교차 검증하여 신뢰도 높은 인사이트를 제공합니다.</p>
                     </div>
                     <div className="p-6 rounded-xl bg-accent/50 border border-border">
                         <h3 className="text-lg font-bold text-foreground mb-2">실시간 시황 데이터</h3>
@@ -42,7 +74,7 @@ export default function AboutPage() {
                 </div>
 
                 <section>
-                    <h2 className="text-xl font-semibold text-foreground mb-3">우리의 미션</h2>
+                    <h2 className="text-xl font-semibold text-foreground mb-3">운영자의 미션</h2>
                     <p>
                         정보의 불균형을 해소하고, 전업 투자자와 일반 개인 투자자 모두가 전문가 수준의 데이터 분석을 활용할 수 있는 환경을 만드는 것이 제네시스 주식 리포트의 목표입니다.
                     </p>
