@@ -40,19 +40,19 @@ def main():
 
     # 임시 폴더에 stockanalysis 클론
     tmp_dir = tempfile.mkdtemp(prefix="stockanalysis-")
-    print(f"[1/4] stockanalysis 레포 클론 중...")
+    print(f"[1/5] stockanalysis 레포 클론 중...")
     run(f'git clone {STOCKANALYSIS_REPO} "{tmp_dir}"')
     run(f'git config user.name "{GIT_USER_NAME}"', cwd=tmp_dir)
     run(f'git config user.email "{GIT_USER_EMAIL}"', cwd=tmp_dir)
 
     # 보고서 파일 복사 (디렉토리 구조 유지)
-    print(f"[2/4] 파일 복사: {report_path}")
+    print(f"[2/5] 파일 복사: {report_path}")
     dest = os.path.join(tmp_dir, report_path)
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     shutil.copy2(abs_report, dest)
 
     # 커밋 & push
-    print(f"[3/4] 커밋 & push...")
+    print(f"[3/5] 커밋 & push...")
     run(f'git add "{report_path}"', cwd=tmp_dir)
     run(f'git commit -m "{commit_msg}"', cwd=tmp_dir)
     output = run("git push origin main", cwd=tmp_dir)
@@ -62,20 +62,20 @@ def main():
 
     # 정리
     shutil.rmtree(tmp_dir, ignore_errors=True)
-    print(f"[4/4] 완료 — 커밋: {commit_hash} → stockanalysis/{report_path}")
+    print(f"[4/5] 완료 — 커밋: {commit_hash} → stockanalysis/{report_path}")
 
     # 로컬 레포를 origin에 맞게 동기화 (히스토리 분기 방지)
     print(f"[5/5] 로컬 레포 origin 동기화 중...")
-    local_has_changes = False
     try:
-        status = subprocess.run("git status --porcelain", shell=True, cwd=root_dir,
-                                capture_output=True, text=True).stdout.strip()
-        local_has_changes = bool(status)
-        if local_has_changes:
-            run('git stash --include-untracked -- src/', cwd=root_dir)
+        # src/ 범위만 확인 (루트의 PNG·MDX 등 untracked 파일은 무관)
+        src_status = subprocess.run("git status --porcelain -- src/", shell=True, cwd=root_dir,
+                                    capture_output=True, text=True).stdout.strip()
+        src_has_changes = bool(src_status)
+        if src_has_changes:
+            run('git stash push --include-untracked -- src/', cwd=root_dir)
         run("git fetch origin", cwd=root_dir)
         run("git reset --hard origin/main", cwd=root_dir)
-        if local_has_changes:
+        if src_has_changes:
             stash_result = subprocess.run("git stash pop", shell=True, cwd=root_dir,
                                           capture_output=True, text=True)
             if stash_result.returncode != 0:
