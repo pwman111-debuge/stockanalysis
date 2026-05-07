@@ -63,6 +63,29 @@ def main():
     # 정리
     shutil.rmtree(tmp_dir, ignore_errors=True)
     print(f"[4/4] 완료 — 커밋: {commit_hash} → stockanalysis/{report_path}")
+
+    # 로컬 레포를 origin에 맞게 동기화 (히스토리 분기 방지)
+    print(f"[5/5] 로컬 레포 origin 동기화 중...")
+    local_has_changes = False
+    try:
+        status = subprocess.run("git status --porcelain", shell=True, cwd=root_dir,
+                                capture_output=True, text=True).stdout.strip()
+        local_has_changes = bool(status)
+        if local_has_changes:
+            run('git stash --include-untracked -- src/', cwd=root_dir)
+        run("git fetch origin", cwd=root_dir)
+        run("git reset --hard origin/main", cwd=root_dir)
+        if local_has_changes:
+            stash_result = subprocess.run("git stash pop", shell=True, cwd=root_dir,
+                                          capture_output=True, text=True)
+            if stash_result.returncode != 0:
+                print(f"[주의] stash pop 실패 — src/ 변경사항을 수동으로 확인하세요.\n{stash_result.stderr}")
+            else:
+                print("  → src/ 로컬 변경사항 복원 완료")
+        print(f"  → 로컬 HEAD: {run('git rev-parse --short HEAD', cwd=root_dir)}")
+    except Exception as e:
+        print(f"[주의] 로컬 동기화 실패 (수동으로 git pull --rebase 실행 필요): {e}")
+
     return commit_hash
 
 
