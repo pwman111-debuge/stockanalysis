@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { MdxRenderer } from '@/components/content/MdxRenderer';
 import { ShareButton } from '@/components/common/ShareButton';
 import { AdFitBanner } from '@/components/common/AdFitBanner';
+import { CoupangBanner } from '@/components/common/CoupangBanner';
 
 export async function generateStaticParams() {
     return allStockPicks.map((post) => ({
@@ -91,9 +92,12 @@ export default async function StockPickDetailPage({ params }: { params: Promise<
                     <MdxRenderer code={post.body.code} />
                 </div>
 
+                <CoupangBanner seed={slug} keywords={[...(post.tags ?? []), post.ticker]} variant="mid" className="px-8 md:px-12" />
+
                 <AdFitBanner />
 
                 <footer className="px-8 md:px-12 py-8 border-t border-border bg-muted/5">
+                    <CoupangBanner seed={`${slug}-bottom`} keywords={[...(post.tags ?? []), post.ticker]} variant="bottom" className="mb-6" />
                     <div className="flex flex-wrap gap-2">
                         {post.tags?.map((tag) => (
                             <span key={tag} className="inline-flex items-center rounded-lg bg-card px-3 py-1 text-[11px] font-bold text-muted-foreground border border-border">

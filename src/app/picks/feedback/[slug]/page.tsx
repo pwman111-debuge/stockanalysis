@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { MdxRenderer } from '@/components/content/MdxRenderer';
 import { ShareButton } from '@/components/common/ShareButton';
 import { AdFitBanner } from '@/components/common/AdFitBanner';
+import { CoupangBanner } from '@/components/common/CoupangBanner';
 
 export async function generateStaticParams() {
     return allStockPickFeedbacks.map((post) => ({
@@ -81,7 +82,7 @@ export default async function PerformanceReviewDetailPage({ params }: { params: 
 
                 <AdFitBanner />
 
-                <div className="p-10 md:p-16 prose prose-slate max-w-none 
+                <div className="p-10 md:p-16 prose prose-slate max-w-none
                     prose-headings:font-black prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
                     prose-p:leading-relaxed prose-p:text-lg prose-p:text-slate-600
                     prose-strong:text-slate-900 prose-blockquote:border-violet-500
@@ -91,9 +92,12 @@ export default async function PerformanceReviewDetailPage({ params }: { params: 
                     <MdxRenderer code={post.body.code} />
                 </div>
 
+                <CoupangBanner seed={slug} keywords={[...(post.tags ?? []), '투자', '매매']} variant="mid" className="px-10 md:px-16" />
+
                 <AdFitBanner />
 
                 <footer className="px-10 md:px-16 py-12 border-t border-border bg-slate-50/50">
+                    <CoupangBanner seed={`${slug}-bottom`} keywords={[...(post.tags ?? []), '투자', '매매']} variant="bottom" className="mb-6" />
                     <div className="flex flex-wrap gap-2.5 mb-10">
                         {post.tags?.map((tag) => (
                             <span key={tag} className="inline-flex items-center rounded-xl bg-white px-4 py-2 text-[11px] font-black text-slate-500 border border-slate-200 shadow-sm hover:border-violet-200 hover:text-violet-500 transition-all cursor-default">

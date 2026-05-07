@@ -12,6 +12,7 @@ import { StockChart } from "@/components/common/StockChart";
 import Image from "next/image";
 import { allMarketAnalyses, allStockReports, allStockPicks } from 'contentlayer2/generated';
 import { AdFitBanner } from '@/components/common/AdFitBanner';
+import { CoupangBanner } from '@/components/common/CoupangBanner';
 
 export default async function Home() {
   const marketData = await getLatestMarketData();
@@ -90,6 +91,8 @@ export default async function Home() {
       </section>
 
       <AdFitBanner />
+
+      <CoupangBanner seed="dashboard" keywords={[]} variant="mid" />
 
       {/* Market Indices - Featured Charts (Restored from previous version) */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
