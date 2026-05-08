@@ -90,9 +90,6 @@ export default async function PerformanceReviewDetailPage({ params }: { params: 
                     <MdxRenderer code={post.body.code} />
                 </div>
 
-                <CoupangBanner seed={slug} keywords={[...(post.tags ?? []), '투자', '매매']} variant="mid" className="px-10 md:px-16" />
-
-
                 <footer className="px-10 md:px-16 py-12 border-t border-border bg-slate-50/50">
                     <CoupangBanner seed={`${slug}-bottom`} keywords={[...(post.tags ?? []), '투자', '매매']} variant="bottom" className="mb-6" />
                     <div className="flex flex-wrap gap-2.5 mb-10">

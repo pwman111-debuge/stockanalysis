@@ -90,8 +90,6 @@ export default async function Home() {
       </section>
 
 
-      <CoupangBanner seed="dashboard" keywords={[]} variant="mid" />
-
       {/* Market Indices - Featured Charts (Restored from previous version) */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <StockChart code="KOSPI" title="KOSPI" className="w-full" />
@@ -399,6 +397,7 @@ export default async function Home() {
         </div>
       </div>
 
+      <CoupangBanner seed="dashboard-bottom" keywords={[]} variant="bottom" />
 
     </div>
   );

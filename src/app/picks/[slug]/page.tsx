@@ -90,9 +90,6 @@ export default async function StockPickDetailPage({ params }: { params: Promise<
                     <MdxRenderer code={post.body.code} />
                 </div>
 
-                <CoupangBanner seed={slug} keywords={[...(post.tags ?? []), post.ticker]} variant="mid" className="px-8 md:px-12" />
-
-
                 <footer className="px-8 md:px-12 py-8 border-t border-border bg-muted/5">
                     <CoupangBanner seed={`${slug}-bottom`} keywords={[...(post.tags ?? []), post.ticker]} variant="bottom" className="mb-6" />
                     <div className="flex flex-wrap gap-2">

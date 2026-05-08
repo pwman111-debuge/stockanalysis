@@ -69,9 +69,6 @@ export default async function InsightDetailPage({ params }: { params: Promise<{ 
                     <MdxRenderer code={post.body.code} />
                 </div>
 
-                <CoupangBanner seed={slug} keywords={[...(post.tags ?? []), post.category]} variant="mid" />
-
-
                 <footer className="mt-12 pt-8 border-t border-border">
                     <CoupangBanner seed={`${slug}-bottom`} keywords={[...(post.tags ?? []), post.category]} variant="bottom" className="mb-6" />
                     <div className="flex flex-wrap gap-2">
