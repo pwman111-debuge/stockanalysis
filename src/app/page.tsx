@@ -11,7 +11,6 @@ import { RefreshButton } from "@/components/dashboard/RefreshButton";
 import { StockChart } from "@/components/common/StockChart";
 import Image from "next/image";
 import { allMarketAnalyses, allStockReports, allStockPicks } from 'contentlayer2/generated';
-import { AdFitBanner } from '@/components/common/AdFitBanner';
 import { CoupangBanner } from '@/components/common/CoupangBanner';
 
 export default async function Home() {
@@ -90,7 +89,6 @@ export default async function Home() {
         </div>
       </section>
 
-      <AdFitBanner />
 
       <CoupangBanner seed="dashboard" keywords={[]} variant="mid" />
 
@@ -239,7 +237,6 @@ export default async function Home() {
         </div>
       </div>
 
-      <AdFitBanner />
 
       {/* Overview Cards Section */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -402,7 +399,6 @@ export default async function Home() {
         </div>
       </div>
 
-      <AdFitBanner />
 
     </div>
   );

@@ -8,7 +8,6 @@ import { ArrowLeft, Calendar, Tag, Share2, Bookmark, BarChart3, TrendingUp, Aler
 import Link from 'next/link';
 import { MdxRenderer } from '@/components/content/MdxRenderer';
 import { ShareButton } from '@/components/common/ShareButton';
-import { AdFitBanner } from '@/components/common/AdFitBanner';
 import { CoupangBanner } from '@/components/common/CoupangBanner';
 
 export async function generateStaticParams() {
@@ -80,7 +79,6 @@ export default async function PerformanceReviewDetailPage({ params }: { params: 
                     </div>
                 </header>
 
-                <AdFitBanner />
 
                 <div className="p-10 md:p-16 prose prose-slate max-w-none
                     prose-headings:font-black prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
@@ -94,7 +92,6 @@ export default async function PerformanceReviewDetailPage({ params }: { params: 
 
                 <CoupangBanner seed={slug} keywords={[...(post.tags ?? []), '투자', '매매']} variant="mid" className="px-10 md:px-16" />
 
-                <AdFitBanner />
 
                 <footer className="px-10 md:px-16 py-12 border-t border-border bg-slate-50/50">
                     <CoupangBanner seed={`${slug}-bottom`} keywords={[...(post.tags ?? []), '투자', '매매']} variant="bottom" className="mb-6" />

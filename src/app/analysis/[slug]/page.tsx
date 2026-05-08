@@ -7,7 +7,6 @@ import { ArrowLeft, Calendar, Tag, Share2, Bookmark, BarChart3, TrendingUp } fro
 import Link from 'next/link';
 import { MdxRenderer } from '@/components/content/MdxRenderer';
 import { ShareButton } from '@/components/common/ShareButton';
-import { AdFitBanner } from '@/components/common/AdFitBanner';
 import { CoupangBanner } from '@/components/common/CoupangBanner';
 
 export async function generateStaticParams() {
@@ -132,7 +131,6 @@ export default async function StockReportDetailPage({ params }: { params: Promis
                     </div>
                 </header>
 
-                <AdFitBanner />
 
                 <div className="p-6 md:p-12 prose prose-slate max-w-none prose-headings:font-bold prose-h1:text-2xl prose-h2:text-xl prose-p:leading-relaxed break-words overflow-x-hidden">
                     <MdxRenderer code={post.body.code} />
@@ -140,7 +138,6 @@ export default async function StockReportDetailPage({ params }: { params: Promis
 
                 <CoupangBanner seed={slug} keywords={[...(post.tags ?? []), post.sector ?? '', post.ticker]} variant="mid" className="px-6 md:px-12" />
 
-                <AdFitBanner />
 
                 <footer className="px-6 md:px-12 py-8 border-t border-border bg-muted/5">
                     <CoupangBanner seed={`${slug}-bottom`} keywords={[...(post.tags ?? []), post.sector ?? '', post.ticker]} variant="bottom" className="mb-6" />
