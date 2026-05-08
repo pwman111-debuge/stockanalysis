@@ -114,7 +114,7 @@ export default function RootLayout({
               // JS 청크 로드 실패 시 자동 새로고침 (클라이언트/서버 빌드 불일치 해결)
               window.addEventListener('error', function(e) {
                 var msg = e.message || '';
-                if (msg.indexOf('ChunkLoadError') !== -1 || msg.indexOf('Failed to fetch') !== -1) {
+                if (msg.indexOf('ChunkLoadError') !== -1) {
                   console.warn('Runtime error detected, forcing hard reload...');
                   window.location.reload(true);
                 }
@@ -143,7 +143,7 @@ export default function RootLayout({
             <Sidebar />
             <LayoutWrapper>
               <Navbar />
-              <main className="flex-1 p-4 md:p-8 overflow-x-hidden">
+              <main className="flex-1 p-4 md:p-8">
                 {children}
               </main>
               <Footer />
