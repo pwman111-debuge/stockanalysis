@@ -36,7 +36,7 @@ export default async function Home() {
         <div className="absolute right-0 top-0 h-full w-1/2 opacity-30 md:opacity-100 pointer-events-none">
           <div className="absolute inset-0 z-10 bg-gradient-to-l from-transparent via-card/50 to-card" />
           <Image
-            src="/images/hero-wisdom.png"
+            src="/images/hero-pool.jpg"
             alt="KRX Intelligence - 전술적 주식 분석"
             fill
             className="object-contain object-right"
