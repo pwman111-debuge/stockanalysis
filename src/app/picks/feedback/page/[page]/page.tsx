@@ -1,14 +1,33 @@
 import { allStockPickFeedbacks } from 'contentlayer2/generated';
 import { compareDesc, format, parseISO } from 'date-fns';
-import { Search, ArrowRight, Calendar, ClipboardCheck, TrendingUp, CheckCircle2, Award, TrendingDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, Calendar, ClipboardCheck, TrendingUp, Award, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
 const POSTS_PER_PAGE = 9;
 
 export const dynamic = 'force-static';
+export const dynamicParams = false;
 
-export default function PerformanceReviewPage() {
-    const currentPage = 1;
+export function generateStaticParams() {
+    const totalPages = Math.ceil(allStockPickFeedbacks.length / POSTS_PER_PAGE);
+
+    const pages = Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
+        page: (i + 2).toString(),
+    }));
+
+    if (pages.length === 0) {
+        return [{ page: '2' }];
+    }
+    return pages;
+}
+
+interface PageProps {
+    params: Promise<{ page: string }>;
+}
+
+export default async function PerformanceReviewSubPage({ params }: PageProps) {
+    const resolvedParams = await params;
+    const currentPage = Number(resolvedParams.page);
 
     const allReviews = allStockPickFeedbacks.sort((a, b) =>
         compareDesc(parseISO(a.date), parseISO(b.date))
@@ -35,23 +54,13 @@ export default function PerformanceReviewPage() {
                         <span className="text-sm font-black tracking-[0.2em] text-violet-300 uppercase">Performance Archives</span>
                     </div>
                     <h1 className="text-4xl font-black tracking-tight sm:text-6xl mb-8 leading-[1.1]">
-                        투자 성과 <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-blue-400">리뷰</span>
+                        투자 성과 <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-blue-400">리뷰</span> - {currentPage}페이지
                     </h1>
                     <p className="text-xl text-slate-300 leading-relaxed font-medium">
-                        제네시스 AI의 유망 종목 추천 이후, 실제 시장에서의 성과를 투명하게 공개합니다. <br className="hidden md:block" />
-                        7일, 30일, 그리고 그 이상의 결과를 기반으로 끊임없이 알고리즘을 개선합니다.
+                        제네시스 AI의 유망 종목 추천 이후, 실제 시장에서의 성과를 투명하게 공개합니다.
                     </p>
                 </div>
-
-                {/* Stats floating decorations */}
-                <div className="absolute right-12 bottom-12 hidden lg:flex gap-6">
-                    <div className="bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-[2rem]">
-                        <p className="text-xs text-slate-400 font-bold mb-1 uppercase tracking-widest">Avg. Win Rate</p>
-                        <p className="text-4xl font-black text-emerald-400">75%<span className="text-sm ml-1 text-slate-500 font-medium">+</span></p>
-                    </div>
-                </div>
             </section>
-
 
             {/* Reviews List */}
             <div className="space-y-8">
@@ -60,7 +69,6 @@ export default function PerformanceReviewPage() {
                         {reviews.map((review) => (
                             <Link key={review._id} href={review.url} className="block group">
                                 <article className="relative h-full space-y-6 rounded-[2.5rem] border border-border bg-card p-10 shadow-sm transition-all duration-500 hover:border-violet-500/30 hover:shadow-2xl hover:shadow-violet-500/10 hover:-translate-y-2 overflow-hidden">
-                                    {/* Accent background element */}
                                     <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-violet-500/5 blur-3xl group-hover:bg-violet-500/10 transition-colors duration-700" />
 
                                     <div className="relative flex flex-col justify-between h-full">
@@ -121,8 +129,8 @@ export default function PerformanceReviewPage() {
             {allReviews.length > POSTS_PER_PAGE && (
                 <div className="flex items-center justify-center space-x-2 pt-8">
                     <Link
-                        href="#"
-                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-border transition-all pointer-events-none opacity-30"
+                        href={currentPage === 2 ? '/picks/feedback' : `/picks/feedback/page/${currentPage - 1}`}
+                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-border transition-all hover:bg-violet-500 hover:text-white hover:border-violet-500"
                     >
                         <ChevronLeft className="h-5 w-5" />
                     </Link>
