@@ -51,6 +51,16 @@ export const metadata: Metadata = {
   },
   verification: {
     google: "Qq9Sl-g4NINDCZEPLXqJXe7a_S9CcNaxs3RdwtR70ts",
+    other: {
+      "naver-site-verification": "4951935aefe7dcfe7bea8c02ef4ec6a3f21132ae",
+    },
+  },
+  alternates: {
+    types: {
+      "application/rss+xml": [
+        { url: "https://genesis-report.com/rss.xml", title: "제네시스 주식 리포트 RSS" },
+      ],
+    },
   },
   other: {
     "google-adsense-account": "ca-pub-5479680289617146"

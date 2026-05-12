@@ -1,9 +1,8 @@
 import { MetadataRoute } from 'next'
 
-export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://genesis-report.com'
+const BASE_URL = 'https://genesis-report.com'
 
-    // Static routes
+export default function sitemap(): MetadataRoute.Sitemap {
     const staticRoutes = [
         '',
         '/market',
@@ -11,44 +10,103 @@ export default function sitemap(): MetadataRoute.Sitemap {
         '/education',
         '/calendar',
         '/picks',
+        '/insight',
         '/about',
         '/privacy',
         '/terms',
         '/contact',
     ].map((route) => ({
-        url: `${baseUrl}${route}`,
+        url: `${BASE_URL}${route}`,
         lastModified: new Date(),
         changeFrequency: 'daily' as const,
         priority: route === '' ? 1 : 0.8,
     }))
 
-    // Dynamic routes (Contentlayer 연동)
-    let dynamicRoutes: any[] = []
+    let dynamicRoutes: MetadataRoute.Sitemap = []
+
     try {
-        // Note: build 타임에 파일이 생성되므로 require 활용
-        const { allMarketAnalyses, allStockReports } = require('contentlayer2/generated')
+        const {
+            allMarketAnalyses,
+            allStockReports,
+            allMarketInsights,
+            allStockPicks,
+            allEducations,
+            allStockPickFeedbacks,
+        } = require('contentlayer2/generated')
 
         if (allMarketAnalyses) {
-            const marketEntries = allMarketAnalyses.map((post: any) => ({
-                url: `${baseUrl}${post.url}`,
-                lastModified: new Date(post.date),
-                changeFrequency: 'weekly' as const,
-                priority: 0.6,
-            }))
-            dynamicRoutes = [...dynamicRoutes, ...marketEntries]
+            dynamicRoutes = [
+                ...dynamicRoutes,
+                ...allMarketAnalyses.map((post: any) => ({
+                    url: `${BASE_URL}${post.url}`,
+                    lastModified: new Date(post.date),
+                    changeFrequency: 'weekly' as const,
+                    priority: 0.7,
+                })),
+            ]
         }
 
         if (allStockReports) {
-            const stockEntries = allStockReports.map((post: any) => ({
-                url: `${baseUrl}${post.url}`,
-                lastModified: new Date(post.date),
-                changeFrequency: 'weekly' as const,
-                priority: 0.7,
-            }))
-            dynamicRoutes = [...dynamicRoutes, ...stockEntries]
+            dynamicRoutes = [
+                ...dynamicRoutes,
+                ...allStockReports.map((post: any) => ({
+                    url: `${BASE_URL}${post.url}`,
+                    lastModified: new Date(post.date),
+                    changeFrequency: 'weekly' as const,
+                    priority: 0.7,
+                })),
+            ]
+        }
+
+        if (allMarketInsights) {
+            dynamicRoutes = [
+                ...dynamicRoutes,
+                ...allMarketInsights.map((post: any) => ({
+                    url: `${BASE_URL}${post.url}`,
+                    lastModified: new Date(post.date),
+                    changeFrequency: 'weekly' as const,
+                    priority: 0.7,
+                })),
+            ]
+        }
+
+        if (allStockPicks) {
+            dynamicRoutes = [
+                ...dynamicRoutes,
+                ...allStockPicks.map((post: any) => ({
+                    url: `${BASE_URL}${post.url}`,
+                    lastModified: new Date(post.date),
+                    changeFrequency: 'daily' as const,
+                    priority: 0.8,
+                })),
+            ]
+        }
+
+        if (allEducations) {
+            dynamicRoutes = [
+                ...dynamicRoutes,
+                ...allEducations.map((post: any) => ({
+                    url: `${BASE_URL}${post.url}`,
+                    lastModified: new Date(post.date),
+                    changeFrequency: 'monthly' as const,
+                    priority: 0.5,
+                })),
+            ]
+        }
+
+        if (allStockPickFeedbacks) {
+            dynamicRoutes = [
+                ...dynamicRoutes,
+                ...allStockPickFeedbacks.map((post: any) => ({
+                    url: `${BASE_URL}${post.url}`,
+                    lastModified: new Date(post.date),
+                    changeFrequency: 'weekly' as const,
+                    priority: 0.6,
+                })),
+            ]
         }
     } catch (e) {
-        console.warn('Sitemap dynamic generation failed (this is normal during dev before build):', e)
+        console.warn('Sitemap: contentlayer not available (normal during dev before build):', e)
     }
 
     return [...staticRoutes, ...dynamicRoutes]
