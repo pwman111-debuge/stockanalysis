@@ -1,3 +1,5 @@
+export const runtime = 'edge'
+
 import { NextResponse } from 'next/server'
 
 const BASE_URL = 'https://genesis-report.com'
@@ -15,65 +17,33 @@ export async function GET() {
     let items: { title: string; url: string; date: string; summary: string; category: string }[] = []
 
     try {
-        const {
-            allMarketAnalyses,
-            allStockReports,
-            allMarketInsights,
-            allStockPicks,
-        } = require('contentlayer2/generated')
+        const generated = await import('contentlayer2/generated')
+        const { allMarketAnalyses, allStockReports, allMarketInsights, allStockPicks } = generated as any
 
         if (allMarketAnalyses) {
             for (const post of allMarketAnalyses) {
-                items.push({
-                    title: post.title,
-                    url: `${BASE_URL}${post.url}`,
-                    date: post.date,
-                    summary: post.summary || '',
-                    category: '시황분석',
-                })
+                items.push({ title: post.title, url: `${BASE_URL}${post.url}`, date: post.date, summary: post.summary || '', category: '시황분석' })
             }
         }
-
         if (allStockReports) {
             for (const post of allStockReports) {
-                items.push({
-                    title: post.title,
-                    url: `${BASE_URL}${post.url}`,
-                    date: post.date,
-                    summary: post.summary || '',
-                    category: '종목분석',
-                })
+                items.push({ title: post.title, url: `${BASE_URL}${post.url}`, date: post.date, summary: post.summary || '', category: '종목분석' })
             }
         }
-
         if (allMarketInsights) {
             for (const post of allMarketInsights) {
-                items.push({
-                    title: post.title,
-                    url: `${BASE_URL}${post.url}`,
-                    date: post.date,
-                    summary: post.summary || '',
-                    category: '마켓인사이트',
-                })
+                items.push({ title: post.title, url: `${BASE_URL}${post.url}`, date: post.date, summary: post.summary || '', category: '마켓인사이트' })
             }
         }
-
         if (allStockPicks) {
             for (const post of allStockPicks) {
-                items.push({
-                    title: post.title,
-                    url: `${BASE_URL}${post.url}`,
-                    date: post.date,
-                    summary: post.summary || '',
-                    category: '유망종목',
-                })
+                items.push({ title: post.title, url: `${BASE_URL}${post.url}`, date: post.date, summary: post.summary || '', category: '유망종목' })
             }
         }
     } catch (e) {
         console.warn('RSS generation: contentlayer not available', e)
     }
 
-    // 최신순 정렬, 최대 50개
     items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     items = items.slice(0, 50)
 
