@@ -4,6 +4,7 @@ export const dynamicParams = false;
 import { notFound } from 'next/navigation';
 import { allEducation } from 'contentlayer2/generated';
 import { MdxWrapper } from '@/components/mdx/MdxWrapper';
+import { CoupangDisclosure } from '@/components/common/CoupangDisclosure';
 import { BookOpen, Clock, Calendar, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -78,6 +79,8 @@ export default async function EducationPostPage({ params }: EducationPostPagePro
                     </div>
                 </div>
             </header>
+
+            <CoupangDisclosure />
 
             {/* 본문 콘텐츠 섹션 */}
             <div className="prose prose-zinc prose-lg min-w-full bg-white p-8 sm:p-12 rounded-2xl shadow-sm border border-border">
