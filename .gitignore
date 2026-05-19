@@ -44,15 +44,14 @@ next-env.d.ts
 # contentlayer
 .contentlayer
 
-# 자동화 워크스페이스 (stockanalysis repo에 push 안 함)
-시황분석/
-단기유망종목/
-중기유망종목/
-장기유망종목/
-종목분석/
-.claude/
-CLAUDE.md
+# 자동화 워크스페이스 폴더 제외 규칙은 각 git dir의 info/exclude로 이동:
+#   - .git/info/exclude       → stockanalysis: 워크플로우/스킬 폴더 제외
+#   - .git-code/info/exclude  → webpage-automation: content/src/public 등 제외
+# 이 .gitignore는 양쪽 모두에 공통 적용되는 규칙만 둠
 
-# 민감 정보 (절대 push 안 함)
+# 민감 정보 (절대 어디로도 push 안 함)
 config/
 .playwright-mcp/
+
+# 코드 백업용 별도 git 디렉토리 (webpage-automation 전용)
+.git-code/
