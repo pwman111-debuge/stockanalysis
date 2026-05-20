@@ -16,7 +16,7 @@ export function CoupangBanner({ seed, keywords = [], variant, className = '' }: 
   return (
     <div className={`my-6 px-4 md:px-0 ${className}`}>
       <div className="border-t border-border pt-5">
-        <p className="text-base font-extrabold text-red-600 mb-3">
+        <p className="text-[32px] font-extrabold text-red-600 mb-3">
           [광고] 이 게시물은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.
         </p>
         <p className="text-sm text-slate-600 mb-3 leading-relaxed">
