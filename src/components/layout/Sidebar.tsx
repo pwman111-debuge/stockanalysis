@@ -12,14 +12,25 @@ import {
     Calendar,
     LayoutDashboard,
     Zap,
-    ClipboardCheck
+    ClipboardCheck,
+    SlidersHorizontal
 } from "lucide-react";
 
-const menuItems = [
+type MenuItem = {
+    name: string;
+    href: string;
+    icon: typeof LayoutDashboard;
+    isPro?: boolean;
+    isNew?: boolean;
+    external?: boolean;
+};
+
+const menuItems: MenuItem[] = [
     { name: "대시보드", href: "/", icon: LayoutDashboard },
     { name: "시황 분석", href: "/market", icon: TrendingUp },
     { name: "마켓 인사이트", href: "/insight", icon: Zap },
     { name: "유망 종목", href: "/picks", icon: Search, isPro: true },
+    { name: "주식 스크리너", href: "https://screener.genesis-report.com", icon: SlidersHorizontal, isNew: true, external: true },
     { name: "투자 성과 리포트", href: "/picks/feedback", icon: ClipboardCheck },
     { name: "종목 리포트", href: "/analysis", icon: BarChart3 },
     { name: "경제 캘린더", href: "/calendar", icon: Calendar },
@@ -69,19 +80,22 @@ export function Sidebar() {
 
                     <nav className="flex-1 space-y-1">
                         {menuItems.map((item) => {
-                            const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+                            const isActive = !item.external && (pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)));
                             return (
                                 <Link
                                     key={item.href}
                                     href={item.href}
+                                    {...(item.external ? { target: "_blank", rel: "noopener" } : {})}
                                     className={cn(
                                         "group flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                                         isActive
                                             ? "bg-primary text-primary-foreground"
-                                            : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                                            : item.isNew
+                                                ? "text-foreground bg-sky-50 hover:bg-sky-100 border border-sky-200"
+                                                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                                     )}
                                 >
-                                    <item.icon className={cn("mr-3 h-5 w-5", isActive ? "" : "text-muted-foreground group-hover:text-accent-foreground")} />
+                                    <item.icon className={cn("mr-3 h-5 w-5", isActive ? "" : item.isNew ? "text-sky-500" : "text-muted-foreground group-hover:text-accent-foreground")} />
                                     <span className="flex-1">{item.name}</span>
                                     {item.isPro && (
                                         <span className={cn(
@@ -91,6 +105,11 @@ export function Sidebar() {
                                                 : "bg-amber-100 text-amber-600 border border-amber-200"
                                         )}>
                                             PRO
+                                        </span>
+                                    )}
+                                    {item.isNew && (
+                                        <span className="inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-bold bg-sky-500 text-white shadow-sm">
+                                            NEW
                                         </span>
                                     )}
                                 </Link>
