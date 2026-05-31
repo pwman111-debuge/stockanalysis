@@ -113,9 +113,9 @@ export default async function StockPickDetailPage({ params }: { params: Promise<
                     <CoupangBanner seed={`${slug}-bottom`} keywords={[...(post.tags ?? []), post.ticker]} variant="bottom" className="mb-6" />
                     <div className="flex flex-wrap gap-2">
                         {post.tags?.map((tag) => (
-                            <span key={tag} className="inline-flex items-center rounded-lg bg-card px-3 py-1 text-[11px] font-bold text-muted-foreground border border-border">
+                            <Link key={tag} href={`/tag/${encodeURIComponent(tag)}`} className="inline-flex items-center rounded-lg bg-card px-3 py-1 text-[11px] font-bold text-muted-foreground border border-border hover:border-primary/50 hover:text-primary transition-colors">
                                 #{tag}
-                            </span>
+                            </Link>
                         ))}
                     </div>
                     <div className="mt-10 p-4 rounded-xl bg-orange-50 border border-orange-100 flex gap-3">

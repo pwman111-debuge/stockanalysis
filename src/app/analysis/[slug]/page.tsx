@@ -159,10 +159,10 @@ export default async function StockReportDetailPage({ params }: { params: Promis
                     <CoupangBanner seed={`${slug}-bottom`} keywords={[...(post.tags ?? []), post.sector ?? '', post.ticker]} variant="bottom" className="mb-6" />
                     <div className="flex flex-wrap gap-2">
                         {post.tags?.map((tag) => (
-                            <span key={tag} className="inline-flex items-center rounded-full bg-card px-3 py-1 text-xs font-medium text-muted-foreground border border-border">
+                            <Link key={tag} href={`/tag/${encodeURIComponent(tag)}`} className="inline-flex items-center rounded-full bg-card px-3 py-1 text-xs font-medium text-muted-foreground border border-border hover:border-primary/50 hover:text-primary transition-colors">
                                 <Tag className="mr-1 h-3 w-3" />
                                 {tag}
-                            </span>
+                            </Link>
                         ))}
                     </div>
                     <p className="mt-8 text-xs text-muted-foreground italic">
