@@ -1,5 +1,6 @@
-export const dynamic = 'force-static';
-export const dynamicParams = false;
+// 한글 등 비ASCII 태그가 다수라, Cloudflare(next-on-pages)의 프리렌더 경로 매칭 버그를
+// 피하기 위해 엣지 런타임에서 요청 시 동적 렌더링한다. (sitemap.ts 가 색인용 URL을 제공)
+export const runtime = 'edge';
 
 import {
     allMarketAnalyses,
@@ -44,27 +45,6 @@ function allTagged(): TaggedDoc[] {
         ...allStockPicks,
         ...allStockPickFeedbacks,
     ] as unknown as TaggedDoc[];
-}
-
-// 태그 목록 (슬래시 포함 태그는 라우팅 깨짐 방지를 위해 제외, 2건 이상만 페이지 생성)
-function tagCounts(): Map<string, number> {
-    const counts = new Map<string, number>();
-    for (const doc of allTagged()) {
-        for (const raw of doc.tags ?? []) {
-            const t = raw?.trim();
-            if (!t || t.includes('/')) continue;
-            counts.set(t, (counts.get(t) ?? 0) + 1);
-        }
-    }
-    return counts;
-}
-
-export function generateStaticParams() {
-    const params: { tag: string }[] = [];
-    for (const [tag, count] of tagCounts()) {
-        if (count >= 2) params.push({ tag });
-    }
-    return params;
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ tag: string }> }): Promise<Metadata> {

@@ -18,12 +18,34 @@ const LEVEL_STYLE: Record<string, string> = {
     '고급': 'bg-purple-100 text-purple-700',
 };
 
+const DEFAULT_CATEGORY_STYLE = {
+    icon: BookOpen,
+    color: 'bg-slate-50 border-slate-200 text-slate-700',
+    iconColor: 'text-slate-600',
+};
+
 export default function EducationPage() {
-    // 카테고리별로 작성된 교육 콘텐츠 분류하기
-    const articlesByCategory = CATEGORIES.map(cat => ({
-        ...cat,
-        articles: allEducation.filter(post => post.category === cat.title).sort((a: Education, b: Education) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    }));
+    // 카테고리별로 작성된 교육 콘텐츠 분류하기.
+    // 미리 정의된 카테고리는 지정 스타일을 쓰고, 새로운 카테고리는 기본 스타일로 자동 노출한다.
+    const knownTitles = CATEGORIES.map((c) => c.title);
+    const orderedTitles = [
+        ...knownTitles,
+        ...Array.from(new Set(allEducation.map((p: Education) => p.category))).filter(
+            (c) => !knownTitles.includes(c),
+        ),
+    ];
+    const articlesByCategory = orderedTitles
+        .map((title) => {
+            const style = CATEGORIES.find((c) => c.title === title) ?? { title, ...DEFAULT_CATEGORY_STYLE };
+            return {
+                ...style,
+                title,
+                articles: allEducation
+                    .filter((post: Education) => post.category === title)
+                    .sort((a: Education, b: Education) => new Date(a.date).getTime() - new Date(b.date).getTime()),
+            };
+        })
+        .filter((cat) => cat.articles.length > 0);
 
     // 총 작성된 아티클 계산
     const totalArticles = allEducation.length;
@@ -46,7 +68,7 @@ export default function EducationPage() {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
                 <div className="rounded-xl border border-border bg-white p-4 shadow-sm text-center">
                     <p className="text-xs font-medium text-muted-foreground uppercase">분류된 카테고리</p>
-                    <p className="mt-1 text-2xl font-bold text-foreground">{CATEGORIES.length}개</p>
+                    <p className="mt-1 text-2xl font-bold text-foreground">{articlesByCategory.length}개</p>
                 </div>
                 <div className="rounded-xl border border-border bg-white p-4 shadow-sm text-center">
                     <p className="text-xs font-medium text-muted-foreground uppercase">총 콘텐츠</p>
