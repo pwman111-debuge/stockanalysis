@@ -11,6 +11,8 @@ import { ShareButton } from '@/components/common/ShareButton';
 import { CoupangBanner } from '@/components/common/CoupangBanner';
 import { CoupangDisclosure } from '@/components/common/CoupangDisclosure';
 import { ContentJsonLd } from '@/components/seo/ContentJsonLd';
+import { RelatedPosts } from '@/components/content/RelatedPosts';
+import { getRelatedPosts } from '@/lib/related';
 
 export async function generateStaticParams() {
     return allStockPicks.map((post) => ({
@@ -25,6 +27,8 @@ export default async function StockPickDetailPage({ params }: { params: Promise<
     );
 
     if (!post) notFound();
+
+    const related = getRelatedPosts(allStockPicks, post, 4);
 
     return (
         <div className="max-w-4xl mx-auto pb-20">
@@ -122,6 +126,8 @@ export default async function StockPickDetailPage({ params }: { params: Promise<
                     </div>
                 </footer>
             </article>
+
+            <RelatedPosts items={related.map((r) => ({ url: r.url, title: r.title, summary: r.summary }))} />
         </div>
     );
 }
