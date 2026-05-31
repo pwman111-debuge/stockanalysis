@@ -125,10 +125,10 @@ export default async function MarketDetailPage({ params }: { params: Promise<{ s
                     <CoupangBanner seed={`${slug}-bottom`} keywords={[...(post.tags ?? []), post.category]} variant="bottom" className="mb-6" />
                     <div className="flex flex-wrap gap-2">
                         {post.tags?.map((tag) => (
-                            <Link key={tag} href={`/tag/${encodeURIComponent(tag)}`} className="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground border border-border hover:border-primary/50 hover:text-primary transition-colors">
+                            <span key={tag} className="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground border border-border">
                                 <Tag className="mr-1 h-3 w-3" />
                                 {tag}
-                            </Link>
+                            </span>
                         ))}
                     </div>
                 </footer>

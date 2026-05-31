@@ -105,33 +105,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
                 })),
             ]
         }
-
-        // 태그 페이지 (2건 이상 태그만, 슬래시 포함 태그는 제외 — /tag/[tag] 라우트와 일치)
-        const tagCounts = new Map<string, number>()
-        const addTags = (arr: any[] | undefined) => {
-            if (!arr) return
-            for (const post of arr) {
-                for (const raw of (post.tags ?? [])) {
-                    const t = (raw ?? '').trim()
-                    if (!t || t.includes('/')) continue
-                    tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1)
-                }
-            }
-        }
-        addTags(allMarketAnalyses)
-        addTags(allStockReports)
-        addTags(allMarketInsights)
-        addTags(allStockPicks)
-        addTags(allStockPickFeedbacks)
-        for (const [tag, count] of tagCounts) {
-            if (count < 2) continue
-            dynamicRoutes.push({
-                url: `${BASE_URL}/tag/${encodeURIComponent(tag)}`,
-                lastModified: new Date(),
-                changeFrequency: 'weekly' as const,
-                priority: 0.4,
-            })
-        }
     } catch (e) {
         console.warn('Sitemap: contentlayer not available (normal during dev before build):', e)
     }
