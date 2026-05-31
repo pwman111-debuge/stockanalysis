@@ -1,5 +1,35 @@
-User-Agent: *
+# genesis-report.com robots.txt
+# 모든 크롤러 허용 (API 경로만 차단)
+User-agent: *
 Allow: /
 Disallow: /api/
+
+# --- AI 어시스턴트/생성형 검색 크롤러 명시 허용 (인용 트래픽 최대화) ---
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
 
 Sitemap: https://genesis-report.com/sitemap.xml

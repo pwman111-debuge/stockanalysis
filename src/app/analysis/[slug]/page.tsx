@@ -9,6 +9,7 @@ import { MdxRenderer } from '@/components/content/MdxRenderer';
 import { ShareButton } from '@/components/common/ShareButton';
 import { CoupangBanner } from '@/components/common/CoupangBanner';
 import { CoupangDisclosure } from '@/components/common/CoupangDisclosure';
+import { ContentJsonLd } from '@/components/seo/ContentJsonLd';
 
 export async function generateStaticParams() {
     return allStockReports.map((post) => ({
@@ -62,6 +63,16 @@ export default async function StockReportDetailPage({ params }: { params: Promis
 
     return (
         <div className="max-w-4xl mx-auto pb-20 px-4">
+            <ContentJsonLd
+                headline={post.title}
+                description={post.summary}
+                path={`/analysis/${slug}`}
+                datePublished={post.date}
+                dateModified={post.updatedAt}
+                image={post.thumbnail}
+                sectionLabel="종목 리포트"
+                sectionPath="/analysis"
+            />
             <Link
                 href="/analysis"
                 className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors"

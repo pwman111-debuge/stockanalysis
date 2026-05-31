@@ -10,6 +10,7 @@ import { MdxRenderer } from '@/components/content/MdxRenderer';
 import { ShareButton } from '@/components/common/ShareButton';
 import { CoupangBanner } from '@/components/common/CoupangBanner';
 import { CoupangDisclosure } from '@/components/common/CoupangDisclosure';
+import { ContentJsonLd } from '@/components/seo/ContentJsonLd';
 
 export async function generateStaticParams() {
     return allMarketInsights.map((post) => ({
@@ -27,6 +28,15 @@ export default async function InsightDetailPage({ params }: { params: Promise<{ 
 
     return (
         <div className="max-w-4xl mx-auto pb-20 px-4 sm:px-0">
+            <ContentJsonLd
+                headline={post.title}
+                description={post.summary}
+                path={`/insight/${slug}`}
+                datePublished={post.date}
+                image={post.thumbnail}
+                sectionLabel="마켓 인사이트"
+                sectionPath="/insight"
+            />
             <Link
                 href="/insight"
                 className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors"

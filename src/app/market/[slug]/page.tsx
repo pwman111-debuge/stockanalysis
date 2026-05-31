@@ -10,6 +10,7 @@ import { MdxRenderer } from '@/components/content/MdxRenderer';
 import { ShareButton } from '@/components/common/ShareButton';
 import { CoupangBanner } from '@/components/common/CoupangBanner';
 import { CoupangDisclosure } from '@/components/common/CoupangDisclosure';
+import { ContentJsonLd } from '@/components/seo/ContentJsonLd';
 
 export async function generateStaticParams() {
     return allMarketAnalyses.map((post) => ({
@@ -63,6 +64,15 @@ export default async function MarketDetailPage({ params }: { params: Promise<{ s
 
     return (
         <div className="max-w-4xl mx-auto pb-20 px-4 sm:px-0">
+            <ContentJsonLd
+                headline={post.title}
+                description={post.summary}
+                path={`/market/${slug}`}
+                datePublished={post.date}
+                image={post.thumbnail}
+                sectionLabel="시황 분석"
+                sectionPath="/market"
+            />
             <Link
                 href="/market"
                 className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors"
