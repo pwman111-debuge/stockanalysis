@@ -1,5 +1,6 @@
 
 import { defineDocumentType, makeSource } from 'contentlayer2/source-files'
+import remarkGfm from 'remark-gfm'
 
 export const MarketAnalysis = defineDocumentType(() => ({
     name: 'MarketAnalysis',
@@ -130,4 +131,7 @@ export const StockPickFeedback = defineDocumentType(() => ({
 export default makeSource({
     contentDirPath: 'content',
     documentTypes: [MarketAnalysis, StockPick, StockReport, Education, MarketInsight, StockPickFeedback],
+    mdx: {
+        remarkPlugins: [remarkGfm],
+    },
 })

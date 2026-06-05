@@ -14,13 +14,14 @@ const mdxComponents = {
     ol: (props: any) => <ol className="list-decimal pl-6 mb-4 space-y-2" {...props} />,
     li: (props: any) => <li className="text-slate-700" {...props} />,
     table: (props: any) => (
-        <div className="overflow-x-auto my-6 border rounded-lg">
-            <table className="min-w-full divide-y divide-border" {...props} />
+        <div className="overflow-x-auto my-6 rounded-lg shadow-sm">
+            <table className="min-w-full text-sm border-collapse border border-slate-300" {...props} />
         </div>
     ),
-    thead: (props: any) => <thead className="bg-muted/50" {...props} />,
-    th: (props: any) => <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground" {...props} />,
-    td: (props: any) => <td className="px-4 py-3 text-sm border-t border-border" {...props} />,
+    thead: (props: any) => <thead className="bg-slate-800 text-white" {...props} />,
+    tr: (props: any) => <tr className="even:bg-slate-50 hover:bg-primary/5 transition-colors" {...props} />,
+    th: (props: any) => <th className="border border-slate-300 px-4 py-3 text-center text-sm font-semibold whitespace-nowrap" {...props} />,
+    td: (props: any) => <td className="border border-slate-300 px-4 py-3 text-sm text-slate-700 tabular-nums align-middle" {...props} />,
     blockquote: (props: any) => <blockquote className="border-l-4 border-primary bg-muted/30 p-4 italic my-6 text-slate-600 rounded-r-lg" {...props} />,
     code: (props: any) => <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-primary" {...props} />,
     pre: (props: any) => <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto my-6 text-sm" {...props} />,
