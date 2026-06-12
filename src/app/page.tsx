@@ -1,6 +1,4 @@
-export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
-export const revalidate = 0;
+export const dynamic = 'force-static';
 
 import { TrendingUp, TrendingDown, Users, Activity, ArrowRight, Calendar, Zap, Globe, BarChart3 } from "lucide-react";
 import Link from "next/link";
@@ -10,7 +8,7 @@ import { getNextHighImpactEvent, getFlag } from "@/lib/api/economic-calendar";
 import { RefreshButton } from "@/components/dashboard/RefreshButton";
 import { StockChart } from "@/components/common/StockChart";
 import Image from "next/image";
-import { allMarketAnalyses, allStockReports, allStockPicks } from 'contentlayer2/generated';
+import { allMarketAnalyses, allStockReports } from 'contentlayer2/generated';
 import { CoupangBanner } from '@/components/common/CoupangBanner';
 
 export default async function Home() {
