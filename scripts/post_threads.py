@@ -9,6 +9,7 @@ import re
 import time
 import urllib.request
 import urllib.parse
+import urllib.error
 import os
 
 ENV_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
@@ -126,36 +127,49 @@ def build_post_text(fm, post_url):
         if tag_list:
             hashtags = " ".join([f"#{t.replace(' ', '')}" for t in tag_list[:4]])
 
-    text = f"{title}\n\n{summary}"
+    # 링크·해시태그는 항상 포함되도록 공간을 먼저 확보하고, 요약만 잘라낸다
+    tail = ""
     if hashtags:
-        text += f"\n\n{hashtags}"
-    text += f"\n\n🔗 {post_url}"
+        tail += f"\n\n{hashtags}"
+    tail += f"\n\n🔗 {post_url}"
 
-    if len(text) > 490:
-        text = text[:487] + "..."
+    budget = 490 - len(title) - 2 - len(tail)  # 2 = 제목 뒤 "\n\n"
+    if len(summary) > budget:
+        summary = summary[:budget - 1].rstrip() + "…"
 
-    return text
+    return f"{title}\n\n{summary}{tail}"
 
 
 OG_IMAGE_URL = "https://genesis-report.com/og-image.png"
 
 
-def post_to_threads(user_id, token, text):
-    """Threads API 2단계 포스팅 (이미지 + 텍스트)"""
-    # 1단계: 미디어 컨테이너 생성
+def create_container(user_id, token, params):
+    """미디어 컨테이너 생성 (1단계)"""
     url1 = f"https://graph.threads.net/v1.0/{user_id}/threads"
-    params1 = {
-        "media_type": "IMAGE",
-        "image_url": OG_IMAGE_URL,
-        "text": text,
-        "access_token": token,
-    }
-    data1 = urllib.parse.urlencode(params1).encode("utf-8")
+    data1 = urllib.parse.urlencode(dict(params, access_token=token)).encode("utf-8")
     req1 = urllib.request.Request(url1, data=data1, method="POST")
     req1.add_header("Content-Type", "application/x-www-form-urlencoded")
-
     with urllib.request.urlopen(req1) as r:
-        result1 = json.loads(r.read().decode("utf-8"))
+        return json.loads(r.read().decode("utf-8"))
+
+
+def post_to_threads(user_id, token, text):
+    """Threads API 2단계 포스팅 (이미지 + 텍스트, 이미지 실패 시 텍스트 전용 폴백)"""
+    # 1단계: 미디어 컨테이너 생성
+    try:
+        result1 = create_container(user_id, token, {
+            "media_type": "IMAGE",
+            "image_url": OG_IMAGE_URL,
+            "text": text,
+        })
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", errors="replace")
+        print(f"[주의] 이미지 컨테이너 생성 실패 (HTTP {e.code}): {body}")
+        print("[주의] 텍스트 전용 포스팅으로 폴백합니다.")
+        result1 = create_container(user_id, token, {
+            "media_type": "TEXT",
+            "text": text,
+        })
 
     creation_id = result1.get("id")
     if not creation_id:
