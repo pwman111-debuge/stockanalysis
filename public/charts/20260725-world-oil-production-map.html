@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>세계 원유 생산 지도 — 지역별 점유율 (합계 100%)</title>
+<style>
+  :root {
+    --bg: #f2f5f7; --surface: #ffffff; --surface-2: #eef2f5;
+    --ocean: #d9e6ef; --ocean-2: #cfdeea; --land: #c2cfda; --land-edge: #aebccb;
+    --grid: rgba(40,70,95,0.10);
+    --ink: #12212c; --muted: #5c6b77; --faint: #8b98a3; --line: rgba(20,40,55,0.12);
+    --accent: #c07214; --ring: #ffffff; --shadow: rgba(20,40,55,0.10);
+    --c1:#2a78d6; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100; --c5:#e87ba4; --c6:#008300;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#080d13; --surface:#0e1721; --surface-2:#0b131c;
+      --ocean:#0b1a26; --ocean-2:#0e2130; --land:#182634; --land-edge:#24384a;
+      --grid: rgba(130,165,190,0.10);
+      --ink:#e7eef4; --muted:#8ea0b0; --faint:#5f7180; --line: rgba(255,255,255,0.08);
+      --accent:#f0a83c; --ring:#0b131c; --shadow: rgba(0,0,0,0.35);
+      --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#c98500; --c5:#d55181; --c6:#008300;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg:#f2f5f7; --surface:#ffffff; --surface-2:#eef2f5; --ocean:#d9e6ef; --ocean-2:#cfdeea;
+    --land:#c2cfda; --land-edge:#aebccb; --grid:rgba(40,70,95,0.10); --ink:#12212c; --muted:#5c6b77;
+    --faint:#8b98a3; --line:rgba(20,40,55,0.12); --accent:#c07214; --ring:#ffffff; --shadow:rgba(20,40,55,0.10);
+    --c1:#2a78d6; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100; --c5:#e87ba4; --c6:#008300;
+  }
+  :root[data-theme="dark"] {
+    --bg:#080d13; --surface:#0e1721; --surface-2:#0b131c; --ocean:#0b1a26; --ocean-2:#0e2130;
+    --land:#182634; --land-edge:#24384a; --grid:rgba(130,165,190,0.10); --ink:#e7eef4; --muted:#8ea0b0;
+    --faint:#5f7180; --line:rgba(255,255,255,0.08); --accent:#f0a83c; --ring:#0b131c; --shadow:rgba(0,0,0,0.35);
+    --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#c98500; --c5:#d55181; --c6:#008300;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font-family: ui-sans-serif, -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", Roboto, sans-serif;
+    line-height:1.5; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1180px; margin:0 auto; padding:28px 20px 56px; }
+
+  header.top { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:12px 20px; margin-bottom:6px; }
+  .eyebrow { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); margin:0 0 8px; }
+  h1 { font-size: clamp(22px, 3.4vw, 33px); line-height:1.12; margin:0; letter-spacing:-0.01em; text-wrap:balance; font-weight:680; }
+  .sub { color:var(--muted); font-size:14px; margin:8px 0 0; max-width:64ch; }
+  .sub b { color:var(--ink); font-weight:620; }
+  .stamp { font-family: ui-monospace, Consolas, monospace; font-size:11.5px; color:var(--faint); text-align:right; white-space:nowrap; line-height:1.7; }
+  .stamp b { color:var(--muted); font-weight:600; }
+
+  .maprow { display:grid; grid-template-columns:1fr; gap:18px; margin-top:20px; }
+  /* 본문 삽입(iframe) 폭에 맞춘 배치: 지도는 전폭, 패널 카드는 가로 배열 */
+  @media (min-width:660px){
+    .maprow .mapholder { aspect-ratio:100/50; }
+    .maprow .panel { flex-direction:row; align-items:flex-start; }
+    .maprow .panel > .card { flex:1.75 1 0; min-width:0; }
+    .maprow .panel > .note { flex:1 1 0; min-width:0; }
+  }
+
+  .mapcard { position:relative; background:var(--surface); border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:0 1px 0 var(--shadow); }
+  .mapholder { position:relative; width:100%; aspect-ratio:100/54; }
+  canvas#map { position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; }
+  .legend { display:flex; flex-wrap:wrap; gap:7px 14px; padding:11px 14px; border-top:1px solid var(--line); font-size:12px; color:var(--muted); background:var(--surface-2); }
+  .legend .li { display:inline-flex; align-items:center; gap:6px; }
+  .legend .sw { width:11px; height:11px; border-radius:50%; border:1.5px solid var(--ring); }
+
+  .tooltip { position:absolute; z-index:20; pointer-events:none; opacity:0; transition:opacity .12s ease;
+    background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:10px; padding:9px 11px;
+    font-size:12.5px; box-shadow:0 8px 26px var(--shadow); max-width:236px; line-height:1.45; }
+  .tooltip .tn { font-weight:700; margin-bottom:2px; }
+  .tooltip .ts { color:var(--muted); font-size:11.5px; }
+  .tooltip .tv { font-family: ui-monospace, Consolas, monospace; font-weight:700; }
+
+  .panel { display:flex; flex-direction:column; gap:18px; }
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 16px 14px; box-shadow:0 1px 0 var(--shadow); }
+  .card h2 { font-size:12px; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); margin:0 0 13px; font-weight:640; }
+  .card h2 .hint { text-transform:none; letter-spacing:0; color:var(--faint); font-weight:500; font-size:11px; }
+
+  .stack { display:flex; width:100%; height:36px; border-radius:7px; overflow:hidden; gap:2px; background:var(--surface-2); margin-bottom:14px; }
+  .stack .seg { position:relative; height:100%; display:flex; align-items:center; justify-content:center; min-width:2px; transition:filter .12s ease; }
+  .stack .seg b { font-family: ui-monospace, Consolas, monospace; font-size:11px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .stack .seg:hover { filter:brightness(1.09); }
+
+  .rlist { display:flex; flex-direction:column; }
+  .rlist .r { display:grid; grid-template-columns:13px 1fr auto; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); }
+  .rlist .r:last-child { border-bottom:0; }
+  .rlist .idx { position:absolute; }
+  .rlist .sw { width:13px; height:13px; border-radius:4px; }
+  .rlist .rn { display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .rlist .rn b { font-weight:600; font-size:14px; }
+  .rlist .rn small { color:var(--faint); font-size:11.5px; }
+  .rlist .rp { font-family: ui-monospace, Consolas, monospace; font-variant-numeric:tabular-nums; font-weight:700; font-size:15px; text-align:right; }
+
+  .note { display:flex; gap:9px; font-size:12px; color:var(--muted); background:var(--surface-2); border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:8px; padding:10px 12px; }
+  .note b { color:var(--ink); }
+  .note > span:first-child { color:var(--accent); font-weight:700; }
+
+  footer.src { margin-top:22px; padding-top:16px; border-top:1px solid var(--line); color:var(--faint); font-size:11.5px; line-height:1.7; }
+  footer.src a { color:var(--muted); text-decoration:none; border-bottom:1px solid var(--line); }
+  footer.src a:hover { color:var(--accent); }
+  .srclist { display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:4px; }
+
+  .toggle { font-family: ui-monospace, Consolas, monospace; font-size:11px; color:var(--muted); cursor:pointer; background:var(--surface); border:1px solid var(--line); border-radius:7px; padding:5px 10px; }
+  .toggle:hover { color:var(--accent); border-color:var(--accent); }
+  .toggle:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  @media (prefers-reduced-motion: reduce){ * { transition:none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Genesis Report · Energy Desk</p>
+      <h1>세계 원유 생산 지도 — 지역별 점유율 (합계 100%)</h1>
+      <p class="sub">원유가 실제로 <b>어디서 나오나</b> — 대륙·지역별 생산 비중. 요청하신 <b>아프리카 → 중동 → 아시아 → 아메리카</b> 순으로 배열했고, 100%를 채우기 위해 러시아·유라시아와 유럽을 뒤에 더했다. 버블 크기 = 생산 비중.</p>
+    </div>
+    <div class="stamp">
+      <div><b>기준</b> 세계 생산 ≈ 100 mb/d</div>
+      <div><b>출처</b> Energy Institute · EIA (2024)</div>
+      <div id="themebtnwrap"></div>
+    </div>
+  </header>
+
+  <div class="maprow">
+    <div class="mapcard">
+      <div class="mapholder">
+        <canvas id="map" role="img" aria-label="세계 지역별 원유 생산 비중 지도"></canvas>
+        <div class="tooltip" id="tip"></div>
+      </div>
+      <div class="legend" id="legend"></div>
+    </div>
+
+    <div class="panel">
+      <div class="card">
+        <h2>지역별 원유 생산 비중 · 합계 100% <span class="hint">아프리카→중동→아시아→아메리카 순</span></h2>
+        <div class="stack" id="stack" role="img" aria-label="지역별 생산 100% 구성 막대"></div>
+        <div class="rlist" id="rlist"></div>
+      </div>
+
+      <div class="note">
+        <span>◇</span>
+        <div><b>'생산'은 매장량·수출과 다릅니다.</b> 미국은 세계 최대 <b>생산국</b>(약 22%)이자 최대 소비국이라, 생산 비중만큼 수출하지는 않는다. 아메리카가 중동을 앞선 건 셰일 혁명 이후의 구조 변화다. 지역 수치는 공개 통계 기반 <b>근사치</b>(반올림, 상대 비교용).</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="src">
+    <div><b style="color:var(--muted)">데이터</b> · 지역별 원유(석유 액체) 생산 비중, 2024년 근사 — Energy Institute Statistical Review of World Energy 및 EIA 기반. 북미 ~30%(미국 ~22%)·중동 ~31%·아메리카 전체가 중동을 상회. 대륙 분류·반올림으로 합계 100% 정규화.</div>
+    <div class="srclist">
+      <a href="https://www.energyinst.org/statistical-review" target="_blank" rel="noopener">Energy Institute · Statistical Review</a>
+      <a href="https://ourworldindata.org/grapher/oil-production-by-region" target="_blank" rel="noopener">Our World in Data · Production by Region</a>
+      <a href="https://www.statista.com/statistics/277621/distribution-of-global-oil-production-by-region/" target="_blank" rel="noopener">Statista · Production Share by Region</a>
+      <a href="https://www.visualcapitalist.com/chart-where-the-worlds-oil-comes-from-by-region/" target="_blank" rel="noopener">Visual Capitalist · Where Oil Comes From</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var root = document.documentElement;
+
+  var btn = document.createElement("button");
+  btn.className = "toggle"; btn.type = "button";
+  function curTheme(){ var t = root.getAttribute("data-theme"); return t ? t : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark":"light"); }
+  function syncBtn(){ btn.textContent = curTheme()==="dark" ? "◑ 라이트 모드" : "◐ 다크 모드"; }
+  btn.addEventListener("click", function(){ root.setAttribute("data-theme", curTheme()==="dark"?"light":"dark"); syncBtn(); draw(); });
+  document.getElementById("themebtnwrap").appendChild(btn); syncBtn();
+
+  function V(n){ return getComputedStyle(root).getPropertyValue(n).trim(); }
+  function roundRect(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+  function textOn(hex){ // pick readable text color on a fill
+    var h = hex.replace('#',''); if (h.length===3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    var r=parseInt(h.substr(0,2),16), g=parseInt(h.substr(2,2),16), b=parseInt(h.substr(4,2),16);
+    var L = (0.299*r+0.587*g+0.114*b)/255; return L>0.62 ? "#241a05" : "#ffffff";
+  }
+
+  // projection
+  var LON0=-170, LON1=190, LAT0=80, LAT1=-56;
+  function projX(lon,W){ return (lon-LON0)/(LON1-LON0)*W; }
+  function projY(lat,H){ return (LAT0-lat)/(LAT0-LAT1)*H; }
+
+  var LAND = [
+    [[-166,66],[-164,54],[-157,57],[-152,58],[-140,60],[-132,56],[-125,50],[-124,40],[-119,34],[-111,31],[-105,24],[-97,26],[-91,29],[-84,30],[-81,25],[-80,27],[-76,35],[-70,43],[-66,45],[-59,47],[-64,52],[-78,52],[-80,62],[-95,58],[-92,64],[-105,68],[-125,70],[-141,70],[-156,71],[-166,66]],
+    [[-45,60],[-22,64],[-18,70],[-20,76],[-32,83],[-52,82],[-58,76],[-53,68],[-45,60]],
+    [[-79,9],[-77,1],[-80,-3],[-75,-14],[-71,-18],[-70,-23],[-72,-38],[-74,-45],[-75,-51],[-69,-55],[-65,-48],[-62,-40],[-58,-34],[-52,-32],[-48,-25],[-40,-22],[-35,-9],[-44,-3],[-50,0],[-52,4],[-62,8],[-70,11],[-77,9],[-79,9]],
+    [[-17,15],[-16,21],[-10,28],[-2,35],[10,37],[11,34],[19,31],[25,32],[33,31],[35,24],[38,18],[43,12],[51,12],[48,5],[41,-2],[40,-11],[35,-20],[27,-34],[20,-35],[15,-28],[12,-17],[9,-2],[5,4],[-4,5],[-8,10],[-13,13],[-17,15]],
+    [[26,41],[36,42],[40,38],[48,40],[50,44],[48,52],[58,55],[62,52],[70,55],[68,66],[74,73],[90,76],[105,78],[130,73],[142,72],[160,69],[172,66],[184,65],[176,60],[162,58],[150,59],[142,54],[140,46],[135,43],[130,35],[122,31],[122,24],[110,21],[106,10],[104,8],[100,7],[98,10],[97,16],[92,21],[89,22],[82,17],[77,8],[73,17],[68,24],[61,25],[57,25],[52,28],[48,30],[44,37],[36,37],[30,36],[33,42],[26,41]],
+    [[-10,37],[-9,43],[-4,48],[-1,49],[3,51],[7,54],[8,58],[12,59],[17,56],[13,54],[19,54],[24,60],[28,61],[30,58],[28,45],[24,41],[19,42],[15,44],[12,46],[8,44],[3,43],[-2,36],[-6,36],[-10,37]],
+    [[114,-22],[121,-18],[130,-12],[137,-12],[142,-11],[145,-15],[149,-21],[153,-28],[151,-34],[146,-39],[140,-38],[135,-35],[129,-32],[123,-34],[115,-34],[114,-27],[114,-22]],
+    [[130,31],[135,34],[140,36],[142,40],[141,43],[137,37],[133,34],[130,31]],
+    [[-5,50],[-3,54],[-6,58],[-2,57],[0,53],[1,51],[-5,50]]
+  ];
+
+  // ── data: regional crude production, displayed in requested order ──
+  var PROD = [
+    { name:"아프리카",       pct:8,  cv:"--c1", top:"나이지리아·앙골라·알제리·리비아",
+      bubbles:[{lat:9,lon:9}] },
+    { name:"중동",           pct:31, cv:"--c2", top:"사우디·이라크·UAE·이란·쿠웨이트",
+      bubbles:[{lat:26,lon:49}] },
+    { name:"아시아·태평양",   pct:7,  cv:"--c3", top:"중국·인도네시아·인도·말레이시아",
+      bubbles:[{lat:31,lon:107}] },
+    { name:"아메리카",        pct:36, cv:"--c4", sub:"북미 28 · 중남미 8", top:"미국·캐나다·브라질·멕시코",
+      bubbles:[{lat:41,lon:-100,pct:28,lab:"북미"},{lat:-7,lon:-57,pct:8,lab:"중남미"}] },
+    { name:"러시아·유라시아",  pct:15, cv:"--c5", top:"러시아·카자흐스탄·아제르바이잔",
+      bubbles:[{lat:62,lon:75}] },
+    { name:"유럽",           pct:3,  cv:"--c6", top:"노르웨이·영국",
+      bubbles:[{lat:59,lon:3}] }
+  ];
+
+  var cv = document.getElementById("map"), ctx = cv.getContext("2d"), tip = document.getElementById("tip");
+  var pts = [];
+
+  function draw(){
+    var holder = cv.parentElement, W = holder.clientWidth, H = holder.clientHeight;
+    var dpr = Math.min(window.devicePixelRatio||1, 2);
+    cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,H);
+
+    var ocean=V("--ocean"), ocean2=V("--ocean-2"), land=V("--land"), landEdge=V("--land-edge"),
+        grid=V("--grid"), ring=V("--ring"), ink=V("--ink");
+    var g = ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,ocean2); g.addColorStop(1,ocean);
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    for (var lon=-180; lon<=180; lon+=30){ var x=projX(lon,W); ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for (var lat=60; lat>=-40; lat-=30){ var y=projY(lat,H); ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+    ctx.lineJoin="round";
+    LAND.forEach(function(poly){
+      ctx.beginPath();
+      poly.forEach(function(p,i){ var x=projX(p[0],W), y=projY(p[1],H); if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); });
+      ctx.closePath(); ctx.fillStyle=land; ctx.fill(); ctx.strokeStyle=landEdge; ctx.lineWidth=1; ctx.stroke();
+    });
+
+    pts = [];
+    // production bubbles
+    PROD.forEach(function(rg){
+      var col = V(rg.cv);
+      rg.bubbles.forEach(function(b){
+        var pct = (b.pct!=null) ? b.pct : rg.pct;
+        var x = projX(b.lon,W), y = projY(b.lat,H);
+        var r = 5 + Math.sqrt(pct)*3.0;
+        ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+        ctx.globalAlpha=0.9; ctx.fillStyle=col; ctx.fill(); ctx.globalAlpha=1;
+        ctx.lineWidth=2; ctx.strokeStyle=ring; ctx.stroke();
+        // % inside bubble if big enough
+        if (r>=15){ ctx.fillStyle=textOn(col); ctx.font="700 "+Math.min(15,Math.round(r*0.7))+"px ui-monospace, Consolas, monospace";
+          ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(pct+"%", x, y); ctx.textAlign="left"; }
+        // name label with halo
+        var label = (b.lab||rg.name) + (r>=15 ? "" : "  "+pct+"%");
+        ctx.font="600 11px ui-sans-serif, 'Malgun Gothic', sans-serif";
+        var tw = ctx.measureText(label).width;
+        var lx = x - tw/2, ly = y + r + 10;
+        if (ly > H-8) ly = y - r - 10;
+        if (lx < 3) lx = 3; if (lx+tw > W-3) lx = W-3-tw;
+        ctx.globalAlpha=0.8; ctx.fillStyle=V("--surface"); roundRect(ctx, lx-5, ly-8, tw+10, 16, 4); ctx.fill(); ctx.globalAlpha=1;
+        ctx.fillStyle=ink; ctx.textBaseline="middle"; ctx.fillText(label, lx, ly);
+        pts.push({ x:x, y:y, r:r+5, rg:rg, pct:pct, lab:(b.lab||rg.name) });
+      });
+    });
+  }
+
+  function hit(mx,my){ var best=null, bd=1e9; for(var i=pts.length-1;i>=0;i--){ var p=pts[i], dx=mx-p.x, dy=my-p.y, dd=dx*dx+dy*dy; if(dd<=p.r*p.r && dd<bd){bd=dd;best=p;} } return best; }
+  function showTip(p,mx,my){
+    tip.innerHTML = '<div class="tn">'+p.lab+' <span class="tv" style="color:'+V(p.rg.cv)+'">'+p.pct+'%</span></div>'+
+      '<div class="ts">세계 원유 생산 비중 · 주요국: '+p.rg.top+'</div>';
+    tip.style.opacity="1";
+    var hw=cv.parentElement.clientWidth, hh=cv.parentElement.clientHeight, tw=tip.offsetWidth, th=tip.offsetHeight;
+    var lx=mx+14, ty=my+14; if(lx+tw>hw-6)lx=mx-tw-14; if(ty+th>hh-6)ty=my-th-14;
+    tip.style.left=Math.max(4,lx)+"px"; tip.style.top=Math.max(4,ty)+"px";
+  }
+  function mv(cxp,cyp){ var rect=cv.getBoundingClientRect(), mx=cxp-rect.left, my=cyp-rect.top, p=hit(mx,my);
+    if(p){ showTip(p,mx,my); cv.style.cursor="pointer"; } else { tip.style.opacity="0"; cv.style.cursor="default"; } }
+  cv.addEventListener("mousemove", function(e){ mv(e.clientX,e.clientY); });
+  cv.addEventListener("mouseleave", function(){ tip.style.opacity="0"; });
+  cv.addEventListener("touchstart", function(e){ if(e.touches[0]) mv(e.touches[0].clientX, e.touches[0].clientY); }, {passive:true});
+
+  // legend
+  var lg = document.getElementById("legend");
+  PROD.forEach(function(rg){
+    var s = document.createElement("span"); s.className="li";
+    s.innerHTML = '<span class="sw" style="background:'+V(rg.cv)+'"></span>'+rg.name+' '+rg.pct+'%';
+    lg.appendChild(s);
+  });
+
+  // 100% stacked bar + list
+  var stack = document.getElementById("stack"), rl = document.getElementById("rlist");
+  PROD.forEach(function(rg){
+    var col = V(rg.cv);
+    var seg = document.createElement("div"); seg.className="seg";
+    seg.style.flex = rg.pct+" 0 0"; seg.style.background=col; seg.title = rg.name+" · "+rg.pct+"%";
+    if (rg.pct>=6){ seg.innerHTML = '<b style="color:'+textOn(col)+'">'+rg.pct+'</b>'; }
+    stack.appendChild(seg);
+
+    var r = document.createElement("div"); r.className="r";
+    r.innerHTML = '<span class="sw" style="background:'+col+'"></span>'+
+      '<span class="rn"><b>'+rg.name+'</b>'+(rg.sub?'<small>'+rg.sub+' · '+rg.top+'</small>':'<small>'+rg.top+'</small>')+'</span>'+
+      '<span class="rp">'+rg.pct+'%</span>';
+    rl.appendChild(r);
+  });
+
+  new ResizeObserver(function(){ draw(); }).observe(cv.parentElement);
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function(){ syncBtn(); draw(); });
+  new MutationObserver(function(){ syncBtn(); draw(); }).observe(root, { attributes:true, attributeFilter:["data-theme"] });
+  draw();
+})();
+</script>
+
+<script>
+/* genesis-report.com 본문에 iframe으로 삽입될 때 높이 자동 맞춤 (동일 출처) */
+(function(){
+  "use strict";
+  function fit(){
+    try{
+      var fe = window.frameElement; if(!fe) return;
+      var h = Math.ceil(document.documentElement.getBoundingClientRect().height);
+      if(h > 0) fe.style.height = h + "px";
+    }catch(e){}
+  }
+  window.addEventListener("load", fit);
+  window.addEventListener("resize", fit);
+  if (window.ResizeObserver) new ResizeObserver(fit).observe(document.body);
+  document.addEventListener("click", function(){ setTimeout(fit, 60); });
+  fit(); setTimeout(fit, 300);
+})();
+</script>
+
+</body>
+</html>

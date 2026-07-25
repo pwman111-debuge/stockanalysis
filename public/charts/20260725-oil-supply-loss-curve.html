@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>유가 vs 공급손실 — 중국 반영 vs 미반영 곡선</title>
+<style>
+  :root {
+    --bg:#f2f5f7; --surface:#ffffff; --surface-2:#eef2f5; --plot:#fbfcfd;
+    --grid:rgba(30,55,75,0.10); --ink:#12212c; --muted:#5c6b77; --faint:#8b98a3; --line:rgba(20,40,55,0.13);
+    --a:#c2560f; --b:#2a6fd0; --hi:#c9781a; --danger:#c5352f; --cushion:rgba(42,111,208,0.07);
+    --ring:#ffffff; --shadow:rgba(20,40,55,0.10);
+  }
+  @media (prefers-color-scheme: dark){
+    :root {
+      --bg:#080d13; --surface:#0e1721; --surface-2:#0b131c; --plot:#0a141d;
+      --grid:rgba(130,165,190,0.11); --ink:#e7eef4; --muted:#8ea0b0; --faint:#5f7180; --line:rgba(255,255,255,0.08);
+      --a:#e8814a; --b:#4f9bec; --hi:#f0a83c; --danger:#ef5b5b; --cushion:rgba(79,155,236,0.10);
+      --ring:#0b131c; --shadow:rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="light"]{ --bg:#f2f5f7; --surface:#ffffff; --surface-2:#eef2f5; --plot:#fbfcfd; --grid:rgba(30,55,75,0.10); --ink:#12212c; --muted:#5c6b77; --faint:#8b98a3; --line:rgba(20,40,55,0.13); --a:#c2560f; --b:#2a6fd0; --hi:#c9781a; --danger:#c5352f; --cushion:rgba(42,111,208,0.07); --ring:#ffffff; --shadow:rgba(20,40,55,0.10); }
+  :root[data-theme="dark"]{ --bg:#080d13; --surface:#0e1721; --surface-2:#0b131c; --plot:#0a141d; --grid:rgba(130,165,190,0.11); --ink:#e7eef4; --muted:#8ea0b0; --faint:#5f7180; --line:rgba(255,255,255,0.08); --a:#e8814a; --b:#4f9bec; --hi:#f0a83c; --danger:#ef5b5b; --cushion:rgba(79,155,236,0.10); --ring:#0b131c; --shadow:rgba(0,0,0,0.35); }
+
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font-family: ui-sans-serif,-apple-system,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",Roboto,sans-serif;
+    line-height:1.5; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1120px; margin:0 auto; padding:28px 20px 52px; }
+  header.top { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:12px 20px; }
+  .eyebrow { font-family:ui-monospace,"SF Mono",Consolas,monospace; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--hi); margin:0 0 8px; }
+  h1 { font-size:clamp(21px,3.2vw,31px); line-height:1.14; margin:0; letter-spacing:-0.01em; text-wrap:balance; font-weight:680; }
+  .sub { color:var(--muted); font-size:14px; margin:9px 0 0; max-width:66ch; }
+  .sub b { color:var(--ink); font-weight:620; }
+  .stamp { font-family:ui-monospace,Consolas,monospace; font-size:11.5px; color:var(--faint); text-align:right; line-height:1.7; }
+  .stamp b { color:var(--muted); }
+
+  .row { display:grid; grid-template-columns:1fr; gap:18px; margin-top:20px; }
+  /* 본문 삽입(iframe) 폭에 맞춘 배치: 차트는 전폭, 패널 카드는 가로 배열 */
+  @media (min-width:660px){
+    .row .cholder { aspect-ratio:100/52; }
+    .row .panel { flex-direction:row; align-items:stretch; }
+    .row .panel > * { flex:1 1 0; min-width:0; }
+  }
+
+  .chartcard { background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:8px 8px 4px; box-shadow:0 1px 0 var(--shadow); position:relative; }
+  .cholder { position:relative; width:100%; aspect-ratio:100/64; }
+  canvas { position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; }
+  .tip { position:absolute; z-index:20; pointer-events:none; opacity:0; transition:opacity .1s; background:var(--surface); color:var(--ink);
+    border:1px solid var(--line); border-radius:9px; padding:8px 10px; font-size:12px; box-shadow:0 8px 24px var(--shadow); white-space:nowrap; line-height:1.5; }
+  .tip .x { font-weight:700; margin-bottom:3px; }
+  .tip .a { color:var(--a); font-family:ui-monospace,Consolas,monospace; }
+  .tip .b { color:var(--b); font-family:ui-monospace,Consolas,monospace; font-weight:700; }
+  .tip .gap { color:var(--muted); font-size:11px; margin-top:2px; }
+
+  .panel { display:flex; flex-direction:column; gap:16px; }
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:15px 16px 13px; box-shadow:0 1px 0 var(--shadow); }
+  .card h2 { font-size:12px; letter-spacing:0.05em; text-transform:uppercase; color:var(--muted); margin:0 0 12px; font-weight:640; }
+  .leg { display:flex; flex-direction:column; gap:8px; font-size:12.5px; }
+  .leg .li { display:flex; align-items:center; gap:9px; }
+  .leg .ln { width:22px; height:0; border-top-width:3px; border-top-style:solid; flex:none; }
+  .leg .dot { width:13px; height:13px; border-radius:50%; flex:none; border:2px solid var(--ring); }
+  .leg small { color:var(--faint); }
+
+  table.k { width:100%; border-collapse:collapse; font-size:13px; }
+  table.k td { padding:7px 0; border-bottom:1px solid var(--line); }
+  table.k tr:last-child td { border-bottom:0; }
+  table.k .lbl small { display:block; color:var(--faint); font-size:11px; font-weight:400; }
+  table.k .lbl { font-weight:560; }
+  table.k .v { text-align:right; font-family:ui-monospace,Consolas,monospace; font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  table.k .v.b { color:var(--b); }
+  table.k .v.a { color:var(--a); }
+
+  .note { display:flex; gap:9px; font-size:12px; color:var(--muted); background:var(--surface-2); border:1px solid var(--line); border-left:3px solid var(--danger); border-radius:8px; padding:10px 12px; }
+  .note b { color:var(--ink); }
+  .note>span:first-child { color:var(--danger); font-weight:700; }
+
+  footer.src { margin-top:20px; padding-top:15px; border-top:1px solid var(--line); color:var(--faint); font-size:11.5px; line-height:1.7; }
+  footer.src a { color:var(--muted); text-decoration:none; border-bottom:1px solid var(--line); }
+  footer.src a:hover { color:var(--hi); }
+  .srclist { display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:4px; }
+  .toggle { font-family:ui-monospace,Consolas,monospace; font-size:11px; color:var(--muted); cursor:pointer; background:var(--surface); border:1px solid var(--line); border-radius:7px; padding:5px 10px; margin-top:4px; }
+  .toggle:hover { color:var(--hi); border-color:var(--hi); }
+  .toggle:focus-visible { outline:2px solid var(--hi); outline-offset:2px; }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Genesis Report · Energy Desk</p>
+      <h1>유가 vs 공급손실 — 중국이 흡수하면 곡선이 내려간다</h1>
+      <p class="sub">공급이 몇 % 부족하면 WTI가 얼마가 되나. <b>A곡선(중국 미반영·점선)</b>은 부족분을 그대로 값에 반영한 가정, <b>B곡선(중국 반영·실선)</b>은 중국 수요 붕괴(−5 mb/d)가 첫 ~6%p를 흡수한 현실. <b>현재(≈$90)는 B곡선</b>에 앉아 있다.</p>
+    </div>
+    <div class="stamp">
+      <div><b>기준선</b> 전쟁 전 WTI $63</div>
+      <div><b>스냅샷</b> 2026-07-25</div>
+      <div id="tb"></div>
+    </div>
+  </header>
+
+  <div class="row">
+    <div class="chartcard">
+      <div class="cholder">
+        <canvas id="c" role="img" aria-label="공급손실 대비 WTI 가격 곡선 — 중국 반영 및 미반영"></canvas>
+        <div class="tip" id="tip"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="card">
+        <h2>범례</h2>
+        <div class="leg">
+          <span class="li"><span class="ln" style="border-top-color:var(--b)"></span> B곡선 · <b>중국 반영(현실)</b></span>
+          <span class="li"><span class="ln" style="border-top-color:var(--a); border-top-style:dashed"></span> A곡선 · 중국 미반영(가정)</span>
+          <span class="li"><span class="dot" style="background:var(--hi)"></span> 현재 <small>(총손실 ~12% → ~$90)</small></span>
+          <span class="li"><span class="dot" style="background:var(--a)"></span> 5월 <small>(총손실 9.6% → $110)</small></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>핵심 판독</h2>
+        <table class="k">
+          <tr><td class="lbl">전쟁 전<small>기준선</small></td><td class="v">$63</td></tr>
+          <tr><td class="lbl">5월 · 9.6%<small>호르무즈 1전선 · 흡수 前 (A)</small></td><td class="v a">$110</td></tr>
+          <tr><td class="lbl">현재 · ~12%<small>⚡ 후티 개입 2전선 · 흡수 後 (B) · 실제</small></td><td class="v b">~$90</td></tr>
+          <tr><td class="lbl">재고 재구축 시<small>B→A 복귀 (같은 12%)</small></td><td class="v a">~$122</td></tr>
+          <tr><td class="lbl">20% 최악<small>중국 반영 / 미반영</small></td><td class="v"><span class="b">~$132</span> / <span class="a">$161</span></td></tr>
+        </table>
+      </div>
+
+      <div class="note">
+        <span>⚡</span>
+        <div><b>스위치:</b> 지금 $90는 중국이 수요를 참아 B곡선에 눌러앉힌 값. 중국이 <b>재고 재구축</b>을 시작하거나 <b>바브엘만데브</b>가 악화되면, 같은 손실에서도 화살표를 타고 <b>A곡선($120대)</b>으로 튄다.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="src">
+    <div><b style="color:var(--muted)">방법</b> · 기준선 $63(전쟁 전 WTI 1개월 평균). 증폭 k≈7.8(관측 앵커: 9.6%→$110). B곡선 = 중국·기타 상쇄 ~6%p 흡수 후. 수치는 시나리오 추정치(정밀 예측 아님).</div>
+    <div class="srclist">
+      <a href="https://www.eia.gov/todayinenergy/detail.php?id=67424" target="_blank" rel="noopener">EIA · 2026 유가</a>
+      <a href="https://en.wikipedia.org/wiki/2026%E2%80%932028_world_oil_market_chronology" target="_blank" rel="noopener">2026 Oil Chronology</a>
+      <a href="https://www.api.org/energy-insights/charts-analysis/china-crude-imports-have-declined" target="_blank" rel="noopener">API · China imports −40%</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var root=document.documentElement;
+  var btn=document.createElement("button"); btn.className="toggle"; btn.type="button";
+  function cur(){ var t=root.getAttribute("data-theme"); return t?t:(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"); }
+  function sb(){ btn.textContent=cur()==="dark"?"◑ 라이트 모드":"◐ 다크 모드"; }
+  btn.addEventListener("click",function(){ root.setAttribute("data-theme",cur()==="dark"?"light":"dark"); sb(); draw(); });
+  document.getElementById("tb").appendChild(btn); sb();
+  function V(n){ return getComputedStyle(root).getPropertyValue(n).trim(); }
+
+  var BASE=63, K=0.078, CUSHION=6; // $63, 7.8%/pt, China absorbs first 6pt
+  function priceA(x){ return BASE*(1+K*x); }
+  function priceB(x){ return x<=CUSHION ? BASE : BASE*(1+K*(x-CUSHION)); }
+
+  var XMIN=0, XMAX=20, YMIN=55, YMAX=175;
+  var c=document.getElementById("c"), ctx=c.getContext("2d"), tip=document.getElementById("tip");
+  var geo={};
+
+  function draw(hoverX){
+    var W=c.parentElement.clientWidth, H=c.parentElement.clientHeight, dpr=Math.min(window.devicePixelRatio||1,2);
+    c.width=W*dpr; c.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,H);
+    var padL=52, padR=18, padT=16, padB=38, pw=W-padL-padR, ph=H-padT-padB;
+    geo={padL:padL,padT:padT,pw:pw,ph:ph,W:W,H:H};
+    function X(v){ return padL+(v-XMIN)/(XMAX-XMIN)*pw; }
+    function Y(v){ return padT+(YMAX-v)/(YMAX-YMIN)*ph; }
+
+    var ink=V("--ink"), muted=V("--muted"), faint=V("--faint"), grid=V("--grid"), plot=V("--plot"),
+        A=V("--a"), B=V("--b"), hi=V("--hi"), danger=V("--danger"), cush=V("--cushion"), ring=V("--ring"), line=V("--line");
+
+    // plot bg
+    ctx.fillStyle=plot; ctx.fillRect(padL,padT,pw,ph);
+    // cushion zone 0-6%
+    ctx.fillStyle=cush; ctx.fillRect(X(0),padT, X(CUSHION)-X(0), ph);
+    ctx.fillStyle=faint; ctx.font="10px ui-sans-serif,'Malgun Gothic',sans-serif"; ctx.textAlign="center";
+    ctx.fillText("중국 흡수 구간", (X(0)+X(CUSHION))/2, padT+13);
+
+    // grid + axes
+    ctx.strokeStyle=grid; ctx.lineWidth=1; ctx.fillStyle=faint; ctx.font="11px ui-monospace,Consolas,monospace";
+    ctx.textAlign="right"; ctx.textBaseline="middle";
+    for(var y=60;y<=160;y+=20){ ctx.beginPath(); ctx.moveTo(padL,Y(y)); ctx.lineTo(padL+pw,Y(y)); ctx.stroke(); ctx.fillText("$"+y, padL-8, Y(y)); }
+    ctx.textAlign="center"; ctx.textBaseline="top";
+    for(var x=0;x<=20;x+=5){ ctx.beginPath(); ctx.moveTo(X(x),padT); ctx.lineTo(X(x),padT+ph); ctx.stroke(); ctx.fillText(x+"%", X(x), padT+ph+8); }
+    ctx.fillStyle=muted; ctx.font="11px ui-sans-serif,sans-serif";
+    ctx.fillText("공급 손실 (세계 생산 대비 %)", padL+pw/2, padT+ph+22);
+
+    // baseline $63
+    ctx.strokeStyle=faint; ctx.setLineDash([2,3]); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(padL,Y(BASE)); ctx.lineTo(padL+pw,Y(BASE)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=faint; ctx.textAlign="left"; ctx.textBaseline="bottom"; ctx.font="10px ui-monospace,Consolas,monospace";
+    ctx.fillText("전쟁 전 $63", X(0.3), Y(BASE)-3);
+
+    function plotCurve(fn,color,dash,width){
+      ctx.strokeStyle=color; ctx.lineWidth=width; ctx.setLineDash(dash); ctx.lineJoin="round"; ctx.beginPath();
+      for(var xx=XMIN; xx<=XMAX+0.001; xx+=0.25){ var px=X(xx), py=Y(fn(xx)); if(xx===XMIN)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+      ctx.stroke(); ctx.setLineDash([]);
+    }
+    plotCurve(priceA, A, [6,5], 2);   // 미반영
+    plotCurve(priceB, B, [], 3);      // 현실
+
+    // curve end labels
+    ctx.font="700 11px ui-sans-serif,'Malgun Gothic',sans-serif"; ctx.textBaseline="middle"; ctx.textAlign="right";
+    ctx.fillStyle=A; ctx.fillText("A · 중국 미반영", X(XMAX)-4, Y(priceA(XMAX))-9);
+    ctx.fillStyle=B; ctx.fillText("B · 현실", X(XMAX)-4, Y(priceB(XMAX))+11);
+
+    // restock arrow: 현재(12,90) → A(12)
+    var ax=X(12);
+    drawArrow(ax, Y(90)-9, ax, Y(priceA(12))+7, danger, [5,4]);
+    ctx.fillStyle=danger; ctx.font="700 10.5px ui-sans-serif,'Malgun Gothic',sans-serif"; ctx.textAlign="left"; ctx.textBaseline="middle";
+    ctx.fillText("재고 재구축 →", ax+8, (Y(90)+Y(priceA(12)))/2);
+
+    // markers
+    function mark(x,y,fill,label,sub,align,note){
+      var px=X(x), py=Y(y);
+      ctx.beginPath(); ctx.arc(px,py,6.5,0,7); ctx.fillStyle=fill; ctx.fill(); ctx.lineWidth=2.5; ctx.strokeStyle=ring; ctx.stroke();
+      ctx.lineWidth=1.2; ctx.strokeStyle=fill; ctx.beginPath(); ctx.arc(px,py,8,0,7); ctx.stroke();
+      // label chip
+      ctx.font="700 11.5px ui-sans-serif,'Malgun Gothic',sans-serif"; var tw=ctx.measureText(label).width;
+      ctx.font="10px ui-monospace,Consolas,monospace"; var sw=ctx.measureText(sub).width;
+      var nw=0; if(note){ ctx.font="700 10px ui-sans-serif,'Malgun Gothic',sans-serif"; nw=ctx.measureText(note).width; }
+      var bw=Math.max(tw,sw,nw)+14, bh=note?47:34;
+      var bx = align==="l" ? px-12-bw : px+12;
+      var by = py-(note?26:19);
+      if(bx<padL+2) bx=px+12; if(bx+bw>padL+pw-2) bx=px-12-bw;
+      if(by<padT+2) by=padT+2;
+      ctx.globalAlpha=0.93; ctx.fillStyle=V("--surface"); roundRect(bx,by,bw,bh,7); ctx.fill(); ctx.globalAlpha=1;
+      ctx.strokeStyle=line; ctx.lineWidth=1; roundRect(bx,by,bw,bh,7); ctx.stroke();
+      ctx.textAlign="left"; ctx.textBaseline="middle";
+      ctx.fillStyle=ink; ctx.font="700 11.5px ui-sans-serif,'Malgun Gothic',sans-serif"; ctx.fillText(label, bx+7, by+11);
+      ctx.fillStyle=faint; ctx.font="10px ui-monospace,Consolas,monospace"; ctx.fillText(sub, bx+7, by+24);
+      if(note){ ctx.fillStyle=V("--danger"); ctx.font="700 10px ui-sans-serif,'Malgun Gothic',sans-serif"; ctx.fillText(note, bx+7, by+38); }
+    }
+    mark(9.6,110,A,"5월 · 9.6%","$110 · 호르무즈 1전선","l");
+    mark(12,90,hi,"현재 · ~12%","~$90 (B곡선)","r","⚡ 후티 반군 개입 · 2전선");
+
+    // hover crosshair
+    if(hoverX!=null){
+      var hx=Math.max(XMIN,Math.min(XMAX,hoverX));
+      var pxh=X(hx);
+      ctx.strokeStyle=muted; ctx.setLineDash([3,3]); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(pxh,padT); ctx.lineTo(pxh,padT+ph); ctx.stroke(); ctx.setLineDash([]);
+      var pa=priceA(hx), pb=priceB(hx);
+      [[pa,A],[pb,B]].forEach(function(d){ ctx.beginPath(); ctx.arc(pxh,Y(d[0]),4.5,0,7); ctx.fillStyle=d[1]; ctx.fill(); ctx.lineWidth=1.5; ctx.strokeStyle=ring; ctx.stroke(); });
+      geo.hover={x:hx,pa:pa,pb:pb,px:pxh};
+    } else geo.hover=null;
+  }
+
+  function drawArrow(x1,y1,x2,y2,color,dash){
+    ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=2; ctx.setLineDash(dash||[]);
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.setLineDash([]);
+    var ang=Math.atan2(y2-y1,x2-x1), h=7;
+    ctx.beginPath(); ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-h*Math.cos(ang-0.4), y2-h*Math.sin(ang-0.4));
+    ctx.lineTo(x2-h*Math.cos(ang+0.4), y2-h*Math.sin(ang+0.4));
+    ctx.closePath(); ctx.fill();
+  }
+  function roundRect(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+
+  function onMove(clientX){
+    var rect=c.getBoundingClientRect(), mx=clientX-rect.left;
+    var hx=(mx-geo.padL)/geo.pw*(XMAX-XMIN)+XMIN;
+    if(mx<geo.padL || mx>geo.padL+geo.pw){ tip.style.opacity="0"; draw(null); return; }
+    draw(hx);
+    var h=geo.hover; if(!h) return;
+    tip.innerHTML='<div class="x">공급 손실 '+h.x.toFixed(1)+'%</div>'+
+      '<div class="b">현실(B) $'+Math.round(h.pb)+'</div>'+
+      '<div class="a">미반영(A) $'+Math.round(h.pa)+'</div>'+
+      '<div class="gap">중국 쿠션 −$'+Math.round(h.pa-h.pb)+'</div>';
+    tip.style.opacity="1";
+    var hw=c.parentElement.clientWidth, tw=tip.offsetWidth;
+    var lx=h.px+12; if(lx+tw>hw-6) lx=h.px-tw-12;
+    tip.style.left=Math.max(4,lx)+"px"; tip.style.top=Math.max(6,geo.padT+6)+"px";
+  }
+  c.addEventListener("mousemove",function(e){ onMove(e.clientX); });
+  c.addEventListener("mouseleave",function(){ tip.style.opacity="0"; draw(null); });
+  c.addEventListener("touchstart",function(e){ if(e.touches[0]) onMove(e.touches[0].clientX); },{passive:true});
+  c.addEventListener("touchmove",function(e){ if(e.touches[0]) onMove(e.touches[0].clientX); },{passive:true});
+
+  new ResizeObserver(function(){ draw(null); }).observe(c.parentElement);
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(){ sb(); draw(null); });
+  new MutationObserver(function(){ sb(); draw(null); }).observe(root,{attributes:true,attributeFilter:["data-theme"]});
+  draw(null);
+})();
+</script>
+
+<script>
+/* genesis-report.com 본문에 iframe으로 삽입될 때 높이 자동 맞춤 (동일 출처) */
+(function(){
+  "use strict";
+  function fit(){
+    try{
+      var fe = window.frameElement; if(!fe) return;
+      var h = Math.ceil(document.documentElement.getBoundingClientRect().height);
+      if(h > 0) fe.style.height = h + "px";
+    }catch(e){}
+  }
+  window.addEventListener("load", fit);
+  window.addEventListener("resize", fit);
+  if (window.ResizeObserver) new ResizeObserver(fit).observe(document.body);
+  document.addEventListener("click", function(){ setTimeout(fit, 60); });
+  fit(); setTimeout(fit, 300);
+})();
+</script>
+
+</body>
+</html>
