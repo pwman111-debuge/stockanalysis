@@ -3,6 +3,8 @@
 import { useMDXComponent } from 'next-contentlayer2/hooks';
 import { PortfolioChart } from '@/components/dashboard/MainIndexCharts';
 import { CustomStockChart } from '@/components/mdx/CustomStockChart';
+import { SignalChart } from '@/components/mdx/market/SignalChart';
+import { KeyPoints, IndexBoard, MacroStrip, SectorBoard, RankGroup, SignalCard, SignalGuide } from '@/components/mdx/market/MarketBlocks';
 
 // MDX 컴포넌트 커스텀 스타일 정의
 const mdxComponents = {
@@ -32,6 +34,8 @@ const mdxComponents = {
         </div>
     ),
     StockChart: CustomStockChart,
+    // 쉬운 시황 v4 (scripts/market_brief.py)
+    SignalChart, KeyPoints, IndexBoard, MacroStrip, SectorBoard, RankGroup, SignalCard, SignalGuide,
 };
 
 interface MdxRendererProps {
