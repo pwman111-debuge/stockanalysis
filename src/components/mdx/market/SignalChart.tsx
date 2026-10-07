@@ -134,6 +134,8 @@ export function SignalChart({ src, title }: { src: string; title?: string }) {
         setHover(Math.min(last, Math.max(off, i)));
     };
     const chg = hi > 0 ? (data.close[hi] / data.close[hi - 1] - 1) * 100 : 0;
+    // 지수는 소수 둘째 자리, 개별 종목(원 단위 정수 시세)은 소수점 없이
+    const dp = data.close.every((v) => Number.isInteger(v)) ? 0 : 2;
 
     return (
         <figure className="not-prose my-6 rounded-2xl border border-border bg-card p-3 sm:p-5 shadow-sm">
@@ -157,10 +159,10 @@ export function SignalChart({ src, title }: { src: string; title?: string }) {
             {/* 호버 정보 줄 — 고정 위치라 모바일에서도 가리지 않는다 */}
             <div className="mb-2 flex flex-wrap gap-x-4 gap-y-1 text-xs tabular-nums text-slate-600">
                 <span className="font-semibold text-slate-800">{data.dates[hi]}</span>
-                <span>종가 <b className={chg >= 0 ? "text-rose-600" : "text-blue-600"}>{fmt(data.close[hi])} ({chg >= 0 ? "+" : ""}{chg.toFixed(2)}%)</b></span>
-                <span>고 {fmt(data.high[hi])} · 저 {fmt(data.low[hi])}</span>
-                <span style={{ color: C.ma20 }}>20일선 {fmt(data.ma20[hi])}</span>
-                <span style={{ color: C.ma120 }}>120일선 {fmt(data.ma120[hi])}</span>
+                <span>종가 <b className={chg >= 0 ? "text-rose-600" : "text-blue-600"}>{fmt(data.close[hi], dp)} ({chg >= 0 ? "+" : ""}{chg.toFixed(2)}%)</b></span>
+                <span>고 {fmt(data.high[hi], dp)} · 저 {fmt(data.low[hi], dp)}</span>
+                <span style={{ color: C.ma20 }}>20일선 {fmt(data.ma20[hi], dp)}</span>
+                <span style={{ color: C.ma120 }}>120일선 {fmt(data.ma120[hi], dp)}</span>
                 <span>RSI(7) {fmt(data.rsi7[hi], 0)}</span>
             </div>
 
