@@ -10,7 +10,7 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
     return (
         <div 
             className={cn(
-                "flex flex-1 flex-col transition-all duration-300 ease-in-out min-h-screen",
+                "flex flex-1 flex-col min-w-0 transition-all duration-300 ease-in-out min-h-screen",
                 isOpen ? "lg:pl-64" : "pl-0"
             )}
         >
