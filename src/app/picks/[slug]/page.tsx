@@ -30,6 +30,12 @@ export default async function StockPickDetailPage({ params }: { params: Promise<
 
     const related = getRelatedPosts(allStockPicks, post, 4);
 
+    // 종목이 없는 날(가격 0)은 가격 카드 대신 안내 문구. 종목이 있으면 pickName으로 어느 종목의 가격인지 밝힌다.
+    const hasPrices = post.currentPrice > 0 && post.targetPrice > 0;
+    const pickLabel = post.term === 'short' ? '오늘의 관심 종목' : '1순위 관심 종목';
+    const expectedReturn = post.expectedReturn
+        || (hasPrices ? `${((post.targetPrice / post.currentPrice - 1) * 100) >= 0 ? '+' : ''}${((post.targetPrice / post.currentPrice - 1) * 100).toFixed(1)}%` : undefined);
+
     return (
         <div className="max-w-4xl mx-auto pb-20">
             <ContentJsonLd
@@ -65,20 +71,33 @@ export default async function StockPickDetailPage({ params }: { params: Promise<
                         {post.title}
                     </h1>
 
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
-                        <div className="p-5 rounded-2xl bg-background border border-border shadow-sm">
-                            <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1 tracking-wider">목표가</p>
-                            <p className="text-xl font-black text-kr-up">{post.targetPrice > 0 ? post.targetPrice.toLocaleString() + '원' : '상세내용 확인'}</p>
+                    {hasPrices ? (
+                        <div className="mt-8">
+                            {post.pickName && (
+                                <p className="mb-3 text-sm font-bold text-foreground">
+                                    {pickLabel}: <span className="text-primary">{post.pickName}</span>
+                                </p>
+                            )}
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                <div className="p-5 rounded-2xl bg-background border border-border shadow-sm">
+                                    <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1 tracking-wider">목표가</p>
+                                    <p className="text-xl font-black text-kr-up">{post.targetPrice.toLocaleString()}원</p>
+                                </div>
+                                <div className="p-5 rounded-2xl bg-background border border-border shadow-sm">
+                                    <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1 tracking-wider">손절가</p>
+                                    <p className="text-xl font-black text-kr-down">{post.stopLoss > 0 ? post.stopLoss.toLocaleString() + '원' : '상세내용 확인'}</p>
+                                </div>
+                                <div className="p-5 rounded-2xl bg-background border border-border shadow-sm">
+                                    <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1 tracking-wider">기대 수익률</p>
+                                    <p className="text-xl font-black text-primary">{expectedReturn ?? '상세내용 확인'}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div className="p-5 rounded-2xl bg-background border border-border shadow-sm">
-                            <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1 tracking-wider">손절가</p>
-                            <p className="text-xl font-black text-kr-down">{post.stopLoss > 0 ? post.stopLoss.toLocaleString() + '원' : '상세내용 확인'}</p>
+                    ) : (
+                        <div className="mt-8 p-5 rounded-2xl bg-background border border-border shadow-sm text-sm leading-relaxed text-muted-foreground">
+                            <b className="text-foreground">{post.term === 'short' ? '오늘은' : '이번 회차에는'} 조건을 통과한 종목이 없습니다.</b> 아래 본문에서 시장 신호와 그 이유를 확인하세요.
                         </div>
-                        <div className="p-5 rounded-2xl bg-background border border-border shadow-sm">
-                            <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1 tracking-wider">기대 수익률</p>
-                            <p className="text-xl font-black text-primary">{post.expectedReturn || '상세내용 확인'}</p>
-                        </div>
-                    </div>
+                    )}
 
                     <div className="mt-8 pt-6 border-t border-border flex items-center justify-between">
                         <div className="flex items-center space-x-4">

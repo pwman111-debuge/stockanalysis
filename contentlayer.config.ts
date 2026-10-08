@@ -37,6 +37,7 @@ export const StockPick = defineDocumentType(() => ({
         stopLoss: { type: 'number', required: true },
         expectedReturn: { type: 'string' },
         holdingPeriod: { type: 'string' },
+        pickName: { type: 'string' }, // 상단 가격 카드의 종목명 (예: "녹십자 (006280)"). 종목이 없는 날은 가격 0 → 카드 숨김
         tags: { type: 'list', of: { type: 'string' } },
         summary: { type: 'string', required: true },
         thumbnail: { type: 'string' },
