@@ -87,6 +87,21 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Epigraph - Oscar Wilde */}
+      <figure className="mx-auto max-w-3xl px-4 text-center">
+        <blockquote className="space-y-2">
+          <p className="font-serif text-lg md:text-xl italic text-foreground/90 leading-relaxed">
+            &ldquo;We are all in the gutter, but some of us are looking at the stars.&rdquo;
+          </p>
+          <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+            우리는 모두 시궁창에 있지만, 그중 어떤 이들은 별을 바라본다.
+          </p>
+        </blockquote>
+        <figcaption className="mt-3 text-xs text-muted-foreground/80 tracking-wide">
+          — 오스카 와일드, 《윈더미어 부인의 부채》(1892)
+        </figcaption>
+      </figure>
+
       {/* Coupang Partners Banner - Top */}
       <CoupangBanner seed="dashboard-top" keywords={[]} variant="mid" />
 
