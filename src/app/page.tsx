@@ -6,7 +6,9 @@ import { cn } from "@/lib/utils";
 import { getLatestMarketData } from "@/lib/api/market-api";
 import { getNextHighImpactEvent, getFlag } from "@/lib/api/economic-calendar";
 import { RefreshButton } from "@/components/dashboard/RefreshButton";
-import { StockChart } from "@/components/common/StockChart";
+import { SignalChart } from "@/components/mdx/market/SignalChart";
+import fs from "fs";
+import path from "path";
 import Image from "next/image";
 import { allMarketAnalyses, allStockReports } from 'contentlayer2/generated';
 import { CoupangBanner } from '@/components/common/CoupangBanner';
@@ -24,6 +26,13 @@ export default async function Home() {
   const recentReports = [...allStockReports]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 3);
+
+  // 지수 차트 신호 — 빌드 시점의 최신 market_brief JSON (시황 push마다 재빌드되어 매일 갱신)
+  const signalDate = fs.readdirSync(path.join(process.cwd(), "public/charts/market"))
+    .map((f) => f.match(/^(\d{4}-\d{2}-\d{2})-kospi\.json$/)?.[1])
+    .filter((d): d is string => !!d)
+    .sort()
+    .pop();
 
 
   return (
@@ -107,8 +116,8 @@ export default async function Home() {
 
       {/* Market Indices - Featured Charts (Restored from previous version) */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <StockChart code="KOSPI" title="KOSPI" className="w-full" />
-        <StockChart code="KOSDAQ" title="KOSDAQ" className="w-full" />
+        <SignalChart src={`/charts/market/${signalDate}-kospi.json`} title="코스피" compact live="KOSPI" moreHref={recentAnalyses[0]?.url} />
+        <SignalChart src={`/charts/market/${signalDate}-kosdaq.json`} title="코스닥" compact live="KOSDAQ" moreHref={recentAnalyses[0]?.url} />
       </div>
 
       {/* Market Indices Grid - Other Indicators */}

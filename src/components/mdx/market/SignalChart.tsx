@@ -2,6 +2,7 @@
 
 // 차트 신호 캔들 차트 — scripts/market_brief.py 가 만든 public/charts/market/*.json 을 읽어 그린다.
 // 규칙은 주도섹터 chart_signal.py 와 동일: 파란 박스=매수 구간(눌림→반등), 보라 박스=과열 구간(과열→꺾임).
+// compact = 홈 대시보드용(MACD·RSI 생략), live = 지수 코드 — 장중 오늘 캔들만 1분마다 덧붙인다(신호는 종가 확정분만).
 import { useEffect, useMemo, useRef, useState } from "react";
 
 interface Signal { kind: "B" | "S"; start: number; fire: number; date: string; price: number }
@@ -25,17 +26,38 @@ const STATE_STYLE: Record<string, string> = {
 };
 
 const PL = 6, PR = 62;   // 가로폭 W는 컨테이너 실측(글자 크기가 화면과 1:1)
-const H_PRICE = 300, H_GAP = 14, H_SUB = 64, H_AXIS = 22;
-const Y_MACD = H_PRICE + H_GAP, Y_RSI = Y_MACD + H_SUB + H_GAP;
-const H = Y_RSI + H_SUB + H_AXIS;
+const H_GAP = 14, H_SUB = 64, H_AXIS = 22;
+
+interface Live { date: string; open: number; high: number; low: number; close: number; open_: boolean }
+
+// /api/chart/index (periodType=day) 1분봉 → 오늘 OHLC 한 개
+async function fetchLive(code: string): Promise<Live | null> {
+    const r = await fetch(`/api/chart/index?code=${code}&periodType=day&range=1`, { cache: "no-store" });
+    if (!r.ok) return null;
+    const j = await r.json();
+    const p: { currentPrice: number; highPrice: number; lowPrice: number }[] = j.priceInfos ?? [];
+    if (!p.length || !j.tradeBaseAt) return null;
+    const t = String(j.tradeBaseAt);
+    return {
+        date: `${t.slice(0, 4)}-${t.slice(4, 6)}-${t.slice(6, 8)}`,
+        open: j.openPrice ?? p[0].currentPrice,
+        high: Math.max(...p.map((x) => x.highPrice ?? x.currentPrice)),
+        low: Math.min(...p.map((x) => x.lowPrice ?? x.currentPrice)),
+        close: p[p.length - 1].currentPrice,
+        open_: j.marketStatus === "OPEN",
+    };
+}
 
 const fmt = (v: number | null | undefined, d = 2) =>
     v == null ? "—" : v.toLocaleString("ko-KR", { minimumFractionDigits: d, maximumFractionDigits: d });
 
-export function SignalChart({ src, title }: { src: string; title?: string }) {
-    const [data, setData] = useState<ChartData | null>(null);
+export function SignalChart({ src, title, compact = false, live, moreHref }: {
+    src: string; title?: string; compact?: boolean; live?: string; moreHref?: string;
+}) {
+    const [raw, setData] = useState<ChartData | null>(null);
+    const [today, setToday] = useState<Live | null>(null);
     const [err, setErr] = useState<string | null>(null);
-    const [days, setDays] = useState(250);
+    const [days, setDays] = useState(compact ? 125 : 250);
     const [hover, setHover] = useState<number | null>(null);
     const [W, setW] = useState(800);
     const svgRef = useRef<SVGSVGElement>(null);
@@ -51,7 +73,7 @@ export function SignalChart({ src, title }: { src: string; title?: string }) {
         const ro = new ResizeObserver(fit);
         ro.observe(el);
         return () => ro.disconnect();
-    }, [data]);
+    }, [raw]);
 
     useEffect(() => {
         fetch(src).then((r) => {
@@ -59,6 +81,32 @@ export function SignalChart({ src, title }: { src: string; title?: string }) {
             return r.json();
         }).then(setData).catch((e) => setErr(`차트 데이터를 불러오지 못했습니다 (${e.message})`));
     }, [src]);
+
+    useEffect(() => {
+        if (!live) return;
+        const tick = () => { if (!document.hidden) fetchLive(live).then((v) => v && setToday(v)).catch(() => {}); };
+        tick();
+        const id = setInterval(tick, 60_000);
+        return () => clearInterval(id);
+    }, [live]);
+
+    // 종가 확정분(JSON) 뒤에 오늘 장중 캔들을 붙인다 — 지표·신호는 비워 둔다
+    const liveI = raw && today && today.date > raw.asof ? raw.dates.length : -1;
+    const data = useMemo(() => {
+        if (!raw || liveI < 0 || !today) return raw;
+        const nul = <T,>(a: (T | null)[]) => [...a, null];
+        return {
+            ...raw, dates: [...raw.dates, today.date],
+            open: [...raw.open, today.open], high: [...raw.high, today.high],
+            low: [...raw.low, today.low], close: [...raw.close, today.close],
+            ma5: nul(raw.ma5), ma20: nul(raw.ma20), ma120: nul(raw.ma120), bbUp: nul(raw.bbUp), bbDn: nul(raw.bbDn),
+            macdHist: nul(raw.macdHist), rsi7: nul(raw.rsi7),
+        };
+    }, [raw, today, liveI]);
+
+    const H_PRICE = compact ? 250 : 300;
+    const Y_MACD = H_PRICE + H_GAP, Y_RSI = Y_MACD + H_SUB + H_GAP;
+    const H = compact ? H_PRICE + H_AXIS : Y_RSI + H_SUB + H_AXIS;
 
     const view = useMemo(() => {
         if (!data) return null;
@@ -107,7 +155,7 @@ export function SignalChart({ src, title }: { src: string; title?: string }) {
             if (m !== prev) {
                 const mm = Number(m.slice(5));
                 // 첫 눈금이 잘린 달이면 다음 눈금과 겹치므로 버린다
-                if (ticks.length === 1 && i - ticks[0].i < 12) ticks.pop();
+                if (ticks.length === 1 && (i - ticks[0].i) * step < 48) ticks.pop();
                 ticks.push({ i, label: ticks.length === 0 || mm === 1 ? `${m.slice(2, 4)}/${m.slice(5)}` : `${mm}월` });
                 prev = m;
             }
@@ -115,10 +163,10 @@ export function SignalChart({ src, title }: { src: string; title?: string }) {
         const pTicks = [...Array(5).keys()].map((k) => lo + ((hi - lo) * (k + 0.5)) / 5);
         const sigs = data.signals.filter((s) => s.fire >= off);
         return { off, n, len, step, x, y, yM, yR, line, band, ticks, pTicks, sigs };
-    }, [data, days, W]);
+    }, [data, days, W, H_PRICE, Y_MACD, Y_RSI]);
 
     if (err) return <div className="my-6 rounded-xl border border-border p-6 text-sm text-muted-foreground">{err}</div>;
-    if (!data || !view) return <div className="my-6 h-[420px] animate-pulse rounded-xl border border-border bg-muted/40" />;
+    if (!data || !view) return <div className={`my-6 ${compact ? "h-[330px]" : "h-[420px]"} animate-pulse rounded-xl border border-border bg-muted/40`} />;
 
     const { off, n, step, x, y, yM, yR, line, band, ticks, pTicks, sigs } = view;
     const last = n - 1;
@@ -138,7 +186,7 @@ export function SignalChart({ src, title }: { src: string; title?: string }) {
     const dp = data.close.every((v) => Number.isInteger(v)) ? 0 : 2;
 
     return (
-        <figure className="not-prose my-6 rounded-2xl border border-border bg-card p-3 sm:p-5 shadow-sm">
+        <figure className="not-prose my-6 min-w-0 rounded-2xl border border-border bg-card p-3 sm:p-5 shadow-sm">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                     <span className="text-base font-bold text-slate-900">{title ?? `${data.name} 차트 신호`}</span>
@@ -159,11 +207,11 @@ export function SignalChart({ src, title }: { src: string; title?: string }) {
             {/* 호버 정보 줄 — 고정 위치라 모바일에서도 가리지 않는다 */}
             <div className="mb-2 flex flex-wrap gap-x-4 gap-y-1 text-xs tabular-nums text-slate-600">
                 <span className="font-semibold text-slate-800">{data.dates[hi]}</span>
-                <span>종가 <b className={chg >= 0 ? "text-rose-600" : "text-blue-600"}>{fmt(data.close[hi], dp)} ({chg >= 0 ? "+" : ""}{chg.toFixed(2)}%)</b></span>
+                <span>{hi === liveI ? (today?.open_ ? "장중 현재" : "오늘 잠정") : "종가"} <b className={chg >= 0 ? "text-rose-600" : "text-blue-600"}>{fmt(data.close[hi], dp)} ({chg >= 0 ? "+" : ""}{chg.toFixed(2)}%)</b></span>
                 <span>고 {fmt(data.high[hi], dp)} · 저 {fmt(data.low[hi], dp)}</span>
-                <span style={{ color: C.ma20 }}>20일선 {fmt(data.ma20[hi], dp)}</span>
-                <span style={{ color: C.ma120 }}>120일선 {fmt(data.ma120[hi], dp)}</span>
-                <span>RSI(7) {fmt(data.rsi7[hi], 0)}</span>
+                {data.ma20[hi] != null && <span style={{ color: C.ma20 }}>20일선 {fmt(data.ma20[hi], dp)}</span>}
+                {data.ma120[hi] != null && <span style={{ color: C.ma120 }}>120일선 {fmt(data.ma120[hi], dp)}</span>}
+                {!compact && <span>RSI(7) {fmt(data.rsi7[hi], 0)}</span>}
             </div>
 
             <div ref={boxRef} className="w-full">
@@ -217,7 +265,7 @@ export function SignalChart({ src, title }: { src: string; title?: string }) {
                     const col = c >= o ? C.up : C.dn;
                     const top = y(Math.max(o, c)), h = Math.max(1, Math.abs(y(o) - y(c)));
                     return (
-                        <g key={i}>
+                        <g key={i} opacity={i === liveI ? 0.5 : 1}>
                             <line x1={x(i)} x2={x(i)} y1={y(data.high[i])} y2={y(data.low[i])} stroke={col} strokeWidth={0.9} />
                             <rect x={x(i) - cw / 2} y={top} width={cw} height={h} fill={col} />
                         </g>
@@ -231,11 +279,12 @@ export function SignalChart({ src, title }: { src: string; title?: string }) {
 
                 {/* 마지막 종가 태그 */}
                 <line x1={PL} x2={W - PR} y1={y(data.close[last])} y2={y(data.close[last])} stroke={C.up} strokeDasharray="2 3" opacity={0.7} />
-                <rect x={W - PR + 2} y={y(data.close[last]) - 10} width={PR - 4} height={20} rx={4} fill={C.up} />
+                <rect x={W - PR + 2} y={y(data.close[last]) - 10} width={PR - 4} height={20} rx={4} fill={last === liveI ? "#0f172a" : C.up} />
                 <text x={W - PR / 2} y={y(data.close[last]) + 4} fontSize="11" fontWeight="700" fill="#fff" textAnchor="middle">
                     {fmt(data.close[last], 0)}
                 </text>
 
+                {!compact && <>
                 {/* MACD 막대 */}
                 <text x={PL + 2} y={Y_MACD + 11} fontSize="11" fontWeight="600" fill={C.txt}>MACD 막대 (방향 전환)</text>
                 <line x1={PL} x2={W - PR} y1={yM(0)} y2={yM(0)} stroke="#adb5bd" />
@@ -264,6 +313,7 @@ export function SignalChart({ src, title }: { src: string; title?: string }) {
                     }
                     return d;
                 })()} fill="none" stroke={C.buy} strokeWidth={1.4} />
+                </>}
 
                 {/* 호버 크로스헤어 */}
                 {hover != null && (
@@ -281,8 +331,16 @@ export function SignalChart({ src, title }: { src: string; title?: string }) {
                 <span className="inline-flex items-center gap-1.5"><i className="inline-block h-3 w-4 rounded-sm" style={{ background: C.band, opacity: 0.35 }} />볼린저 밴드</span>
                 <span className="inline-flex items-center gap-1.5"><i className="inline-block h-3 w-4 rounded-sm border" style={{ background: "#1971c222", borderColor: C.buy }} />▲ 매수 구간</span>
                 <span className="inline-flex items-center gap-1.5"><i className="inline-block h-3 w-4 rounded-sm border" style={{ background: "#9333ea22", borderColor: C.sell }} />▼ 매도 구간(더 사지 않음)</span>
-                <span className="text-slate-400">기준 {data.asof} · 일봉</span>
+                <span className="text-slate-400">
+                    신호 기준 {data.asof} 종가 · 일봉{liveI >= 0 && (today?.open_ ? " · 오늘 캔들은 장중 1분마다 갱신(흐림)" : " · 오늘 캔들은 잠정(흐림)")}
+                </span>
             </figcaption>
+            {compact && (
+                <p className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                    <span>차트 신호는 참고용이며 단독 매매 근거가 아닙니다.</span>
+                    {moreHref && <a href={moreHref} className="font-semibold text-blue-700 hover:underline">MACD·RSI 포함 자세히 보기 →</a>}
+                </p>
+            )}
         </figure>
     );
 }
