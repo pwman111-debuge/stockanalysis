@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이라크전·금융위기 타임라인</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--text:#1d1d1f;--muted:#6b6b70;--line:#e3e3e0;--grid:#ececea;--spx:#1f4e9c;--war:#c0392b;--pol:#6a4fb3;--fin:#d9822b;--band:#1f4e9c14}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.6;font-size:15px}
+.wrap{max-width:1040px;margin:0 auto;padding:16px 12px 20px}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+.chart{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 8px 4px;overflow-x:auto}
+svg{display:block;width:100%;min-width:640px;height:auto}
+svg text{fill:var(--text);font-family:inherit}
+.ax{fill:var(--muted)!important;font-size:12px}
+.gl{stroke:var(--grid);stroke-width:1}
+.spx{fill:none;stroke:var(--spx);stroke-width:2.5;stroke-linejoin:round}
+.lbl{font-size:14px;font-weight:700}
+.dt{font-size:12.5px;fill:var(--muted)!important}
+.keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:16px 0}
+.k{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;border-top:4px solid var(--c)}
+.k .n{font-size:13px;color:var(--muted)}
+.k .d{font-size:20px;font-weight:800;margin:2px 0}
+.k .t{font-size:14px}
+.gaps{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:16px}
+.gaps b{color:var(--spx)}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:14px}
+td{padding:8px 12px;border-top:1px solid var(--line);vertical-align:top}
+tr:first-child td{border-top:none}
+td:first-child{white-space:nowrap;color:var(--muted);width:110px}
+.tag{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--c)}
+.hl td{font-weight:700}
+footer{color:var(--muted);font-size:12px;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>이라크 전쟁 → 중간선거 → 증시 꼭지 → 금융위기</h1>
+<div class="sub">2003~2011 타임라인 · S&amp;P 500 개략 추이와 핵심 사건</div>
+
+<div class="chart">
+<svg viewBox="0 0 1000 420" role="img" aria-label="2003~2011 S&P 500 추이와 이라크전, 중간선거, 서브프라임, 증시 꼭지 시점">
+  <!-- 선거→꼭지 구간 -->
+  <rect x="445" y="60" width="92" height="320" style="fill:var(--band)"/>
+  <text x="491" y="50" text-anchor="middle" class="dt">선거→꼭지 11개월</text>
+  <!-- grid -->
+  <g>
+    <line class="gl" x1="60" x2="960" y1="80" y2="80"/><text class="ax" x="52" y="84" text-anchor="end">1,600</text>
+    <line class="gl" x1="60" x2="960" y1="140" y2="140"/><text class="ax" x="52" y="144" text-anchor="end">1,400</text>
+    <line class="gl" x1="60" x2="960" y1="200" y2="200"/><text class="ax" x="52" y="204" text-anchor="end">1,200</text>
+    <line class="gl" x1="60" x2="960" y1="260" y2="260"/><text class="ax" x="52" y="264" text-anchor="end">1,000</text>
+    <line class="gl" x1="60" x2="960" y1="320" y2="320"/><text class="ax" x="52" y="324" text-anchor="end">800</text>
+    <line x1="60" x2="960" y1="380" y2="380" style="stroke:var(--muted)"/>
+  </g>
+  <g text-anchor="middle">
+    <text class="ax" x="60" y="400">2003</text><text class="ax" x="160" y="400">2004</text><text class="ax" x="260" y="400">2005</text>
+    <text class="ax" x="360" y="400">2006</text><text class="ax" x="460" y="400">2007</text><text class="ax" x="560" y="400">2008</text>
+    <text class="ax" x="660" y="400">2009</text><text class="ax" x="760" y="400">2010</text><text class="ax" x="860" y="400">2011</text>
+    <text class="ax" x="960" y="400">2012</text>
+  </g>
+
+  <!-- event lines -->
+  <line x1="82" x2="82" y1="60" y2="380" style="stroke:var(--war);stroke-width:2"/>
+  <line x1="445" x2="445" y1="60" y2="380" style="stroke:var(--pol);stroke-width:2"/>
+  <line x1="520" x2="520" y1="60" y2="380" style="stroke:var(--fin);stroke-width:2;stroke-dasharray:5 4"/>
+  <line x1="537" x2="537" y1="60" y2="380" style="stroke:var(--spx);stroke-width:2"/>
+  <line x1="631" x2="631" y1="120" y2="380" style="stroke:var(--fin);stroke-width:1.5;stroke-dasharray:3 4;opacity:.8"/>
+  <line x1="956" x2="956" y1="100" y2="380" style="stroke:var(--war);stroke-width:1.5;stroke-dasharray:3 4;opacity:.8"/>
+
+  <!-- S&P 500 -->
+  <polyline class="spx" points="60,296 79,320 160,227 260,200 360,179 445,146 476,140 500,110 520,104 537,90 560,125 580,176 610,182 631,185 645,334 660,290 678,357 700,330 760,224 800,250 860,182 900,230 956,185"/>
+  <text x="300" y="178" class="ax" style="fill:var(--spx)!important;font-weight:700">S&amp;P 500</text>
+
+  <!-- dots -->
+  <circle cx="82" cy="317" r="5" style="fill:var(--war)"/>
+  <circle cx="445" cy="146" r="5" style="fill:var(--pol)"/>
+  <circle cx="520" cy="104" r="5" style="fill:var(--fin)"/>
+  <circle cx="537" cy="90" r="6.5" style="fill:var(--spx)"/>
+  <circle cx="678" cy="357" r="5" style="fill:var(--spx)"/>
+
+  <!-- labels -->
+  <text x="90" y="78" class="lbl" style="fill:var(--war)">① 이라크 침공</text>
+  <text x="90" y="96" class="dt">2003.3.20 · S&amp;P 약 800</text>
+
+  <text x="437" y="78" text-anchor="end" class="lbl" style="fill:var(--pol)">② 중간선거 민주당 압승</text>
+  <text x="437" y="96" text-anchor="end" class="dt">2006.11.7 · S&amp;P 약 1,380</text>
+
+  <text x="436" y="335" text-anchor="end" class="lbl" style="fill:var(--fin)">③ 서브프라임 터짐</text>
+  <text x="436" y="353" text-anchor="end" class="dt">2007.8.9 BNP파리바 쇼크 →</text>
+
+  <text x="548" y="78" class="lbl" style="fill:var(--spx)">④ 증시 꼭지 1,565</text>
+  <text x="548" y="96" class="dt">2007.10.9</text>
+
+  <text x="655" y="150" class="lbl" style="font-size:13px;fill:var(--fin)">리먼 파산</text>
+  <text x="655" y="167" class="dt">2008.9.15</text>
+
+  <text x="690" y="350" class="lbl" style="font-size:13px">바닥 676</text>
+  <text x="690" y="367" class="dt">2009.3.9 (-57%)</text>
+
+  <text x="948" y="118" text-anchor="end" class="lbl" style="font-size:13px;fill:var(--war)">이라크 철군 완료</text>
+  <text x="948" y="135" text-anchor="end" class="dt">2011.12</text>
+</svg>
+</div>
+
+<div class="keys">
+  <div class="k" style="--c:var(--war)"><div class="n">① 이라크 전쟁 시작</div><div class="d">2003.3.20</div><div class="t">미·영 연합군 이라크 침공</div></div>
+  <div class="k" style="--c:var(--pol)"><div class="n">② 중간선거</div><div class="d">2006.11.7</div><div class="t">이라크전 심판론, 민주당 상하원 장악</div></div>
+  <div class="k" style="--c:var(--fin)"><div class="n">③ 서브프라임 터짐</div><div class="d">2007.8.9</div><div class="t">BNP파리바 펀드 환매 중단, 신용경색 본격화</div></div>
+  <div class="k" style="--c:var(--spx)"><div class="n">④ 증시 꼭지</div><div class="d">2007.10.9</div><div class="t">S&amp;P 500 1,565 (당시 사상 최고)</div></div>
+</div>
+
+<div class="gaps">
+  · 전쟁 시작 → 중간선거: <b>3년 8개월</b><br>
+  · 중간선거 → 증시 꼭지: <b>11개월</b> (S&amp;P 약 +13%)<br>
+  · 서브프라임 터짐 → 증시 꼭지: <b>2개월</b>. 위기가 터진 뒤에도 연준 인하(9.18) 기대로 증시는 한 번 더 신고가<br>
+  · 증시 꼭지 → 바닥: <b>17개월, -57%</b>
+</div>
+
+<table>
+  <tr><td>2003.3.20</td><td><span class="tag" style="--c:var(--war)"></span>이라크 침공 개시</td></tr>
+  <tr><td>2006.11.7</td><td><span class="tag" style="--c:var(--pol)"></span>중간선거, 민주당 상하원 장악</td></tr>
+  <tr><td>2006.11.8</td><td><span class="tag" style="--c:var(--pol)"></span>럼스펠드 국방장관 경질</td></tr>
+  <tr><td>2007.1.10</td><td><span class="tag" style="--c:var(--war)"></span>부시, 이라크 증파(Surge) 발표</td></tr>
+  <tr><td>2007.2.27</td><td><span class="tag" style="--c:var(--spx)"></span>중국발 급락 (S&amp;P 하루 -3.5%)</td></tr>
+  <tr><td>2007.4.2</td><td><span class="tag" style="--c:var(--fin)"></span>서브프라임 2위 업체 뉴센추리 파산 (초기 신호)</td></tr>
+  <tr><td>2007.5</td><td><span class="tag" style="--c:var(--pol)"></span>철군 시한부 예산 → 부시 거부권 → 시한 없이 예산 통과</td></tr>
+  <tr><td>2007.6</td><td><span class="tag" style="--c:var(--fin)"></span>베어스턴스 산하 헤지펀드 2곳 부실</td></tr>
+  <tr class="hl"><td>2007.8.9</td><td><span class="tag" style="--c:var(--fin)"></span>BNP파리바 환매 중단, 서브프라임 사태 본격화</td></tr>
+  <tr><td>2007.9.18</td><td><span class="tag" style="--c:var(--spx)"></span>연준 첫 인하 5.25% → 4.75%</td></tr>
+  <tr class="hl"><td>2007.10.9</td><td><span class="tag" style="--c:var(--spx)"></span>S&amp;P 500 고점 1,565</td></tr>
+  <tr><td>2008.3.16</td><td><span class="tag" style="--c:var(--fin)"></span>베어스턴스 JP모건에 긴급 매각</td></tr>
+  <tr><td>2008.7.11</td><td><span class="tag" style="--c:var(--war)"></span>WTI 사상 최고 147달러</td></tr>
+  <tr><td>2008.9.15</td><td><span class="tag" style="--c:var(--fin)"></span>리먼 브라더스 파산</td></tr>
+  <tr><td>2009.3.9</td><td><span class="tag" style="--c:var(--spx)"></span>S&amp;P 500 바닥 676</td></tr>
+  <tr><td>2011.12.18</td><td><span class="tag" style="--c:var(--war)"></span>미군 이라크 철수 완료</td></tr>
+</table>
+
+<footer>S&amp;P 500 선은 주요 시점을 이은 개략적 추이입니다(실제 일별 지수 아님). 고점 1,565·바닥 676은 실제 종가, 2003.3·2006.11 수준은 근사치.</footer>
+</div>
+<script>
+(function(){function fit(){try{var f=window.frameElement;if(f){f.style.height=document.documentElement.scrollHeight+'px';}}catch(e){}}
+window.addEventListener('load',fit);window.addEventListener('resize',fit);setTimeout(fit,300);})();
+</script>
+</body>
+</html>
