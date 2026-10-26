@@ -1,0 +1,271 @@
+<!DOCTYPE html><html lang="ko" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>코스피 4막 투자전략</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=Nanum+Myeongjo:wght@700;800&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: 한 줄 기둥(72ch) 리포트 — 단계 띠와 가격 사다리 두 장면만 시각화, 나머지는 표와 문장 */
+:root {
+  --bg: #f6f7f8;
+  --paper: #ffffff;
+  --ink: #1b2430;
+  --muted: #5d6877;
+  --line: #dde2e8;
+  --accent: #1f4e79;
+  --accent-soft: #e4edf6;
+  --warn: #9a5b00;
+  --warn-soft: #fbf0dc;
+  --bad: #a3322a;
+  --bad-soft: #f8e3e1;
+  --good: #2f6b45;
+  --good-soft: #e2f0e6;
+  --f-display: "Nanum Myeongjo", "Batang", serif;
+  --f-body: "IBM Plex Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  --f-data: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.75; }
+.wrap { max-width: 760px; margin: 0 auto; padding-block: 40px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 44px; }
+header { display: grid; gap: 10px; }
+.eyebrow { font-size: .78rem; letter-spacing: .08em; color: var(--muted); font-weight: 500; }
+h1 { font-family: var(--f-display); font-size: clamp(1.9rem, 5vw, 2.6rem); line-height: 1.25; margin: 0; text-wrap: balance; font-weight: 800; }
+.lede { font-size: 1.08rem; color: var(--ink); margin: 0; max-width: 62ch; }
+.meta { font-size: .85rem; color: var(--muted); }
+section { display: grid; gap: 14px; min-width: 0; }
+h2 { font-family: var(--f-display); font-size: 1.4rem; margin: 0; line-height: 1.35; text-wrap: balance; }
+h2 small { display: block; font-family: var(--f-body); font-size: .78rem; letter-spacing: .06em; color: var(--accent); font-weight: 500; margin-bottom: 4px; }
+h3 { font-size: 1.02rem; margin: 6px 0 0; }
+p { margin: 0; max-width: 68ch; }
+.num { font-family: var(--f-data); font-variant-numeric: tabular-nums; }
+.tag { display: inline-block; font-size: .72rem; font-weight: 700; padding: 1px 7px; border-radius: 4px; vertical-align: 2px; margin-right: 4px; }
+.t-ok { background: var(--good-soft); color: var(--good); }
+.t-claim { background: var(--warn-soft); color: var(--warn); }
+.t-no { background: var(--bad-soft); color: var(--bad); }
+
+.summary { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 22px 22px; display: grid; gap: 12px; }
+.summary ol { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; }
+
+/* 단계 띠 */
+.acts { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; }
+.act { border-top: 4px solid var(--line); padding-top: 8px; font-size: .88rem; color: var(--muted); }
+.act b { display: block; color: var(--ink); font-size: .95rem; }
+.act.on { border-color: var(--accent); }
+.subacts { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; margin-top: 4px; }
+.sub { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 10px; font-size: .84rem; color: var(--muted); }
+.sub b { display: block; color: var(--ink); font-size: .92rem; }
+.sub.now { border-color: var(--accent); background: var(--accent-soft); }
+.sub.now b::after { content: " ← 지금"; color: var(--accent); font-size: .8rem; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.stat { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.stat .k { font-size: .78rem; color: var(--muted); }
+.stat .v { font-family: var(--f-data); font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+.stat .d { font-size: .8rem; color: var(--muted); }
+
+/* 가격 사다리 */
+.ladder { display: grid; gap: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.rung { display: grid; grid-template-columns: 84px 1fr; gap: 14px; padding: 11px 16px; border-bottom: 1px solid var(--line); align-items: baseline; }
+.rung:last-child { border-bottom: 0; }
+.rung .p { font-family: var(--f-data); font-variant-numeric: tabular-nums; font-size: 1.02rem; text-align: right; }
+.rung .w { min-width: 0; }
+.rung .w b { font-weight: 700; }
+.rung .w span { display: block; font-size: .85rem; color: var(--muted); }
+.rung.now { background: var(--accent-soft); }
+.rung.stop { background: var(--warn-soft); }
+.rung.crisis .p, .rung.crisis b { color: var(--bad); }
+.gap-note { padding: 8px 16px; font-size: .82rem; color: var(--bad); background: var(--bad-soft); border-bottom: 1px solid var(--line); }
+
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; min-width: 520px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: .78rem; color: var(--muted); font-weight: 500; letter-spacing: .03em; background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+td.n { font-family: var(--f-data); font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.base td { background: var(--accent-soft); }
+
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.col { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.col h3 { margin: 0; }
+.col ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: .93rem; }
+.col.g h3 { color: var(--good); } .col.b h3 { color: var(--bad); }
+
+.rules { display: grid; gap: 10px; counter-reset: r; }
+.rule { display: grid; grid-template-columns: 34px 1fr; gap: 12px; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.rule::before { counter-increment: r; content: counter(r); font-family: var(--f-data); color: var(--accent); font-size: 1.1rem; }
+.rule div { min-width: 0; display: grid; gap: 4px; }
+.rule b { font-size: 1rem; }
+.rule p { font-size: .93rem; color: var(--muted); }
+.rule .cond { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.rule .cond span { font-size: .82rem; border: 1px solid var(--accent); color: var(--accent); border-radius: 999px; padding: 1px 10px; }
+
+.check { display: grid; gap: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.check div { padding: 10px 16px; border-bottom: 1px solid var(--line); font-size: .93rem; display: grid; grid-template-columns: 22px 1fr; gap: 8px; }
+.check div:last-child { border-bottom: 0; }
+.check div::before { content: "□"; color: var(--muted); }
+
+.cal { display: grid; gap: 0; border-left: 2px solid var(--line); margin-left: 6px; }
+.cal div { padding: 4px 0 10px 16px; position: relative; font-size: .93rem; }
+.cal div::before { content: ""; position: absolute; left: -6px; top: 12px; width: 10px; height: 10px; border-radius: 50%; background: var(--paper); border: 2px solid var(--accent); }
+.cal .num { color: var(--accent); margin-right: 8px; }
+
+.foot { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 18px; display: grid; gap: 8px; }
+@media (max-width: 560px) {
+  .acts, .subacts { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .rung { grid-template-columns: 70px 1fr; gap: 10px; }
+}
+</style></head><body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">투자전략 보고서 · 2026년 10월 26일 장 마감 기준</div>
+    <h1>코스피는 4막의 마지막 구간에 있다</h1>
+    <p class="lede">큰 상승장은 매집, 손바뀜, 과열, 청산의 네 막으로 끝난다. 지금 코스피는 청산(4막) 안에서 신용 투매 뒤 2차 바닥을 확인하는 <b>바닥 다지기(4-4)</b> 구간 12일째다. 이 구간은 과거에 지수를 나눠 담기 좋은 자리였지만, 2008년처럼 한 단계 더 깊어진 예외도 있었다.</p>
+    <div class="meta">대상: 코스피 지수에 장기 적립·분할 매수하는 투자자 · 데이터: 2000년 이후 코스피·투자자별 순매수·신용잔고 자체 검증</div>
+  </header>
+
+  <section class="summary">
+    <h2 style="font-size:1.15rem">한눈에 보는 결론</h2>
+    <ol>
+      <li><b>위치</b>: 4막 청산 → 4-4 바닥 다지기. 코스피 <span class="num">5,469</span>, 1년 고점 대비 <span class="num">−40%</span>, 1차 바닥(7/30) 대비 <span class="num">−2.2%</span>.</li>
+      <li><b>정상 범위</b>: 2차 바닥은 보통 1차 바닥보다 0~6% 낮다. 이번엔 <span class="num">5,258</span>까지가 정상형이고, 그 아래는 위기형을 의심한다.</li>
+      <li><b>시간</b>: 기본 시나리오는 4막 끝이 12월 하순~1월, 새 상승의 시작(1막)은 2027년 봄. 날짜는 참고만 한다.</li>
+      <li><b>전략</b>: 정기 적립은 그대로. 여유 목돈은 조건이 맞는 날 1/3씩, 20거래일 간격으로 지수에. 5,258 종가 이탈이나 신용잔고 재급감이면 멈추고 다시 판단한다.</li>
+      <li><b>하지 않을 것</b>: 외국인 순매수 전환을 기다리기, 반등 추격, 개별 종목 매수, 빚으로 사기.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2><small>1. 틀</small>4막 사이클과 지금 자리</h2>
+    <div class="acts">
+      <div class="act"><b>1막 매집</b>외국인이 사고 개인이 판다 · 평균 120일</div>
+      <div class="act"><b>2막 손바뀜</b>고점 근처에서 외국인이 팔기 시작 · 46일</div>
+      <div class="act"><b>3막 과열</b>개인·ETF가 빚까지 내서 받는다 · 59일</div>
+      <div class="act on"><b>4막 청산</b>고점 −15% 아래 하락 · 86일</div>
+    </div>
+    <div class="subacts">
+      <div class="sub"><b>4-1 버티기</b>신용 투매 전 · 24일</div>
+      <div class="sub"><b>4-2 투매</b>빚 정리, 1차 바닥 · 29일</div>
+      <div class="sub"><b>4-3 안도 반등</b>1차 바닥 +6% 위 · 45일</div>
+      <div class="sub now"><b>4-4 바닥 다지기</b>2차 바닥 확인 · 63일(중앙 50)</div>
+    </div>
+    <p>이번 사이클은 2025년 4월부터 외국인이 모은 1막, 2025년 11월~2026년 1월 외국인이 ETF에 물량을 넘긴 2막, 2~6월 개인·ETF가 몰린 3막을 거쳐 6월 말 4막에 들어왔다. 7월 말 신용 투매로 1차 바닥(<span class="num">5,594</span>)이 생겼고, 반등 뒤 10월 15일부터 다시 내려와 바닥 다지기에 들어왔다.</p>
+    <div class="stats">
+      <div class="stat"><div class="k">코스피 종가</div><div class="v">5,469</div><div class="d">10/26, −1.46%</div></div>
+      <div class="stat"><div class="k">4-4 경과</div><div class="v">12일</div><div class="d">평균 63 · 중앙 50</div></div>
+      <div class="stat"><div class="k">4막 청산 경과</div><div class="v">117일</div><div class="d">평균 86일보다 김</div></div>
+      <div class="stat"><div class="k">RSI(14)</div><div class="v">30.1</div><div class="d">과매도 경계</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2><small>2. 가격 지도</small>어디까지가 정상이고, 어디부터 다른 하락인가</h2>
+    <p>신용 투매가 있었던 과거 하락 13번 중 9번에 2차 바닥이 나왔다. 깊이는 1차 바닥 대비 중앙값 −3.3%였고, 9번 중 7번이 −6% 안이었다.</p>
+    <div class="ladder">
+      <div class="rung"><div class="p">6,055</div><div class="w"><b>차트 저항 위끝</b><span>5,579~6,055 구간에 물린 물량이 두껍다. 반등은 여기서 막히기 쉽다.</span></div></div>
+      <div class="rung"><div class="p">6,016</div><div class="w"><b>4막 끝 표시선</b><span>다지기 최저 종가 +10%. 바닥이 더 낮아지면 이 선도 따라 내려간다.</span></div></div>
+      <div class="rung"><div class="p">5,594</div><div class="w"><b>1차 바닥</b><span>7/30 종가. 다음 날 신용 투매가 확인됐다.</span></div></div>
+      <div class="rung now"><div class="p">5,469</div><div class="w"><b>지금</b><span>1차 바닥 −2.2%. 정상 범위 안이다.</span></div></div>
+      <div class="rung"><div class="p">5,409</div><div class="w"><b>보통의 2차 바닥</b><span>과거 중앙값 −3.3%를 대입한 값.</span></div></div>
+      <div class="rung stop"><div class="p">5,258</div><div class="w"><b>정상형의 끝 · 멈춤선</b><span>−6%. 2022년 9월 바닥이 정확히 이 깊이였다. 7/29 장중 저점 5,262, 61.8% 되돌림 근처와 겹친다.</span></div></div>
+      <div class="gap-note">−6%와 −23% 사이에 과거 사례가 없다. 5,258이 깨지면 '조금 더 깊은 바닥'이 아니라 다른 종류의 하락일 수 있다.</div>
+      <div class="rung crisis"><div class="p">≈4,280</div><div class="w"><b>위기형 (2002 카드사태)</b><span>1차 대비 −23.5%. 신용잔고가 다시 급감했다.</span></div></div>
+      <div class="rung crisis"><div class="p">≈3,330</div><div class="w"><b>위기형 (2008 리먼)</b><span>1차 대비 −40.4%. 신용잔고가 다시 급감했다.</span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2><small>3. 시간표</small>4막은 언제 끝나는가</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>갈래</th><th>확률</th><th>조건</th><th>4막 끝</th><th>새 1막</th></tr></thead>
+        <tbody>
+          <tr><td>빠른 길</td><td class="n">25%</td><td>빅테크 "투자 계속, 돈 충분" + 외국인 11월 초 재매수</td><td>11월 말~12월 초</td><td>2027년 1~2월</td></tr>
+          <tr class="base"><td><b>기본 길</b></td><td class="n">50%</td><td>겨울 미국 물가 4%대(기저효과 착시), 연준 매파</td><td>12월 하순~1월</td><td>2027년 4~6월</td></tr>
+          <tr><td>늦은 길</td><td class="n">25%</td><td>종가 5,258 이탈 + 신용잔고 급감, 미 회사채 웃돈 확대, 유가 급등</td><td>2027년 봄</td><td>2027년 하반기</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><span class="tag t-claim">추정</span>근거는 두 가지다. 과거 4-4 구간 10번에서 1막이 오기까지 중앙값 209일(2027년 5월 근처), 그리고 2027년 3~5월분 미국 물가가 기저효과로 꺾이는 달력이다. 이번 외국인 60일 매도(약 −51조)는 과거 최대의 세 배라 늦어지는 쪽을 더 경계한다.</p>
+    <p><span class="tag t-no">주의</span>코스피 레벨과 시기 예측은 이 분석에서 대부분 틀렸다(확률 예측 점수가 동전 던지기보다 나빴다). 방향과 이익 지표는 대체로 맞았다. 날짜는 지도이고, 행동은 가격 조건으로 정한다.</p>
+    <p>더 긴 그림으로 보면, 외국인이 국내 돈에 물량을 넘기고 끝난 큰 고점은 전고점을 다시 넘는 데 2.8~4.2년이 걸렸다(2007·2018·2021). 계획은 3~4년을 전제로 세운다.</p>
+  </section>
+
+  <section>
+    <h2><small>4. 근거</small>좋은 신호와 걱정되는 신호</h2>
+    <div class="two">
+      <div class="col g">
+        <h3>좋은 신호</h3>
+        <ul>
+          <li><span class="tag t-ok">검증</span>4-4 구간에 산 경우 120거래일 뒤 오른 비율 학습기 65%, 검증기 78% (평소 60% 안팎). 1년 뒤는 84%.</li>
+          <li><span class="tag t-ok">검증</span>'4-4 · 1차 바닥 −6% 안 · 신용 재투매 없음' 세 조건이 모두 켜진 날에 샀다면 6개월 뒤 10번 중 7~8번 올랐다. 오늘이 그런 날이다.</li>
+          <li>통합천장 대비 위치 66%로 분할 매수 구간.</li>
+          <li>외국인 MSCI 비중·외국인 보유비중·연기금 비중의 매도 압력 세 표가 처음으로 모두 꺼졌다. 판 사람의 짐이 내려갔다는 뜻이고, 살 사람이 왔다는 뜻은 아니다.</li>
+          <li>대만 AI 공급망 9월 매출 +67%. 이익 엔진은 아직 돈다.</li>
+        </ul>
+      </div>
+      <div class="col b">
+        <h3>걱정되는 신호</h3>
+        <ul>
+          <li><span class="tag t-ok">검증</span>4-4 학습기엔 120일 안 −15% 추가 급락이 34%였다(2008년 탓).</li>
+          <li>신용잔고가 석 달 전 대비 −7%로 아직 덜 털렸고, 최근엔 다시 늘고 있다.</li>
+          <li>미국 회사채: 가장 약한 기업(CCC) 웃돈은 경보선 돌파, 하이일드 3.40으로 경보선 3.5 직전. 투자등급은 아직 안정.</li>
+          <li><span class="tag t-claim">추정</span>위기형(고점 대비 −50~55%)으로 갈 확률 15~20%.</li>
+          <li><span class="tag t-ok">검증</span>2002·2008 같은 깊은 위기는 어떤 도구로도 미리 가려내지 못했다.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><small>5. 전략</small>앞으로 할 일과 하지 않을 일</h2>
+    <div class="rules">
+      <div class="rule"><div><b>정기 적립은 지수로, 멈추지 않는다</b><p>시장 위치·뉴스와 무관하게 정해진 날 정해진 금액. 이 국면의 가장 큰 위험은 싼 구간이 아니라 그 사이에 멈추는 것이다.</p></div></div>
+      <div class="rule"><div><b>여유 목돈은 조건이 맞는 날 1/3씩</b><p>네 조건이 모두 맞는 날, 남은 목돈의 1/3을 코스피200 지수 상품에. 같은 날 여러 몫은 넣지 않는다.</p>
+        <div class="cond"><span>4-4 바닥 다지기</span><span>종가 5,258 위</span><span>신용잔고 재급감 없음</span><span>RSI(14) 32 이하</span></div></div></div>
+      <div class="rule"><div><b>다음 몫은 20거래일 뒤</b><p>2008년에 신호마다 바로 넣었다면 사흘 만에 전부 들어가 −28%였다. 한 달 간격이면 1/3만 들어가고 나머지는 지켜졌다. 지금 시작하면 둘째 몫은 11월 하순, 셋째는 12월 하순 무렵으로 기본 시간표와 겹친다.</p></div></div>
+      <div class="rule"><div><b>규칙에 기본값을 붙인다</b><p>조건이 애매해 하루하루 미루면 결국 아무것도 안 하게 된다. 이번 하락에서도 계획한 분할 매수 대부분이 1차 바닥을 그냥 지나쳤다. "조건이 애매하면 1/3 집행, 다음은 한 달 뒤"처럼 기본 행동을 미리 정해 둔다.</p></div></div>
+      <div class="rule"><div><b>멈춤선에서 멈추고 다시 판단한다</b><p>종가 5,258 이탈 또는 신용잔고 28.5조(8월 투매 바닥) 아래 재급감이면 넣지 않고 위기형인지 재판정한다. 산 몫은 팔지 않는다.</p></div></div>
+      <div class="rule"><div><b>외국인 순매수 전환을 기다리지 않는다</b><p><span class="tag t-ok">검증</span>하락장에서 외국인 5일 순매수가 플러스로 돌아선 날 뒤에 그곳이 바닥이었던 비율은 33%로, 아무 날과 같았다. 바닥 뒤엔 거의 늘 외국인이 돌아서지만, 돌아섰다고 바닥은 아니다. 며칠 지나서 확인해 주는 참고용이다.</p></div></div>
+      <div class="rule"><div><b>반등을 쫓지 않고, '4막 끝'에 사지 않는다</b><p>4막 끝 판정일에 산 성적은 평소와 같았다(120일 상승 53%). 이익은 바닥 다지기에서 나눠 담은 데서 나왔다. 반등이 7,300~8,000에 이르면 연기금 매도선과 천장 95%가 겹친다. 그때는 추가 매수를 멈춘다.</p></div></div>
+      <div class="rule"><div><b>개별 종목보다 지수, 빚은 쓰지 않는다</b><p>하락장에선 차트 매수 신호가 거의 나오지 않고, 나와도 적중률은 동전 수준이었다. 가진 개별주는 하락장에선 손대지 않고 반등해 매도 신호가 뜰 때 나눠 지수로 옮긴다. 기한 있는 돈과 빌린 돈은 넣지 않는다.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2><small>6. 재판정</small>이 신호가 켜지면 전략을 다시 본다</h2>
+    <h3>위기형으로 다시 판정할 신호 (하나씩 켜질수록 위험을 올린다)</h3>
+    <div class="check">
+      <div>코스피 종가 5,258 이탈과 신용잔고 28.5조 아래 급감이 함께 나타남</div>
+      <div>미국 하이일드 웃돈 3.5 돌파, 이어서 투자등급 웃돈 1.1 돌파</div>
+      <div>미국 지역은행·사모대출 손실이나 파산 뉴스</div>
+      <div>코스피 이익 전망의 하향 전환 (이익의 약 72%가 반도체 4종)</div>
+    </div>
+    <h3>'조정' 판정을 뒤집는 조건 (넷 중 둘이면 재판정, 지금 0개)</h3>
+    <div class="check">
+      <div>대만 AI 공급망 월매출이 주황 이하로 둔화</div>
+      <div>빅테크 두 곳 이상이 설비투자 가이던스 하향</div>
+      <div>삼성전자 이익 전망 −10% 이상 하향</div>
+      <div>미국 투자등급 회사채 웃돈 1.1 돌파</div>
+    </div>
+  </section>
+
+  <section>
+    <h2><small>7. 일정</small>이번 주와 다음 갈림길</h2>
+    <div class="cal">
+      <div><span class="num">10/27</span>미국 3분기 GDP</div>
+      <div><span class="num">10/28</span>SK하이닉스 실적</div>
+      <div><span class="num">10/29</span>FOMC(새벽) · 삼성전자 확정 실적 · 미국 PCE · 마이크로소프트·알파벳·아마존 실적과 투자 계획</div>
+      <div><span class="num">~11/5</span>외국인 수급 재전환 여부 (참고용)</div>
+      <div><span class="num">11/10</span>대만 10월 월매출</div>
+    </div>
+    <p>빅테크가 투자를 이어 가고 그 돈이 번 돈이면 빠른 길, 겨울 물가가 4%대로 보이면 기본 길이다. 어느 쪽이든 할 일은 같다. 정기 적립, 조건 맞는 날 1/3, 멈춤선에서 멈추고 다시 판단하기.</p>
+  </section>
+
+  <div class="foot">
+    <p><b>표기</b> · <span class="tag t-ok">검증</span>자체 백테스트·데이터로 확인 · <span class="tag t-claim">추정</span>분석자의 판단, 채점 전 · <span class="tag t-no">주의</span>반박되거나 성적이 나빴던 부분.</p>
+    <p><b>한계</b> · 표본이 작다(하락 20번, 신용 투매 13~14번, 큰 상승 7번). 문턱값은 최적화하지 않았다. 4막 판별은 단독 매매 근거가 아니며, 숫자는 2026년 10월 26일 기준이라 빨리 낡는다.</p>
+    <p>이 보고서는 투자 권유가 아니라 개인 투자 원칙을 정리한 참고 자료다. 투자 판단과 결과의 책임은 본인에게 있다.</p>
+  </div>
+</div>
+<script>(function(){function fit(){try{var f=window.frameElement;if(f){f.style.height=document.documentElement.scrollHeight+'px';}}catch(e){}}
+window.addEventListener('load',fit);window.addEventListener('resize',fit);setTimeout(fit,300);})();
+</script>
+</body></html>
