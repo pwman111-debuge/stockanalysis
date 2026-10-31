@@ -45,6 +45,17 @@ const RULES = [
 
 const FACTORS = ['낮은 PER', '낮은 PBR', '높은 ROE', '높은 배당수익률', '12-1개월 모멘텀', '낮은 변동성'];
 
+interface PortfolioEvent {
+    date: string;
+    type: string;
+    detail: string;
+}
+
+function loadEvents(): PortfolioEvent[] {
+    const file = path.join(process.cwd(), 'public/charts/portfolio/events.json');
+    return (JSON.parse(fs.readFileSync(file, 'utf8')) as PortfolioEvent[]).sort((a, b) => b.date.localeCompare(a.date));
+}
+
 function loadPortfolio(): Portfolio {
     const dir = path.join(process.cwd(), 'public/charts/portfolio');
     const latest = fs.readdirSync(dir).filter((f) => /^\d{4}-\d{2}\.json$/.test(f)).sort().pop();
@@ -53,6 +64,7 @@ function loadPortfolio(): Portfolio {
 
 export default function PortfolioPage() {
     const portfolio = loadPortfolio();
+    const events = loadEvents();
     const [year, month] = portfolio.month.split('-').map(Number);
     const hasOpen = portfolio.holdings.every((h) => h.open !== null);
 
@@ -103,6 +115,27 @@ export default function PortfolioPage() {
                         </tbody>
                     </table>
                 </div>
+            </section>
+
+            <section>
+                <h2 className="mb-3 text-lg font-bold">변경 내역</h2>
+                {events.length > 0 ? (
+                    <div className="overflow-x-auto rounded-2xl border border-border bg-card">
+                        <table className="w-full min-w-[480px] text-sm">
+                            <tbody>
+                                {events.map((e) => (
+                                    <tr key={`${e.date}-${e.detail}`} className="border-b border-border last:border-0">
+                                        <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">{e.date}</td>
+                                        <td className="px-4 py-3 font-bold whitespace-nowrap">{e.type}</td>
+                                        <td className="px-4 py-3 text-muted-foreground">{e.detail}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p className="rounded-2xl border border-border bg-card px-5 py-4 text-sm text-muted-foreground">아직 변경 내역이 없습니다.</p>
+                )}
             </section>
 
             <section className="rounded-2xl border border-border bg-card p-6">
