@@ -35,13 +35,12 @@ export default async function Home() {
     .pop();
 
   // 시장 신호등·모의 포트폴리오 — 빌드 시점의 최신 공개 JSON
-  const readLatest = (dir: string, pattern: RegExp) => {
-    const folder = path.join(process.cwd(), dir);
-    const file = fs.readdirSync(folder).filter((f) => pattern.test(f)).sort().pop() as string;
-    return JSON.parse(fs.readFileSync(path.join(folder, file), "utf8"));
-  };
-  const signal = readLatest("public/charts/signal", /^\d{4}-\d{2}-\d{2}\.json$/);
-  const portfolio = readLatest("public/charts/portfolio", /^\d{4}-\d{2}\.json$/);
+  const signalDir = path.join(process.cwd(), "public/charts/signal");
+  const portfolioDir = path.join(process.cwd(), "public/charts/portfolio");
+  const signalFile = fs.readdirSync(signalDir).filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort().pop() as string;
+  const portfolioFile = fs.readdirSync(portfolioDir).filter((f) => /^\d{4}-\d{2}\.json$/.test(f)).sort().pop() as string;
+  const signal = JSON.parse(fs.readFileSync(path.join(signalDir, signalFile), "utf8"));
+  const portfolio = JSON.parse(fs.readFileSync(path.join(portfolioDir, portfolioFile), "utf8"));
   const [portfolioYear, portfolioMonth] = portfolio.month.split("-").map(Number);
   const satellites: string[] = portfolio.holdings
     .filter((h: { role: string }) => h.role !== "코어")
