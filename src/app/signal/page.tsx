@@ -21,6 +21,7 @@ interface SignalItem {
     light: Light | null;
     state: string;
     detail: string;
+    levels?: { label: string; value: number }[];
     asof: string;
 }
 
@@ -162,6 +163,16 @@ export default function SignalPage() {
                             <LightDot light={item.light} />
                         </div>
                         <p className="mt-2 text-xl font-black tracking-tight">{item.state}</p>
+                        {item.levels && (
+                            <dl className="mt-3 space-y-1 text-sm">
+                                {item.levels.map((level) => (
+                                    <div key={level.label} className="flex justify-between">
+                                        <dt className="text-muted-foreground">{level.label}</dt>
+                                        <dd className="font-bold tabular-nums">{level.value.toLocaleString('ko-KR')}</dd>
+                                    </div>
+                                ))}
+                            </dl>
+                        )}
                         <p className="mt-2 flex-grow text-sm leading-relaxed text-muted-foreground">{item.detail}</p>
                         <p className="mt-3 text-xs text-muted-foreground">기준일 {item.asof}</p>
                     </article>
