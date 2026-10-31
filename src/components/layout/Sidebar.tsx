@@ -13,7 +13,8 @@ import {
     LayoutDashboard,
     Zap,
     ClipboardCheck,
-    SlidersHorizontal
+    SlidersHorizontal,
+    Gauge
 } from "lucide-react";
 
 type MenuItem = {
@@ -27,6 +28,7 @@ type MenuItem = {
 const menuItems: MenuItem[] = [
     { name: "대시보드", href: "/", icon: LayoutDashboard },
     { name: "시황 분석", href: "/market", icon: TrendingUp },
+    { name: "시장 신호등", href: "/signal", icon: Gauge },
     { name: "마켓 인사이트", href: "/insight", icon: Zap },
     { name: "주식 스크리너", href: "https://screener.genesis-report.com", icon: SlidersHorizontal, isNew: true, external: true },
     { name: "투자 성과 리포트", href: "/picks/feedback", icon: ClipboardCheck },
