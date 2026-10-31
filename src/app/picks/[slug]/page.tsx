@@ -45,7 +45,7 @@ export default async function StockPickDetailPage({ params }: { params: Promise<
                 datePublished={post.date}
                 dateModified={post.updatedAt}
                 image={post.thumbnail}
-                sectionLabel="유망 종목"
+                sectionLabel="유망 종목 기록"
                 sectionPath="/picks"
             />
             <Link
@@ -56,10 +56,14 @@ export default async function StockPickDetailPage({ params }: { params: Promise<
                 목록으로 돌아가기
             </Link>
 
+            <p className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                2026년 10월까지 발행한 과거 기록입니다. 현재 유효한 추천이 아니며, 지금은 <Link href="/portfolio" className="font-bold underline">제네시스 모의 포트폴리오</Link>로 운영합니다.
+            </p>
+
             <article className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm">
                 <header className="p-8 md:p-12 border-b border-border bg-gradient-to-br from-primary/5 to-transparent">
                     <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase mb-6">
-                        <span className="rounded-full bg-primary/10 px-3 py-1 text-primary">유망 종목 분석</span>
+                        <span className="rounded-full bg-primary/10 px-3 py-1 text-primary">유망 종목 기록</span>
                         <span className="text-muted-foreground">•</span>
                         <div className="flex items-center text-muted-foreground">
                             <Calendar className="mr-1 h-3 w-3" />

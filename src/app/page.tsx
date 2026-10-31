@@ -34,6 +34,18 @@ export default async function Home() {
     .sort()
     .pop();
 
+  // 시장 신호등·모의 포트폴리오 — 빌드 시점의 최신 공개 JSON
+  const readLatest = (dir: string, pattern: RegExp) => {
+    const folder = path.join(process.cwd(), dir);
+    const file = fs.readdirSync(folder).filter((f) => pattern.test(f)).sort().pop() as string;
+    return JSON.parse(fs.readFileSync(path.join(folder, file), "utf8"));
+  };
+  const signal = readLatest("public/charts/signal", /^\d{4}-\d{2}-\d{2}\.json$/);
+  const portfolio = readLatest("public/charts/portfolio", /^\d{4}-\d{2}\.json$/);
+  const [portfolioYear, portfolioMonth] = portfolio.month.split("-").map(Number);
+  const satellites: string[] = portfolio.holdings
+    .filter((h: { role: string }) => h.role !== "코어")
+    .map((h: { name: string }) => h.name);
 
   return (
     <div className="space-y-10">
@@ -113,6 +125,27 @@ export default async function Home() {
 
       {/* Coupang Partners Banner - Top */}
       <CoupangBanner seed="dashboard-top" keywords={[]} variant="mid" />
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <Link href="/signal" className="group rounded-2xl border border-border bg-card p-6 transition-colors hover:border-primary/40">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold text-muted-foreground">시장 신호등</h2>
+            <ArrowRight className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
+          </div>
+          <p className="mt-2 text-2xl font-black tracking-tight">{signal.act.name}</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {signal.date} 기준 · 양호 {signal.count.g} · 주의 {signal.count.y} · 경계 {signal.count.r}
+          </p>
+        </Link>
+        <Link href="/portfolio" className="group rounded-2xl border border-border bg-card p-6 transition-colors hover:border-primary/40">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold text-muted-foreground">제네시스 모의 포트폴리오</h2>
+            <ArrowRight className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
+          </div>
+          <p className="mt-2 text-2xl font-black tracking-tight">{portfolioYear}년 {portfolioMonth}월 구성</p>
+          <p className="mt-2 text-sm text-muted-foreground">코스피200 ETF 50% · {satellites.join(" · ")}</p>
+        </Link>
+      </div>
 
       {/* Market Indices - Featured Charts (Restored from previous version) */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
