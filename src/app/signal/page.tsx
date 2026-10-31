@@ -6,7 +6,7 @@ import { CoupangBanner } from '@/components/common/CoupangBanner';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-    title: '시장 신호등 | 제네시스 리포트',
+    title: '시장 신호등',
     description: '코스피 4막 위치와 수급·금리·환율·신용시장 상태를 매일 한 화면에 정리합니다.',
     alternates: { canonical: 'https://genesis-report.com/signal' },
 };
