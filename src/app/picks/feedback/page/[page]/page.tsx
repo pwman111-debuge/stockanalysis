@@ -57,7 +57,7 @@ export default async function PerformanceReviewSubPage({ params }: PageProps) {
                         투자 성과 <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-blue-400">리뷰</span> - {currentPage}페이지
                     </h1>
                     <p className="text-xl text-slate-300 leading-relaxed font-medium">
-                        제네시스 AI의 유망 종목 추천 이후, 실제 시장에서의 성과를 투명하게 공개합니다.
+                        공개한 종목의 이후 결과를 날짜별로 기록한 공간입니다.
                     </p>
                 </div>
             </section>
@@ -119,7 +119,7 @@ export default async function PerformanceReviewSubPage({ params }: PageProps) {
                         <TrendingUp className="h-16 w-16 text-muted-foreground/20 mb-6" />
                         <h3 className="text-2xl font-black text-muted-foreground">성과 추적 데이터 수집 중</h3>
                         <p className="text-muted-foreground mt-3 max-w-sm mx-auto font-medium">
-                            유망 종목 추천 이후 7일 뒤부터 공식 성과 분석 리포트가 이곳에 자동으로 업데이트됩니다.
+                            투자 성과 리포트가 발행되면 이곳에 표시됩니다.
                         </p>
                     </div>
                 )}

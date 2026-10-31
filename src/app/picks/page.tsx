@@ -32,14 +32,14 @@ export default function PicksPage() {
                         <div className="bg-primary p-2 rounded-xl">
                             <TrendingUp className="h-6 w-6 text-white" />
                         </div>
-                        <span className="text-sm font-bold tracking-widest text-primary-foreground/80 uppercase">Genesis AI Engine</span>
+                        <span className="text-sm font-bold tracking-widest text-primary-foreground/80 uppercase">Archive</span>
                     </div>
                     <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl mb-6">
-                        유망 종목 발굴 <span className="text-primary italic">인사이트</span>
+                        유망 종목 <span className="text-primary italic">기록</span>
                     </h1>
                     <p className="text-lg text-slate-300 leading-relaxed">
-                        제네시스 AI가 매일 시장의 수급과 모멘텀을 분석하여 선정합니다. <br className="hidden md:block" />
-                        단기 급등 가능성이 높은 핵심 종목들을 확인하세요.
+                        2026년 10월까지 발행한 단기·중기·장기 추천 기록입니다. <br className="hidden md:block" />
+                        새 추천은 발행하지 않으며, 현재 유효한 추천이 아닙니다.
                     </p>
                 </div>
             </section>
@@ -73,12 +73,12 @@ export default function PicksPage() {
                                             </div>
                                             <span className="text-xs font-black text-primary tracking-widest uppercase">GENESIS REPORT</span>
                                             {report.term && (
-                                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-bold shadow-sm animate-pulse ml-1 ${
+                                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-bold shadow-sm ml-1 ${
                                                     report.term === 'short' ? 'bg-amber-100 text-amber-600 border border-amber-200' :
                                                     report.term === 'mid' ? 'bg-emerald-100 text-emerald-600 border border-emerald-200' :
                                                     'bg-slate-100 text-slate-500 border border-slate-200'
                                                 }`}>
-                                                    {report.term === 'short' ? 'PRO | 단기' : 
+                                                    {report.term === 'short' ? '단기' : 
                                                      report.term === 'mid' ? '중기' : '장기'}
                                                 </span>
                                             )}
@@ -91,7 +91,7 @@ export default function PicksPage() {
 
                                     <h2 className="text-2xl font-black tracking-tight mb-6 group-hover:text-primary transition-colors leading-tight">
                                         {format(parseISO(report.date), 'MM월 dd일')} <br />
-                                        포착된 유망 섹터
+                                        발행 리포트
                                     </h2>
 
                                     <div className="flex-grow space-y-4 mb-8">
@@ -106,8 +106,6 @@ export default function PicksPage() {
                                                             </div>
                                                             {stock}
                                                         </span>
-                                                        <div className="h-px flex-grow mx-3 bg-border/50 group-hover/item:bg-primary/20 transition-colors" />
-                                                        <span className="text-[9px] font-black bg-primary/10 text-primary px-2 py-0.5 rounded-md self-center">PICK</span>
                                                     </div>
                                                 ))}
                                             </div>

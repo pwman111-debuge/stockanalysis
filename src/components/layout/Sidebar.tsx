@@ -20,7 +20,6 @@ type MenuItem = {
     name: string;
     href: string;
     icon: typeof LayoutDashboard;
-    isPro?: boolean;
     isNew?: boolean;
     external?: boolean;
 };
@@ -29,12 +28,12 @@ const menuItems: MenuItem[] = [
     { name: "대시보드", href: "/", icon: LayoutDashboard },
     { name: "시황 분석", href: "/market", icon: TrendingUp },
     { name: "마켓 인사이트", href: "/insight", icon: Zap },
-    { name: "유망 종목", href: "/picks", icon: Search, isPro: true },
     { name: "주식 스크리너", href: "https://screener.genesis-report.com", icon: SlidersHorizontal, isNew: true, external: true },
     { name: "투자 성과 리포트", href: "/picks/feedback", icon: ClipboardCheck },
     { name: "종목 리포트", href: "/analysis", icon: BarChart3 },
     { name: "경제 캘린더", href: "/calendar", icon: Calendar },
     { name: "투자 교육", href: "/education", icon: BookOpen },
+    { name: "유망 종목 기록", href: "/picks", icon: Search },
 ];
 
 import { useSidebar } from "./SidebarContext";
@@ -43,6 +42,10 @@ import { X } from "lucide-react";
 export function Sidebar() {
     const pathname = usePathname();
     const { isOpen, setIsOpen } = useSidebar();
+    // 가장 구체적인 메뉴 하나만 활성화 (/picks/feedback이 /picks까지 켜지 않도록)
+    const activeHref = menuItems
+        .filter((item) => !item.external && (pathname === item.href || (item.href !== "/" && pathname.startsWith(`${item.href}/`))))
+        .sort((a, b) => b.href.length - a.href.length)[0]?.href;
 
     return (
         <>
@@ -80,7 +83,7 @@ export function Sidebar() {
 
                     <nav className="flex-1 space-y-1">
                         {menuItems.map((item) => {
-                            const isActive = !item.external && (pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)));
+                            const isActive = item.href === activeHref;
                             return (
                                 <Link
                                     key={item.href}
@@ -97,16 +100,6 @@ export function Sidebar() {
                                 >
                                     <item.icon className={cn("mr-3 h-5 w-5", isActive ? "" : item.isNew ? "text-sky-500" : "text-muted-foreground group-hover:text-accent-foreground")} />
                                     <span className="flex-1">{item.name}</span>
-                                    {item.isPro && (
-                                        <span className={cn(
-                                            "inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-bold shadow-sm transition-all animate-pulse",
-                                            isActive
-                                                ? "bg-white/20 text-white border border-white/30"
-                                                : "bg-amber-100 text-amber-600 border border-amber-200"
-                                        )}>
-                                            PRO
-                                        </span>
-                                    )}
                                     {item.isNew && (
                                         <span className="inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-bold bg-sky-500 text-white shadow-sm">
                                             NEW

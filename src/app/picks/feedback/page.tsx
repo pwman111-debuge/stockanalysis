@@ -38,17 +38,9 @@ export default function PerformanceReviewPage() {
                         투자 성과 <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-blue-400">리뷰</span>
                     </h1>
                     <p className="text-xl text-slate-300 leading-relaxed font-medium">
-                        제네시스 AI의 유망 종목 추천 이후, 실제 시장에서의 성과를 투명하게 공개합니다. <br className="hidden md:block" />
-                        7일, 30일, 그리고 그 이상의 결과를 기반으로 끊임없이 알고리즘을 개선합니다.
+                        공개한 종목의 이후 결과를 날짜별로 기록한 공간입니다. <br className="hidden md:block" />
+                        2026년 11월부터는 제네시스 모의 포트폴리오의 결과를 기록합니다.
                     </p>
-                </div>
-
-                {/* Stats floating decorations */}
-                <div className="absolute right-12 bottom-12 hidden lg:flex gap-6">
-                    <div className="bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-[2rem]">
-                        <p className="text-xs text-slate-400 font-bold mb-1 uppercase tracking-widest">Avg. Win Rate</p>
-                        <p className="text-4xl font-black text-emerald-400">75%<span className="text-sm ml-1 text-slate-500 font-medium">+</span></p>
-                    </div>
                 </div>
             </section>
 
@@ -111,7 +103,7 @@ export default function PerformanceReviewPage() {
                         <TrendingUp className="h-16 w-16 text-muted-foreground/20 mb-6" />
                         <h3 className="text-2xl font-black text-muted-foreground">성과 추적 데이터 수집 중</h3>
                         <p className="text-muted-foreground mt-3 max-w-sm mx-auto font-medium">
-                            유망 종목 추천 이후 7일 뒤부터 공식 성과 분석 리포트가 이곳에 자동으로 업데이트됩니다.
+                            투자 성과 리포트가 발행되면 이곳에 표시됩니다.
                         </p>
                     </div>
                 )}
