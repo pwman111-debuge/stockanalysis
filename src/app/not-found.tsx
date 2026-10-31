@@ -10,7 +10,7 @@ export const metadata = {
 const popularLinks = [
     { href: '/market', label: '실시간 시황 분석', icon: LineChart },
     { href: '/analysis', label: '종목 리포트', icon: BarChart3 },
-    { href: '/picks', label: '유망 종목 기록', icon: TrendingUp },
+    { href: '/portfolio', label: '제네시스 모의 포트폴리오', icon: TrendingUp },
     { href: '/insight', label: '마켓 인사이트', icon: Lightbulb },
     { href: '/picks/feedback', label: '투자 성과 리포트', icon: TrendingUp },
     { href: '/education', label: '투자 교육', icon: GraduationCap },

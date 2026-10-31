@@ -7,6 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         '',
         '/market',
         '/signal',
+        '/portfolio',
         '/analysis',
         '/education',
         '/calendar',

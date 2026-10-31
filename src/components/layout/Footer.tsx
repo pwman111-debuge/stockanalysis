@@ -27,6 +27,7 @@ export function Footer() {
                             <li><Link href="/" className="hover:text-primary">대시보드</Link></li>
                             <li><Link href="/market" className="hover:text-primary">시황 분석</Link></li>
                             <li><Link href="/signal" className="hover:text-primary">시장 신호등</Link></li>
+                            <li><Link href="/portfolio" className="hover:text-primary">제네시스 모의 포트폴리오</Link></li>
                             <li><Link href="/insight" className="hover:text-primary">마켓 인사이트</Link></li>
                             <li><Link href="/picks/feedback" className="hover:text-primary">투자 성과 리포트</Link></li>
                             <li><Link href="/analysis" className="hover:text-primary">종목 리포트</Link></li>
