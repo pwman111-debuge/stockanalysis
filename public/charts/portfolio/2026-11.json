@@ -21,7 +21,7 @@
    "close": 11000,
    "open": 10760,
    "reason": "혼합 점수 1위",
-   "reportUrl": null
+   "reportUrl": "/analysis/2026-11-02-hyundai-gf-holdings"
   },
   {
    "role": "멀티팩터",
@@ -31,7 +31,7 @@
    "close": 32150,
    "open": 31950,
    "reason": "혼합 점수 2위",
-   "reportUrl": null
+   "reportUrl": "/analysis/2026-11-02-daou-tech"
   },
   {
    "role": "멀티팩터",
@@ -41,7 +41,7 @@
    "close": 19160,
    "open": 19220,
    "reason": "혼합 점수 3위",
-   "reportUrl": null
+   "reportUrl": "/analysis/2026-11-02-ibk"
   },
   {
    "role": "멀티팩터",
@@ -51,7 +51,7 @@
    "close": 56700,
    "open": 56700,
    "reason": "혼합 점수 4위",
-   "reportUrl": null
+   "reportUrl": "/analysis/2026-11-02-hankook-tire"
   },
   {
    "role": "주도산업",
@@ -61,7 +61,7 @@
    "close": 90300,
    "open": 89700,
    "reason": "주도 사이클이 진행 중인 반도체 산업의 혼합 점수 1위",
-   "reportUrl": null
+   "reportUrl": "/analysis/2026-11-02-db-hitek"
   }
  ],
  "compare": [
