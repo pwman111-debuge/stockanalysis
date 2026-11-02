@@ -9,7 +9,7 @@
    "code": "294400",
    "weight": 50,
    "close": 119385,
-   "open": null,
+   "open": 117700,
    "reason": "코스피200을 따르는 ETF로 시장 평균을 담습니다.",
    "reportUrl": null
   },
@@ -19,7 +19,7 @@
    "code": "005440",
    "weight": 10,
    "close": 11000,
-   "open": null,
+   "open": 10760,
    "reason": "혼합 점수 1위",
    "reportUrl": null
   },
@@ -29,7 +29,7 @@
    "code": "023590",
    "weight": 10,
    "close": 32150,
-   "open": null,
+   "open": 31950,
    "reason": "혼합 점수 2위",
    "reportUrl": null
   },
@@ -39,7 +39,7 @@
    "code": "024110",
    "weight": 10,
    "close": 19160,
-   "open": null,
+   "open": 19220,
    "reason": "혼합 점수 3위",
    "reportUrl": null
   },
@@ -49,7 +49,7 @@
    "code": "161390",
    "weight": 10,
    "close": 56700,
-   "open": null,
+   "open": 56700,
    "reason": "혼합 점수 4위",
    "reportUrl": null
   },
@@ -59,7 +59,7 @@
    "code": "000990",
    "weight": 10,
    "close": 90300,
-   "open": null,
+   "open": 89700,
    "reason": "주도 사이클이 진행 중인 반도체 산업의 혼합 점수 1위",
    "reportUrl": null
   }
@@ -68,27 +68,27 @@
   {
    "name": "현대지에프홀딩스",
    "code": "005440",
-   "open": null
+   "open": 10760
   },
   {
    "name": "다우기술",
    "code": "023590",
-   "open": null
+   "open": 31950
   },
   {
    "name": "기업은행",
    "code": "024110",
-   "open": null
+   "open": 19220
   },
   {
    "name": "한국타이어앤테크놀로지",
    "code": "161390",
-   "open": null
+   "open": 56700
   },
   {
    "name": "KCC",
    "code": "002380",
-   "open": null
+   "open": 382000
   }
  ]
 }
