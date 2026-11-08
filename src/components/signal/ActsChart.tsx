@@ -5,6 +5,7 @@ export interface ActsData {
     asof: string;
     dates: string[];
     close: number[];
+    lows?: { first?: { date: string; value: number }; second?: { date: string; value: number; confirmed: boolean } };
     segments: { code: string; start: string; end: string; days: number; calDays: number }[];
 }
 
@@ -53,6 +54,9 @@ export function ActsChart({ data }: { data: ActsData }) {
     });
 
     const peakI = close.indexOf(hi0);
+    const fl = data.lows?.first, sl = data.lows?.second;
+    const flI = fl ? idx(fl.date) : -1, slI = sl ? idx(sl.date) : -1;
+    const slSame = sl && slI === n - 1;   // 2차 저점 후보가 오늘이면 현재값 라벨과 겹친다
     const last = n - 1;
     const cur = segments[segments.length - 1];
 
@@ -89,13 +93,38 @@ export function ActsChart({ data }: { data: ActsData }) {
 
                 <path d={path} fill="none" stroke="#0f172a" strokeWidth={1.8} strokeLinejoin="round" />
 
+                {fl && flI >= 0 && (
+                    <g>
+                        <line x1={x(flI)} x2={W - PR} y1={y(fl.value)} y2={y(fl.value)} stroke="#7e22ce" strokeDasharray="5 4" strokeWidth={1.2} />
+                        <circle cx={x(flI)} cy={y(fl.value)} r={4.5} fill="#fff" stroke="#7e22ce" strokeWidth={2} />
+                        <text x={x(flI)} y={y(fl.value) + 20} fontSize="11.5" fontWeight="700" fill="#7e22ce" textAnchor="middle"
+                            paintOrder="stroke" stroke="#fff" strokeWidth={3}>
+                            1차 저점 {Math.round(fl.value).toLocaleString('ko-KR')}
+                        </text>
+                        <text x={x(flI)} y={y(fl.value) + 33} fontSize="10.5" fill="#7e22ce" textAnchor="middle"
+                            paintOrder="stroke" stroke="#fff" strokeWidth={3}>
+                            {fl.date.slice(5).replace('-', '/')}
+                        </text>
+                    </g>
+                )}
+                {sl && slI >= 0 && (
+                    <g>
+                        <circle cx={x(slI)} cy={y(sl.value)} r={4.5} fill="#fff" stroke="#0369a1" strokeWidth={2} />
+                        {!slSame && (
+                            <text x={x(slI)} y={y(sl.value) + 20} fontSize="11.5" fontWeight="700" fill="#0369a1" textAnchor="middle"
+                                paintOrder="stroke" stroke="#fff" strokeWidth={3}>
+                                2차 저점{sl.confirmed ? '' : ' 후보'} {Math.round(sl.value).toLocaleString('ko-KR')}
+                            </text>
+                        )}
+                    </g>
+                )}
                 <circle cx={x(peakI)} cy={y(hi0)} r={3.5} fill="#0f172a" />
                 <text x={x(peakI) + 6} y={y(hi0) - 6} fontSize="11" fontWeight="700" fill="#0f172a">
                     고점 {Math.round(hi0).toLocaleString('ko-KR')}
                 </text>
                 <circle cx={x(last)} cy={y(close[last])} r={4} fill={info(cur.code).fill} stroke="#fff" strokeWidth={1.5} />
                 <text x={x(last) - 6} y={y(close[last]) + 18} fontSize="11" fontWeight="700" fill="#0f172a" textAnchor="end">
-                    {Math.round(close[last]).toLocaleString('ko-KR')}
+                    {slSame ? `2차 저점 후보 ${Math.round(close[last]).toLocaleString('ko-KR')}` : Math.round(close[last]).toLocaleString('ko-KR')}
                 </text>
             </svg>
 
@@ -116,7 +145,7 @@ export function ActsChart({ data }: { data: ActsData }) {
             </ul>
             <figcaption className="mt-3 text-xs leading-relaxed text-muted-foreground">
                 {data.asof} 종가 기준. 막은 그날까지 알 수 있는 외국인·개인 수급, 신용잔고, 고점 대비 낙폭으로 판정하며,
-                며칠씩 깜빡이는 구간은 앞 구간에 합쳐 표시합니다. 3막은 경보 구간을 포함하고, 회색은 고점 대비 -15%까지 빠졌다가 4막으로 이어지지 않고 회복한 구간입니다.
+                며칠씩 깜빡이는 구간은 앞 구간에 합쳐 표시합니다. 3막은 경보 구간을 포함하고, 1차 저점은 투매(4-2)에서 만들어진 저점, 2차 저점은 바닥 다지기(4-4) 안의 최저 종가이며 바닥 다지기가 끝나기 전까지는 '후보'입니다. 회색은 고점 대비 -15%까지 빠졌다가 4막으로 이어지지 않고 회복한 구간입니다.
             </figcaption>
         </figure>
     );
