@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { Gauge } from 'lucide-react';
 import { CoupangBanner } from '@/components/common/CoupangBanner';
 import { cn } from '@/lib/utils';
+import { ActsChart, type ActsData } from '@/components/signal/ActsChart';
 
 export const metadata: Metadata = {
     title: '시장 신호등',
@@ -69,6 +70,14 @@ function loadDays(): SignalDay[] {
         .map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')) as SignalDay);
 }
 
+function loadActs(): ActsData | null {
+    try {
+        return JSON.parse(fs.readFileSync(path.join(process.cwd(), 'public/charts/signal/acts.json'), 'utf8')) as ActsData;
+    } catch {
+        return null;
+    }
+}
+
 function LightDot({ light }: { light: Light | null }) {
     if (!light) return <span className="text-xs font-bold text-muted-foreground">참고</span>;
     const l = LIGHTS[light];
@@ -82,6 +91,7 @@ function LightDot({ light }: { light: Light | null }) {
 
 export default function SignalPage() {
     const days = loadDays();
+    const acts = loadActs();
     const today = days[0];
     const { act } = today;
     const stageCode = act.code === '3!' ? '3' : act.code;
@@ -134,6 +144,8 @@ export default function SignalPage() {
                         </li>
                     ))}
                 </ol>
+
+                {acts && <ActsChart data={acts} />}
 
                 <dl className="mt-6 grid grid-cols-1 gap-4 border-t border-border pt-5 text-sm sm:grid-cols-3">
                     <div>
