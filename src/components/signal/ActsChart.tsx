@@ -59,6 +59,10 @@ export function ActsChart({ data }: { data: ActsData }) {
     const slSame = sl && slI === n - 1;   // 2차 저점 후보가 오늘이면 현재값 라벨과 겹친다
     const last = n - 1;
     const cur = segments[segments.length - 1];
+    // 2차 저점 후보 메모: 과거 보통 범위(1차 저점 -6% 이내)와 후보 위치 비교 (후보 확정 전에만 표시)
+    const band6 = fl ? Math.round(fl.value * 0.94) : null;
+    const candPct = fl && sl ? (sl.value / fl.value - 1) * 100 : null;
+    const showNote = !!(fl && sl && !sl.confirmed && band6 && candPct !== null);
 
     return (
         <figure className="mt-6">
@@ -143,6 +147,13 @@ export function ActsChart({ data }: { data: ActsData }) {
                     );
                 })}
             </ul>
+            {showNote && band6 && sl && candPct !== null && (
+                <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2.5 text-xs leading-relaxed text-slate-700">
+                    과거 투매 뒤 2차 저점 9번 중 7번은 1차 저점 대비 -6%({band6.toLocaleString('ko-KR')}) 이내에서 만들어졌습니다.
+                    이번 후보 {Math.round(sl.value).toLocaleString('ko-KR')}은 {candPct.toFixed(1)}%로 이미 그 범위 아래까지 내려온 적이 있어, 4,900 부근까지 더 내려갈 가능성도 열어 둡니다.
+                    지수 전망이 아니라 과거 기록과 현재 위치를 비교한 참고 메모입니다.
+                </p>
+            )}
             <figcaption className="mt-3 text-xs leading-relaxed text-muted-foreground">
                 {data.asof} 종가 기준. 막은 그날까지 알 수 있는 외국인·개인 수급, 신용잔고, 고점 대비 낙폭으로 판정하며,
                 며칠씩 깜빡이는 구간은 앞 구간에 합쳐 표시합니다. 3막은 경보 구간을 포함하고, 1차 저점은 투매(4-2)에서 만들어진 저점, 2차 저점은 바닥 다지기(4-4) 안의 최저 종가이며 바닥 다지기가 끝나기 전까지는 '후보'입니다. 회색은 고점 대비 -15%까지 빠졌다가 4막으로 이어지지 않고 회복한 구간입니다.
